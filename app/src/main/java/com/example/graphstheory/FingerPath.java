@@ -8,9 +8,15 @@ public class FingerPath {
     public int strokeWidth;
     public Path path;
 
+    public int getColor() {
+        return color;
+    }
+
     public FingerPath(int color, int strokeWidth, Path path) {
         this.color = color;
         this.strokeWidth = strokeWidth;
         this.path = path;
+
+
     }
 }
