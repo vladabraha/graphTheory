@@ -35,14 +35,13 @@ public class PaintView extends View {
     private Paint mBitmapPaint = new Paint(Paint.DITHER_FLAG);
     private DisplayMetrics displayMetrics;
 
-    private ArrayList<Coordinate> lineCoordinates = new ArrayList<>();
+    private ArrayList<Coordinate> lineCoordinates = new ArrayList<>(); //prvni hodnota tam, kde začal tah, druhá tam kde končí tah (liny)
     private ArrayList<Coordinate> lineCoordinatesFinal = new ArrayList<>();
     private ArrayList<Coordinate> circleCoordinates = new ArrayList<>();
     private boolean circle = true;
     private boolean line = false;
 
     private Coordinate firstCoordinate;
-
 
     public PaintView(Context context) {
         super(context);
@@ -133,7 +132,7 @@ public class PaintView extends View {
         }
 
         for (int i = 0; i < lineCoordinatesFinal.size(); i++) {
-            if (i % 2 != 0 ) {
+            if (i % 2 != 0) {
                 mPaint.setColor(DEFAULT_COLOR);
                 mPaint.setStrokeWidth(BRUSH_SIZE);
 
@@ -154,11 +153,9 @@ public class PaintView extends View {
 //        mPath.reset();
 //        mPath.moveTo(x, y); //posune prvni texku
 
-        if (lineCoordinates.size() == 0) {
-            lineCoordinates.add(new Coordinate(x, y));
-        } else {
-            lineCoordinates.set(0, new Coordinate(x, y));
-        }
+        firstCoordinate = new Coordinate(x, y);
+        //nasetuje prvni hodnotu do lineCoordinates (pro vykresleni čáry, která se právě kreslí
+        lineCoordinates.add(new Coordinate(x, y));
 
 
         //nastaveni počátečních hodnot pro toleranci
@@ -174,6 +171,7 @@ public class PaintView extends View {
         if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
 
 
+            //pokud je coordinate první, přidá, jinak nasetuje druhej v arraylistu
             if (lineCoordinates.size() == 1) {
                 lineCoordinates.add(new Coordinate(x, y));
             } else {
@@ -190,26 +188,22 @@ public class PaintView extends View {
         lineCoordinates.clear();
 
         if (line) {
-            Coordinate first = null;
-            Coordinate second = null;
-            for (Coordinate coordinate : circleCoordinates) {
-                if (checkIsInCircle(coordinate.x, coordinate.y, x, y)) {
-                    if (first == null) {
-                        first = new Coordinate(coordinate.x, coordinate.y);
-                    }
-                }
-                if (first != null && second == null) {
-                    for (Coordinate coordinate2 : circleCoordinates) {
-                        if (checkIsInCircle(coordinate2.x, coordinate2.y, firstCoordinate.x, firstCoordinate.y)) {
-                            second = new Coordinate(coordinate2.x, coordinate2.y);
-                            lineCoordinatesFinal.add(first);
-                            lineCoordinatesFinal.add(second);
-                        }
+            Coordinate firstLineCoordinate = null;
+            Coordinate secondLineCoordinate;
+            for (Coordinate circleCoordinate : circleCoordinates) {
+                //otestuje, zdali konec, nebo začátek čáry leží v daném kruhu
+                if (checkIsInCircle(circleCoordinate.x, circleCoordinate.y, x, y) || checkIsInCircle(circleCoordinate.x, circleCoordinate.y, firstCoordinate.x, firstCoordinate.y)) {
+                    //pokud je coordinate v kruhu, nastaví se první souřadnice přímky
+                    if (firstLineCoordinate == null) {
+                        firstLineCoordinate = new Coordinate(circleCoordinate.x, circleCoordinate.y);
+                        //pokud je coordinate v kruhu a už máme první souřadnici přímky nastaví se druhá souřadnice přímky
+                    } else {
+                        secondLineCoordinate = new Coordinate(circleCoordinate.x, circleCoordinate.y);
+                        lineCoordinatesFinal.add(firstLineCoordinate);
+                        lineCoordinatesFinal.add(secondLineCoordinate);
                     }
                 }
             }
-
-
         }
 
         if (circle) circleCoordinates.add(new Coordinate(x, y));
@@ -229,7 +223,6 @@ public class PaintView extends View {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 lineCoordinates.clear();
-                firstCoordinate = new Coordinate(x, y);
 
                 if (line) touchStart(x, y);
                 invalidate();
