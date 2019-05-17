@@ -1,20 +1,12 @@
-package com.example.graphstheory;
+package cz.uhk.graphstheory;
 
-import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.BlurMaskFilter;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
+
 
 public class MainActivity extends AppCompatActivity {
 

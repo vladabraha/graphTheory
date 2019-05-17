@@ -1,4 +1,4 @@
-package com.example.graphstheory;
+package cz.uhk.graphstheory;
 
 public class Circle {
     private Coordinate coordinate;

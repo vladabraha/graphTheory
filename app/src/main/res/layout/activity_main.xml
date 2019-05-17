@@ -7,7 +7,7 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <com.example.graphstheory.PaintView
+    <cz.uhk.graphstheory.PaintView
         android:id="@+id/paintView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

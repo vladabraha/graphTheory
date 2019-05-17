@@ -7,7 +7,7 @@
     tools:context=".TextFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <com.example.graphstheory.PaintView
+    <cz.uhk.graphstheory.PaintView
         android:id="@+id/paintView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>
