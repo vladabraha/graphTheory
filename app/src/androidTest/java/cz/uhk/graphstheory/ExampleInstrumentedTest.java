@@ -1,4 +1,4 @@
-package com.example.graphstheory;
+package cz.uhk.graphstheory;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

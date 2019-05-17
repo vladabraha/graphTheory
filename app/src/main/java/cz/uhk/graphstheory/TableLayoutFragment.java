@@ -1,4 +1,4 @@
-package com.example.graphstheory;
+package cz.uhk.graphstheory;
 
 
 import android.content.Context;
@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 
 import java.util.Objects;
 

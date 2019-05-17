@@ -1,4 +1,4 @@
-package com.example.graphstheory;
+package cz.uhk.graphstheory;
 
 class Coordinate {
     public float x;
