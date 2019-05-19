@@ -1,6 +1,7 @@
 package cz.uhk.graphstheory;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -9,9 +10,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-public class TabActivity extends AppCompatActivity implements TableLayoutFragment.TableLayoutCommunicationInterface {
+public class TabActivity extends AppCompatActivity implements TabLayoutFragment.TableLayoutCommunicationInterface {
 
-    private TextFragment fragment;
+    private DrawingFragment drawingFragment;
+    private TextFragment textFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,13 +23,13 @@ public class TabActivity extends AppCompatActivity implements TableLayoutFragmen
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        fragment = new TextFragment();
-        TableLayoutFragment tableLayoutFragment = new TableLayoutFragment();
-        fragmentTransaction.add(R.id.activity_group, tableLayoutFragment);
-        fragmentTransaction.add(R.id.activity_group, fragment);
+        drawingFragment = new DrawingFragment();
+        textFragment = new TextFragment();
+        TabLayoutFragment tabLayoutFragment = new TabLayoutFragment();
+        fragmentTransaction.add(R.id.activity_group, tabLayoutFragment);
+        fragmentTransaction.add(R.id.activity_group, drawingFragment);
         fragmentTransaction.commit();
 
-        MapViewModel mapViewModel = ViewModelProviders.of(this).get(MapViewModel.class);
     }
 
     @Override
@@ -39,15 +41,15 @@ public class TabActivity extends AppCompatActivity implements TableLayoutFragmen
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.circle:
-                fragment.changeDrawingMethod("circle");
+                drawingFragment.changeDrawingMethod("circle");
                 return true;
             case R.id.line:
-                fragment.changeDrawingMethod("line");
+                drawingFragment.changeDrawingMethod("line");
                 return true;
             case R.id.clear:
-                fragment.changeDrawingMethod("clear");
+                drawingFragment.changeDrawingMethod("clear");
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -55,7 +57,7 @@ public class TabActivity extends AppCompatActivity implements TableLayoutFragmen
 
     @Override
     public void tableLayoutSelectedChange(int number) {
-        switch (number){
+        switch (number) {
             case 0:
                 removeDrawingFragment();
                 break;
@@ -70,22 +72,27 @@ public class TabActivity extends AppCompatActivity implements TableLayoutFragmen
 
     private void removeDrawingFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        TableLayoutFragment tableLayoutFragment = new TableLayoutFragment();
+//        TabLayoutFragment tabLayoutFragment = new TabLayoutFragment();
 
-        fragmentTransaction.remove(fragment);
-        fragmentTransaction.commit();
+        //zkontroluje, že už tam neni drawing fragment a kdyžtak tam hodi text fragment
+        if (fragmentManager.getFragments().contains(drawingFragment)) {
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.remove(drawingFragment);
+            fragmentTransaction.add(R.id.activity_group, textFragment);
+            fragmentTransaction.commit();
+        }
     }
 
     private void addDrawingFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        fragment = new TextFragment();
-        TableLayoutFragment tableLayoutFragment = new TableLayoutFragment();
+//        drawingFragment = new DrawingFragment();
+//        TabLayoutFragment tabLayoutFragment = new TabLayoutFragment();
 
-        fragmentTransaction.add(R.id.activity_group, fragment);
+        fragmentTransaction.remove(textFragment);
+        fragmentTransaction.add(R.id.activity_group, drawingFragment);
         fragmentTransaction.commit();
     }
 

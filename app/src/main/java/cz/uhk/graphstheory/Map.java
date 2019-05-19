@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 public class Map {
     private ArrayList<Line> lines;
-    private ArrayList<Circle> circles;
+    private ArrayList<Coordinate> circles;
 
 
-    public Map(ArrayList<Line> lines, ArrayList<Circle> circles) {
+    public Map(ArrayList<Line> lines, ArrayList<Coordinate> circles) {
         this.lines = lines;
         this.circles = circles;
     }
@@ -20,11 +20,11 @@ public class Map {
         this.lines = lines;
     }
 
-    public ArrayList<Circle> getCircles() {
+    public ArrayList<Coordinate> getCircles() {
         return circles;
     }
 
-    public void setCircles(ArrayList<Circle> circles) {
+    public void setCircles(ArrayList<Coordinate> circles) {
         this.circles = circles;
     }
 }

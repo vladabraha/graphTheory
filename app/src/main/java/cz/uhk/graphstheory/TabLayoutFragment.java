@@ -16,21 +16,21 @@ import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link TableLayoutFragment#newInstance} factory method to
+ * Use the {@link TabLayoutFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class TableLayoutFragment extends Fragment {
+public class TabLayoutFragment extends Fragment {
 
     TableLayoutCommunicationInterface tableLayoutCommunicationInterface;
 
-    public TableLayoutFragment() {
+    public TabLayoutFragment() {
         // Required empty public constructor
     }
 
     // TODO: Rename and change types and number of parameters
-    public static TableLayoutFragment newInstance(String param1, String param2) {
+    public static TabLayoutFragment newInstance(String param1, String param2) {
 
-        return new TableLayoutFragment();
+        return new TabLayoutFragment();
     }
 
     @Override
