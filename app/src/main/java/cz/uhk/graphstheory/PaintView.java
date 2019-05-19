@@ -39,6 +39,7 @@ public class PaintView extends View {
     private ArrayList<Coordinate> lineCoordinates = new ArrayList<>(); //prvni hodnota tam, kde začal tah, druhá tam kde končí tah (liny)
     private ArrayList<Coordinate> lineCoordinatesFinal = new ArrayList<>();
     private ArrayList<Coordinate> circleCoordinates = new ArrayList<>();
+    private ArrayList<Coordinate> allLineList = new ArrayList<>();
     private boolean circle = true;
     private boolean line = false;
 
@@ -101,7 +102,7 @@ public class PaintView extends View {
     protected void onDraw(Canvas canvas) {
         canvas.save();
         mCanvas = canvas;
-       mCanvas.drawColor(DEFAULT_BG_COLOR); //vybarví celou plochu bílou barvou
+        mCanvas.drawColor(DEFAULT_BG_COLOR); //vybarví celou plochu bílou barvou
 
         //kresli z arraylistu jednotlive čáry
 //        for (FingerPath fingerPath : fingerPaths) {
@@ -133,12 +134,12 @@ public class PaintView extends View {
             }
         }
 
-        for (int i = 0; i < lineCoordinatesFinal.size(); i++) {
+        for (int i = 0; i < allLineList.size(); i++) {
             if (i % 2 != 0) {
                 mPaint.setColor(DEFAULT_COLOR);
                 mPaint.setStrokeWidth(BRUSH_SIZE);
 
-                mCanvas.drawLine(lineCoordinatesFinal.get(i).x, lineCoordinatesFinal.get(i).y, lineCoordinatesFinal.get(i - 1).x, lineCoordinatesFinal.get(i - 1).y, mPaint);
+                if (!allLineList.isEmpty()) mCanvas.drawLine(allLineList.get(i).x, allLineList.get(i).y, allLineList.get(i - 1).x, allLineList.get(i - 1).y, mPaint);
             }
         }
 
@@ -204,6 +205,8 @@ public class PaintView extends View {
                         secondLineCoordinate = new Coordinate(circleCoordinate.x, circleCoordinate.y);
                         lineCoordinatesFinal.add(firstLineCoordinate);
                         lineCoordinatesFinal.add(secondLineCoordinate);
+                        allLineList.add(firstLineCoordinate);
+                        allLineList.add(secondLineCoordinate);
                     }
                 }
             }
@@ -244,5 +247,34 @@ public class PaintView extends View {
         }
 
         return true;
+    }
+
+    public Map getMap() {
+
+        ArrayList<Line> lines = new ArrayList<>();
+        for (int x = 0; x < allLineList.size(); x++) {
+            if (x % 2 != 0) {
+                Line line = new Line(allLineList.get(x - 1), allLineList.get(x));
+                lines.add(line);
+            }
+        }
+        return new Map(lines, circleCoordinates);
+    }
+
+    public void setMap(Map map) {
+        ArrayList<Line> lines = map.getLines();
+
+        circleCoordinates = map.getCircles();
+        if (!circleCoordinates.isEmpty() || !lineCoordinatesFinal.isEmpty()){
+            invalidate();
+        }
+
+        for (int i = 0; i < lines.size(); i++) {
+            allLineList.add( new Coordinate(lines.get(i).getFrom().x, lines.get(i).getFrom().y));
+            allLineList.add(new Coordinate(lines.get(i).getTo().x, lines.get(i).getTo().y));
+            invalidate();
+        }
+
+
     }
 }

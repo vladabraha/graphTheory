@@ -1,27 +1,27 @@
 package cz.uhk.graphstheory;
 
 public class Line {
-    private Circle from;
-    private Circle to;
+    private Coordinate from;
+    private Coordinate to;
 
-    public Line(Circle from, Circle to) {
+    public Line(Coordinate from, Coordinate to) {
         this.from = from;
         this.to = to;
     }
 
-    public Circle getFrom() {
+    public Coordinate getFrom() {
         return from;
     }
 
-    public void setFrom(Circle from) {
+    public void setFrom(Coordinate from) {
         this.from = from;
     }
 
-    public Circle getTo() {
+    public Coordinate getTo() {
         return to;
     }
 
-    public void setTo(Circle to) {
+    public void setTo(Coordinate to) {
         this.to = to;
     }
 }
