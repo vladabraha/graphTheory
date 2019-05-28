@@ -99,8 +99,7 @@ public class PaintView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.save();
-        mCanvas = canvas;
-       mCanvas.drawColor(DEFAULT_BG_COLOR); //vybarví celou plochu bílou barvou
+        mCanvas.drawColor(DEFAULT_BG_COLOR); //vybarví celou plochu bílou barvou
 
         //kresli z arraylistu jednotlive čáry
 //        for (FingerPath fingerPath : fingerPaths) {
@@ -143,7 +142,6 @@ public class PaintView extends View {
 
         canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
         canvas.restore();
-
     }
 
     private void touchStart(float x, float y) {
