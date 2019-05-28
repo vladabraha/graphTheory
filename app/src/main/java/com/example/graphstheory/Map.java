@@ -1,4 +1,4 @@
-package cz.uhk.graphstheory;
+package com.example.graphstheory;
 
 import java.util.ArrayList;
 
