@@ -15,6 +15,10 @@ import android.view.View;
 
 import java.util.ArrayList;
 
+import cz.uhk.graphstheory.model.Coordinate;
+import cz.uhk.graphstheory.model.Line;
+import cz.uhk.graphstheory.model.Map;
+
 public class PaintView extends View {
 
     public static int BRUSH_SIZE = 15;

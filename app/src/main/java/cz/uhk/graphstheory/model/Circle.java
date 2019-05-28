@@ -1,4 +1,6 @@
-package cz.uhk.graphstheory;
+package cz.uhk.graphstheory.model;
+
+import cz.uhk.graphstheory.model.Coordinate;
 
 public class Circle {
     private Coordinate coordinate;

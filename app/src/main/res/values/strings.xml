@@ -3,4 +3,35 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_tools">Tools</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_send">Send</string>
+    <string name="example_text">
+        <h1>Zkušební nadpis</h1>
+        <p> takovýhle text je v odstavci </p>
+        <big>neco duleziteho</big> <small> beco neduleziteho</small> \n
+        <b>What</b> <i>the</i>  <font fgcolor='red'>Running</font> <u>Html</u> <font fgcolor='green'>Running</font>
+        \n
+        <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam erat volutpat. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat. Ut tempus purus at lorem. Morbi scelerisque luctus velit. Nullam dapibus fermentum ipsum. Nullam feugiat, turpis at pulvinar vulputate, erat libero tristique tellus, nec bibendum odio risus sit amet ante. Curabitur ligula sapien, pulvinar a vestibulum quis, facilisis vel sapien. Etiam posuere lacus quis dolor. Praesent id justo in neque elementum ultrices. Cras elementum. Praesent id justo in neque elementum ultrices. Vestibulum erat nulla, ullamcorper nec, rutrum non, nonummy ac, erat. Nulla non lectus sed nisl molestie malesuada. Nam sed tellus id magna elementum tincidunt. Integer malesuada. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Ut tempus purus at lorem. Duis pulvinar.</p>
+
+<p>Cras elementum. Praesent dapibus. Etiam ligula pede, sagittis quis, interdum ultricies, scelerisque eu. Nullam lectus justo, vulputate eget mollis sed, tempor sed magna. Mauris dolor felis, sagittis at, luctus sed, aliquam non, tellus. Donec vitae arcu. Nunc auctor. Duis sapien nunc, commodo et, interdum suscipit, sollicitudin et, dolor. Suspendisse nisl. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Aliquam id dolor. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Proin mattis lacinia justo. Duis ante orci, molestie vitae vehicula venenatis, tincidunt ac pede. Vestibulum fermentum tortor id mi. Sed elit dui, pellentesque a, faucibus vel, interdum nec, diam. Nullam sit amet magna in magna gravida vehicula.</p>
+
+<p>Aliquam ornare wisi eu metus. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Etiam posuere lacus quis dolor. Fusce suscipit libero eget elit. Nullam sit amet magna in magna gravida vehicula. Vivamus porttitor turpis ac leo. Sed convallis magna eu sem. Maecenas libero. Duis ante orci, molestie vitae vehicula venenatis, tincidunt ac pede. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis sapien nunc, commodo et, interdum suscipit, sollicitudin et, dolor. Mauris dictum facilisis augue. Integer lacinia. Vivamus porttitor turpis ac leo. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Integer lacinia. Praesent in mauris eu tortor porttitor accumsan. Etiam commodo dui eget wisi. Integer malesuada.</p>
+
+<p>Phasellus faucibus molestie nisl. Proin in tellus sit amet nibh dignissim sagittis. Et harum quidem rerum facilis est et expedita distinctio. Aliquam erat volutpat. Nunc auctor. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Nullam sit amet magna in magna gravida vehicula. Aliquam erat volutpat. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nulla non arcu lacinia neque faucibus fringilla. Duis ante orci, molestie vitae vehicula venenatis, tincidunt ac pede.</p>
+
+<p>Nullam feugiat, turpis at pulvinar vulputate, erat libero tristique tellus, nec bibendum odio risus sit amet ante. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Duis bibendum, lectus ut viverra rhoncus, dolor nunc faucibus libero, eget facilisis enim ipsum id lacus. Aliquam ante. In rutrum. Sed convallis magna eu sem. Etiam sapien elit, consequat eget, tristique non, venenatis quis, ante. Etiam quis quam. Nullam sapien sem, ornare ac, nonummy non, lobortis a enim. Nunc dapibus tortor vel mi dapibus sollicitudin. Nulla non lectus sed nisl molestie malesuada. Donec vitae arcu.</p>
+
+    </string>
 </resources>

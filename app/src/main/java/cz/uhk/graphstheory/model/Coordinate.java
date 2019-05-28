@@ -1,6 +1,6 @@
-package cz.uhk.graphstheory;
+package cz.uhk.graphstheory.model;
 
-class Coordinate {
+public class Coordinate {
     public float x;
     public float y;
 

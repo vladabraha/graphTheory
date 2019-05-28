@@ -1,6 +1,9 @@
-package cz.uhk.graphstheory;
+package cz.uhk.graphstheory.model;
 
 import java.util.ArrayList;
+
+import cz.uhk.graphstheory.model.Coordinate;
+import cz.uhk.graphstheory.model.Line;
 
 public class Map {
     private ArrayList<Line> lines;

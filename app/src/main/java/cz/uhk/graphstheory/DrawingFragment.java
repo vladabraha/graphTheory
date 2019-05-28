@@ -14,6 +14,9 @@ import android.view.ViewGroup;
 
 import java.util.Objects;
 
+import cz.uhk.graphstheory.model.Map;
+import cz.uhk.graphstheory.model.MapViewModel;
+
 
 ///**
 // * A simple {@link Fragment} subclass.
