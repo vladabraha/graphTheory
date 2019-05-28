@@ -1,7 +1,6 @@
-package cz.uhk.graphstheory;
+package com.example.graphstheory;
 
 import android.annotation.SuppressLint;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -210,8 +209,6 @@ public class PaintView extends View {
         }
 
         if (circle) circleCoordinates.add(new Coordinate(x, y));
-
-
     }
 
     private boolean checkIsInCircle(float circle_x, float circle_y, float point_x, float point_y) {

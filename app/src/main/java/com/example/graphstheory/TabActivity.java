@@ -1,13 +1,15 @@
-package cz.uhk.graphstheory;
+package com.example.graphstheory;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.TableLayout;
+import android.widget.Toast;
 
 public class TabActivity extends AppCompatActivity implements TableLayoutFragment.TableLayoutCommunicationInterface {
 
@@ -27,7 +29,7 @@ public class TabActivity extends AppCompatActivity implements TableLayoutFragmen
         fragmentTransaction.add(R.id.activity_group, fragment);
         fragmentTransaction.commit();
 
-        MapViewModel mapViewModel = ViewModelProviders.of(this).get(MapViewModel.class);
+
     }
 
     @Override
