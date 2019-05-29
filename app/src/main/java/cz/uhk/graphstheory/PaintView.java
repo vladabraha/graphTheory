@@ -1,7 +1,6 @@
 package cz.uhk.graphstheory;
 
 import android.annotation.SuppressLint;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -13,11 +12,16 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import org.apache.commons.math3.geometry.euclidean.twod.Line;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+
 import java.util.ArrayList;
 
 import cz.uhk.graphstheory.model.Coordinate;
-import cz.uhk.graphstheory.model.Line;
+
+import cz.uhk.graphstheory.model.CustomLine;
 import cz.uhk.graphstheory.model.Map;
+
 
 public class PaintView extends View {
 
@@ -46,6 +50,7 @@ public class PaintView extends View {
     private ArrayList<Coordinate> allLineList = new ArrayList<>(); //seznam všech vytvořených line, ktere propojuji kruhy
     private boolean circle = true;
     private boolean line = false;
+    private boolean remove = false;
     private boolean isCircleDragged = false;
 
     private Coordinate firstCoordinate; //označuje souřadnici, kam uživatel klepnul poprvé během posledního klepnutí
@@ -96,15 +101,24 @@ public class PaintView extends View {
     public void circle() {
         circle = true;
         line = false;
+        remove = false;
     }
 
     public void line() {
         circle = false;
         line = true;
+        remove = false;
+    }
+
+    public void remove() {
+        circle = false;
+        line = false;
+        remove = true;
     }
 
     /**
      * Metoda je provedena každým zavoláním invalidate
+     *
      * @param canvas override parametr, je do něho zakreslováno
      */
     @Override
@@ -212,33 +226,49 @@ public class PaintView extends View {
         circleCoordinates.add(firstCoordinate);
     }
 
+    private void removeObject(float x, float y){
+        for (Coordinate coordinate : circleCoordinates){
+            if (checkIsInCircle(coordinate.x, coordinate.y, x, y)){
+                circleCoordinates.remove(coordinate);
+                break;
+            }
+        }
+
+        //převedeni allLine do CommonMathsLines a zjištění, zdali souřadnice uživatelova klepnutí neleží v blízkosti někteřé přímky
+        for (int i = 0; i < allLineList.size(); i++){
+            if (i % 2 != 0){
+                Line line = new Line(new Vector2D(allLineList.get(i-1).x, allLineList.get(i-1).y), new Vector2D(allLineList.get(i).x, allLineList.get(i).y),1);
+                if (line.distance(new Vector2D(x,y)) < TOUCH_TOLERANCE){
+                    allLineList.remove(i);
+                    allLineList.remove(i-1);
+                    break;
+                }
+            }
+        }
+
+    }
+
 
     private void touchUp(float x, float y) {
 //        mPath.lineTo(previousXCoordinate, previousYCoordinate);
         lineCoordinates.clear();
 
-        if (line) {
-            Coordinate firstLineCoordinate = null;
-            Coordinate secondLineCoordinate;
-            for (Coordinate circleCoordinate : circleCoordinates) {
-                //otestuje, zdali konec, nebo začátek čáry leží v daném kruhu
-                if (checkIsInCircle(circleCoordinate.x, circleCoordinate.y, x, y) || checkIsInCircle(circleCoordinate.x, circleCoordinate.y, firstCoordinate.x, firstCoordinate.y)) {
-                    //pokud je coordinate v kruhu, nastaví se první souřadnice přímky
-                    if (firstLineCoordinate == null) {
-                        firstLineCoordinate = new Coordinate(circleCoordinate.x, circleCoordinate.y);
-                        //pokud je coordinate v kruhu a už máme první souřadnici přímky nastaví se druhá souřadnice přímky
-                    } else {
-                        secondLineCoordinate = new Coordinate(circleCoordinate.x, circleCoordinate.y);
-                        allLineList.add(firstLineCoordinate);
-                        allLineList.add(secondLineCoordinate);
-                    }
+        Coordinate firstLineCoordinate = null;
+        Coordinate secondLineCoordinate;
+        for (Coordinate circleCoordinate : circleCoordinates) {
+            //otestuje, zdali konec, nebo začátek čáry leží v daném kruhu
+            if (checkIsInCircle(circleCoordinate.x, circleCoordinate.y, x, y) || checkIsInCircle(circleCoordinate.x, circleCoordinate.y, firstCoordinate.x, firstCoordinate.y)) {
+                //pokud je coordinate v kruhu, nastaví se první souřadnice přímky
+                if (firstLineCoordinate == null) {
+                    firstLineCoordinate = new Coordinate(circleCoordinate.x, circleCoordinate.y);
+                    //pokud je coordinate v kruhu a už máme první souřadnici přímky nastaví se druhá souřadnice přímky
+                } else {
+                    secondLineCoordinate = new Coordinate(circleCoordinate.x, circleCoordinate.y);
+                    allLineList.add(firstLineCoordinate);
+                    allLineList.add(secondLineCoordinate);
                 }
             }
         }
-
-        if (circle) circleCoordinates.add(new Coordinate(x, y));
-        if (isCircleDragged) isCircleDragged = false; //aby to neposouvalo v dalším tahu kruhy
-
     }
 
     private boolean checkIsInCircle(float circle_x, float circle_y, float point_x, float point_y) {
@@ -262,25 +292,33 @@ public class PaintView extends View {
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (line) touchMove(x, y);
-                if (isCircleDragged) circleDragged(x,y);
+                if (isCircleDragged) circleDragged(x, y);
                 invalidate();
                 break;
             case MotionEvent.ACTION_UP:
-                touchUp(x, y);
-                if (line) touchMove(x, y);
+                if (line) {
+                    touchUp(x, y);
+                    touchMove(x, y);
+                }
+
+                if (circle) circleCoordinates.add(new Coordinate(x, y));
+                if (isCircleDragged) isCircleDragged = false; //aby to neposouvalo v dalším tahu kruhy
+                if (remove) removeObject(x, y);
                 invalidate();
                 break;
         }
         return true;
     }
 
-
+    /**
+     * get map for MapViewModel
+     */
     public Map getMap() {
 
-        ArrayList<Line> lines = new ArrayList<>();
+        ArrayList<CustomLine> lines = new ArrayList<>();
         for (int x = 0; x < allLineList.size(); x++) {
             if (x % 2 != 0) {
-                Line line = new Line(allLineList.get(x - 1), allLineList.get(x));
+                CustomLine line = new CustomLine(allLineList.get(x - 1), allLineList.get(x));
                 lines.add(line);
             }
         }
@@ -288,7 +326,7 @@ public class PaintView extends View {
     }
 
     public void setMap(Map map) {
-        ArrayList<Line> lines = map.getLines();
+        ArrayList<CustomLine> lines = map.getCustomLines();
 
         circleCoordinates = map.getCircles();
         if (!circleCoordinates.isEmpty() || !allLineList.isEmpty()) {
@@ -300,7 +338,5 @@ public class PaintView extends View {
             allLineList.add(new Coordinate(lines.get(i).getTo().x, lines.get(i).getTo().y));
             invalidate();
         }
-
-
     }
 }

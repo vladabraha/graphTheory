@@ -17,6 +17,13 @@
     </item>
 
     <item
+        android:id="@+id/delete"
+        app:showAsAction="never"
+        android:title="delete one object">
+
+    </item>
+
+    <item
         android:id="@+id/clear"
         app:showAsAction="never"
         android:title="clear">

@@ -58,20 +58,12 @@ public class DrawingFragment extends Fragment implements TabActivity.OnFragmentI
     public static DrawingFragment newInstance(String param1, String param2) {
         DrawingFragment fragment = new DrawingFragment();
         fragment.setRetainInstance(true); //při otočení displaye by se to nemělo změnit
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-//        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (getArguments() != null) {
-//            mParam1 = getArguments().getString(ARG_PARAM1);
-//            mParam2 = getArguments().getString(ARG_PARAM2);
-//        }
     }
 
     @Override
@@ -93,13 +85,6 @@ public class DrawingFragment extends Fragment implements TabActivity.OnFragmentI
             paintView.setMap(mapViewModel.getMap());
         }
     }
-
-
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-//    }
 
     @Override
     public void onAttach(Context context) {
@@ -127,6 +112,9 @@ public class DrawingFragment extends Fragment implements TabActivity.OnFragmentI
                 break;
             case "circle":
                 paintView.circle();
+                break;
+            case "remove":
+                paintView.remove();
                 break;
             case "clear":
                 paintView.clear();

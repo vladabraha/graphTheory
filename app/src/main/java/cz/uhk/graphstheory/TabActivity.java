@@ -63,6 +63,9 @@ public class TabActivity extends AppCompatActivity implements TabLayoutFragment.
             case R.id.line:
                 drawingFragment.changeDrawingMethod("line");
                 return true;
+            case R.id.delete:
+                drawingFragment.changeDrawingMethod("remove");
+                return true;
             case R.id.clear:
                 drawingFragment.changeDrawingMethod("clear");
                 return true;

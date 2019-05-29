@@ -1,26 +1,24 @@
 package cz.uhk.graphstheory.model;
 
+
 import java.util.ArrayList;
 
-import cz.uhk.graphstheory.model.Coordinate;
-import cz.uhk.graphstheory.model.Line;
-
 public class Map {
-    private ArrayList<Line> lines;
+    private ArrayList<CustomLine> customLines;
     private ArrayList<Coordinate> circles;
 
 
-    public Map(ArrayList<Line> lines, ArrayList<Coordinate> circles) {
-        this.lines = lines;
+    public Map(ArrayList<CustomLine> customLines, ArrayList<Coordinate> circles) {
+        this.customLines = customLines;
         this.circles = circles;
     }
 
-    public ArrayList<Line> getLines() {
-        return lines;
+    public ArrayList<CustomLine> getCustomLines() {
+        return customLines;
     }
 
-    public void setLines(ArrayList<Line> lines) {
-        this.lines = lines;
+    public void setCustomLines(ArrayList<CustomLine> customLines) {
+        this.customLines = customLines;
     }
 
     public ArrayList<Coordinate> getCircles() {

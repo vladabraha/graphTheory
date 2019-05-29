@@ -1,12 +1,10 @@
 package cz.uhk.graphstheory.model;
 
-import cz.uhk.graphstheory.model.Coordinate;
-
-public class Line {
+public class CustomLine {
     private Coordinate from;
     private Coordinate to;
 
-    public Line(Coordinate from, Coordinate to) {
+    public CustomLine(Coordinate from, Coordinate to) {
         this.from = from;
         this.to = to;
     }
