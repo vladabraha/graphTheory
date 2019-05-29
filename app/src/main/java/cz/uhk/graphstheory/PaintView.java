@@ -222,6 +222,13 @@ public class PaintView extends View {
 
     private void circleDragged(float x, float y) {
         circleCoordinates.remove(firstCoordinate);
+        for (Coordinate coordinate : allLineList){
+            //při tažení se přehodí i souřadnice přímky
+            if (coordinate.x == firstCoordinate.x && coordinate.y == firstCoordinate.y){
+                coordinate.x = x;
+                coordinate.y = y;
+            }
+        }
         firstCoordinate = new Coordinate(x, y);
         circleCoordinates.add(firstCoordinate);
     }
