@@ -28,7 +28,7 @@ public class PaintView extends View {
     public static int BRUSH_SIZE = 15;
     public static final int DEFAULT_COLOR = Color.BLACK;
     public static final int DEFAULT_BG_COLOR = Color.WHITE;
-    private static final float TOUCH_TOLERANCE = 4;
+    private static final float TOUCH_TOLERANCE = 5; //tolerance posunutí prstu při změně
     private float previousXCoordinate, previousYCoordinate;
     //    private Path mPath;
     private Paint mPaint;
@@ -150,7 +150,7 @@ public class PaintView extends View {
                 mPaint.setStrokeWidth(BRUSH_SIZE);
                 mPaint.setStyle(Paint.Style.FILL);
 
-                Log.d("hoo", String.valueOf(displayMetrics.density));
+
                 mCanvas.drawCircle(coordinate.x, coordinate.y, BRUSH_SIZE + 30, mPaint);
             }
         }
@@ -196,14 +196,12 @@ public class PaintView extends View {
         //zkontroluje, zdali se nejedna o chybu, napr. drzenim prstu prilis dlouho
         if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
 
-
             //pokud je coordinate první, přidá, jinak nasetuje druhej v arraylistu
             if (lineCoordinates.size() == 1) {
                 lineCoordinates.add(new Coordinate(x, y));
             } else {
                 lineCoordinates.set(1, new Coordinate(x, y));
             }
-
             previousXCoordinate = x;
             previousYCoordinate = y;
         }
@@ -212,10 +210,15 @@ public class PaintView extends View {
     private void touchStartCircle(float x, float y) {
         for (Coordinate coordinate : circleCoordinates) {
             if (checkIsInCircle(coordinate.x, coordinate.y, x, y)) {
+                Log.d("hoo", (x + " " + y + "coordinates of circle " + coordinate.x + " " + coordinate.y ));
                 isCircleDragged = true;
                 firstCoordinate = coordinate;
                 break;
             }
+        }
+        //pokud neni klepnuto na žádný kruh, vytvoří se nový
+        if (!isCircleDragged){
+           circleCoordinates.add(new Coordinate(x, y));
         }
     }
 
@@ -252,7 +255,6 @@ public class PaintView extends View {
                 }
             }
         }
-
     }
 
 
@@ -307,8 +309,6 @@ public class PaintView extends View {
                     touchUp(x, y);
                     touchMove(x, y);
                 }
-
-                if (circle) circleCoordinates.add(new Coordinate(x, y));
                 if (isCircleDragged) isCircleDragged = false; //aby to neposouvalo v dalším tahu kruhy
                 if (remove) removeObject(x, y);
                 invalidate();
