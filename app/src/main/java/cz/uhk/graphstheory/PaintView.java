@@ -240,6 +240,20 @@ public class PaintView extends View {
         for (Coordinate coordinate : circleCoordinates){
             if (checkIsInCircle(coordinate.x, coordinate.y, x, y)){
                 circleCoordinates.remove(coordinate);
+                //projde všechny vrcholy a pokud maji stejnou souřadnici, jako střed kruhu, tak je smaže včetně párového (je to přímka, takže druhá souřadnice)
+                for (int i = 0; i < allLineList.size(); i++ ){
+                    if (allLineList.get(i).x == coordinate.x && allLineList.get(i).y == coordinate.y){
+                        if (i % 2 == 0){
+                            allLineList.remove(i);
+                            allLineList.remove(i);
+                            i = i - 1; //abychom nepřeskočili žádnou hranu
+                        }else {
+                            allLineList.remove(i-1);
+                            allLineList.remove(i-1);
+                            i = i - 2; //abychom nepřeskočili žádnou hranu
+                        }
+                    }
+                }
                 break;
             }
         }
