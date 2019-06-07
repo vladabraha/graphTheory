@@ -151,7 +151,6 @@ public class PaintView extends View {
                 mPaint.setColor(DEFAULT_COLOR);
                 mPaint.setStrokeWidth(BRUSH_SIZE);
                 mPaint.setStyle(Paint.Style.FILL);
-
                 mCanvas.drawCircle(coordinate.x, coordinate.y, BRUSH_SIZE + 30, mPaint);
             }
         }
@@ -195,9 +194,10 @@ public class PaintView extends View {
         float dy = Math.abs(y - previousYCoordinate);
 
         //zkontroluje, zdali se nejedna o chybu, napr. drzenim prstu prilis dlouho
+
         if (dx >= TOUCH_TOLERANCE_FINGER_MOVE || dy >= TOUCH_TOLERANCE_FINGER_MOVE) {
 
-            //pokud je coordinate první, přidá, jinak nasetuje druhej v arraylistu
+          //pokud je coordinate první, přidá, jinak nasetuje druhej v arraylistu
             if (lineCoordinates.size() == 1) {
                 lineCoordinates.add(new Coordinate(x, y));
             } else {
@@ -211,6 +211,7 @@ public class PaintView extends View {
     private void touchStartCircle(float x, float y) {
         for (Coordinate coordinate : circleCoordinates) {
             if (checkIsInCircle(coordinate.x, coordinate.y, x, y)) {
+                Log.d("hoo", (x + " " + y + "coordinates of circle " + coordinate.x + " " + coordinate.y ));
                 isCircleDragged = true;
                 firstCoordinate = coordinate;
                 break;

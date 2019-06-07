@@ -1,6 +1,7 @@
 package cz.uhk.graphstheory;
 
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -13,16 +14,19 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 public class TabActivity extends AppCompatActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, NavigationView.OnNavigationItemSelectedListener {
 
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
+    private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tab);
+        //for navigation drawer
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -45,7 +49,34 @@ public class TabActivity extends AppCompatActivity implements TabLayoutFragment.
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
+        bottomNavigationView = findViewById(R.id.navigation);
+        bottomNavigationView.setSelectedItemId(R.id.circle);
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.circle:
+                        drawingFragment.changeDrawingMethod("circle");
+                        return true;
+                    case R.id.line:
+                        drawingFragment.changeDrawingMethod("line");
+                        return true;
+                    case R.id.delete:
+                        drawingFragment.changeDrawingMethod("remove");
+                        return true;
+                    case R.id.clear:
+                        drawingFragment.changeDrawingMethod("clear");
+                        bottomNavigationView.setSelectedItemId(R.id.circle);
+                        drawingFragment.changeDrawingMethod("circle");
+                        return false; // return true if you want the item to be displayed as the selected item
+                    default:
+                        return false;
+                }
+            }
+        });
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -101,27 +132,23 @@ public class TabActivity extends AppCompatActivity implements TabLayoutFragment.
     private void removeDrawingFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
 
-//        TabLayoutFragment tabLayoutFragment = new TabLayoutFragment();
-
         //zkontroluje, že už tam neni drawing fragment a kdyžtak tam hodi text fragment
         if (fragmentManager.getFragments().contains(drawingFragment)) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.remove(drawingFragment);
             fragmentTransaction.add(R.id.activity_group, textFragment);
             fragmentTransaction.commit();
+            bottomNavigationView.setVisibility(View.GONE);
         }
     }
 
     private void addDrawingFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-//        drawingFragment = new DrawingFragment();
-//        TabLayoutFragment tabLayoutFragment = new TabLayoutFragment();
-
         fragmentTransaction.remove(textFragment);
         fragmentTransaction.add(R.id.activity_group, drawingFragment);
         fragmentTransaction.commit();
+        bottomNavigationView.setVisibility(View.VISIBLE);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -133,14 +160,6 @@ public class TabActivity extends AppCompatActivity implements TabLayoutFragment.
         if (id == R.id.nav_home) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_tools) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
 
         }
 
