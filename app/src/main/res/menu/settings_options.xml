@@ -5,28 +5,28 @@
     <item
         android:id="@+id/circle"
         app:showAsAction="never"
-        android:title="node">
+        android:title="@string/node">
 
     </item>
 
     <item
         android:id="@+id/line"
         app:showAsAction="never"
-        android:title="line">
+        android:title="@string/line">
 
     </item>
 
     <item
         android:id="@+id/delete"
         app:showAsAction="never"
-        android:title="delete one object">
+        android:title="@string/delete_one_object">
 
     </item>
 
     <item
         android:id="@+id/clear"
         app:showAsAction="never"
-        android:title="clear">
+        android:title="@string/clear_paint_view">
 
     </item>
 

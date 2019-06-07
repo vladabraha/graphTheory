@@ -13,6 +13,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Line;
+import org.apache.commons.math3.geometry.euclidean.twod.Segment;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.util.ArrayList;
@@ -28,7 +29,8 @@ public class PaintView extends View {
     public static int BRUSH_SIZE = 15;
     public static final int DEFAULT_COLOR = Color.BLACK;
     public static final int DEFAULT_BG_COLOR = Color.WHITE;
-    private static final float TOUCH_TOLERANCE = 5; //tolerance posunutí prstu při změně
+    private static final float TOUCH_TOLERANCE_FINGER_MOVE = 5; //tolerance posunutí prstu při změně
+    private static final float TOUCH_TOLERANCE_FINGER_TAPPED = 15; //tolerance posunutí prstu při změně
     private float previousXCoordinate, previousYCoordinate;
     //    private Path mPath;
     private Paint mPaint;
@@ -149,8 +151,6 @@ public class PaintView extends View {
                 mPaint.setColor(DEFAULT_COLOR);
                 mPaint.setStrokeWidth(BRUSH_SIZE);
                 mPaint.setStyle(Paint.Style.FILL);
-
-
                 mCanvas.drawCircle(coordinate.x, coordinate.y, BRUSH_SIZE + 30, mPaint);
             }
         }
@@ -194,9 +194,10 @@ public class PaintView extends View {
         float dy = Math.abs(y - previousYCoordinate);
 
         //zkontroluje, zdali se nejedna o chybu, napr. drzenim prstu prilis dlouho
-        if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
 
-            //pokud je coordinate první, přidá, jinak nasetuje druhej v arraylistu
+        if (dx >= TOUCH_TOLERANCE_FINGER_MOVE || dy >= TOUCH_TOLERANCE_FINGER_MOVE) {
+
+          //pokud je coordinate první, přidá, jinak nasetuje druhej v arraylistu
             if (lineCoordinates.size() == 1) {
                 lineCoordinates.add(new Coordinate(x, y));
             } else {
@@ -240,6 +241,20 @@ public class PaintView extends View {
         for (Coordinate coordinate : circleCoordinates){
             if (checkIsInCircle(coordinate.x, coordinate.y, x, y)){
                 circleCoordinates.remove(coordinate);
+                //projde všechny vrcholy a pokud maji stejnou souřadnici, jako střed kruhu, tak je smaže včetně párového (je to přímka, takže druhá souřadnice)
+                for (int i = 0; i < allLineList.size(); i++ ){
+                    if (allLineList.get(i).x == coordinate.x && allLineList.get(i).y == coordinate.y){
+                        if (i % 2 == 0){
+                            allLineList.remove(i);
+                            allLineList.remove(i);
+                            i = i - 1; //abychom nepřeskočili žádnou hranu
+                        }else {
+                            allLineList.remove(i-1);
+                            allLineList.remove(i-1);
+                            i = i - 2; //abychom nepřeskočili žádnou hranu
+                        }
+                    }
+                }
                 break;
             }
         }
@@ -247,8 +262,10 @@ public class PaintView extends View {
         //převedeni allLine do CommonMathsLines a zjištění, zdali souřadnice uživatelova klepnutí neleží v blízkosti někteřé přímky
         for (int i = 0; i < allLineList.size(); i++){
             if (i % 2 != 0){
-                Line line = new Line(new Vector2D(allLineList.get(i-1).x, allLineList.get(i-1).y), new Vector2D(allLineList.get(i).x, allLineList.get(i).y),1);
-                if (line.distance(new Vector2D(x,y)) < TOUCH_TOLERANCE){
+                Line line = new Line(new Vector2D(allLineList.get(i-1).x, allLineList.get(i-1).y), new Vector2D(allLineList.get(i).x, allLineList.get(i).y),1); //přímka
+                Segment segment = new Segment(new Vector2D(allLineList.get(i-1).x, allLineList.get(i-1).y), new Vector2D(allLineList.get(i).x, allLineList.get(i).y), line); //úsečka
+                Log.d("hoo", ("x je " + x + " y je " + y + " vzdalenost je " + segment.distance(new Vector2D(x,y))));
+                if (segment.distance(new Vector2D(x,y)) < TOUCH_TOLERANCE_FINGER_TAPPED){
                     allLineList.remove(i);
                     allLineList.remove(i-1);
                     break;

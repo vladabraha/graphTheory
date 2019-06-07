@@ -11,6 +11,11 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
+    <string name="node">vrchol</string>
+    <string name="clear_paint_view">vyčistit</string>
+    <string name="delete_one_object">smazat objekt</string>
+    <string name="line">hrana</string>
+
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
