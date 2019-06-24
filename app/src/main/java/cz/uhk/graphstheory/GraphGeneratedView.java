@@ -5,15 +5,20 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.View;
 
 import java.util.ArrayList;
 
 import cz.uhk.graphstheory.model.Coordinate;
+import cz.uhk.graphstheory.model.CustomLine;
+import cz.uhk.graphstheory.model.Map;
+import cz.uhk.graphstheory.util.GraphGenerator;
 
 public class GraphGeneratedView extends View {
 
+    private static final int MAXIMUM_AMOUNT_OF_NODES = 20;
     private Bitmap mBitmap;
     private Canvas mCanvas;
     private Paint mBitmapPaint = new Paint(Paint.DITHER_FLAG);
@@ -27,7 +32,19 @@ public class GraphGeneratedView extends View {
 
     private Paint mPaint;
 
+    public GraphGeneratedView(Context context, AttributeSet attrs) {
+        super(context, attrs);
 
+        mPaint = new Paint();
+        mPaint.setAntiAlias(true);
+        mPaint.setDither(true);
+        mPaint.setColor(DEFAULT_COLOR);
+        mPaint.setStyle(Paint.Style.STROKE);
+        mPaint.setStrokeJoin(Paint.Join.ROUND);
+        mPaint.setStrokeCap(Paint.Cap.ROUND);
+//        mPaint.setXfermode(null);
+        mPaint.setAlpha(0xff);
+    }
 
     public GraphGeneratedView(Context context) {
         super(context);
@@ -45,14 +62,21 @@ public class GraphGeneratedView extends View {
 
     public void init(DisplayMetrics metrics) {
         //dostaneme výšku a šírku okna do ktereho budetem kreslit
-        int height = metrics.heightPixels;
-        int width = metrics.widthPixels;
+        int displayHeight = metrics.heightPixels;
+        int displayWidth = metrics.widthPixels;
 
-        mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);//vytvoření bitmapy pro kresleni
+        mBitmap = Bitmap.createBitmap(displayWidth, displayHeight, Bitmap.Config.ARGB_8888);//vytvoření bitmapy pro kresleni
         mCanvas = new Canvas(mBitmap);  //předá se to cavasu
 
 //        currentColor = DEFAULT_COLOR;
 //        strokeWidth = BRUSH_SIZE;
+
+    }
+
+    public void setDimensionsForMapGenerator(int height, int width){
+        double amountOfEdges = Math.random() * MAXIMUM_AMOUNT_OF_NODES;
+        if (amountOfEdges == 0 || amountOfEdges == 1) amountOfEdges += 2;
+        setMap(GraphGenerator.generateMap(height, width, BRUSH_SIZE, (int) amountOfEdges));
     }
 
     /**
@@ -97,5 +121,35 @@ public class GraphGeneratedView extends View {
         canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
         canvas.restore();
 
+    }
+
+    /**
+     * get map for MapViewModel
+     */
+    public Map getMap() {
+
+        ArrayList<CustomLine> lines = new ArrayList<>();
+        for (int x = 0; x < allLineList.size(); x++) {
+            if (x % 2 != 0) {
+                CustomLine line = new CustomLine(allLineList.get(x - 1), allLineList.get(x));
+                lines.add(line);
+            }
+        }
+        return new Map(lines, circleCoordinates);
+    }
+
+    public void setMap(Map map) {
+        ArrayList<CustomLine> lines = map.getCustomLines();
+
+        circleCoordinates = map.getCircles();
+        if (!circleCoordinates.isEmpty() || !allLineList.isEmpty()) {
+            invalidate();
+        }
+
+        for (int i = 0; i < lines.size(); i++) {
+            allLineList.add(new Coordinate(lines.get(i).getFrom().x, lines.get(i).getFrom().y));
+            allLineList.add(new Coordinate(lines.get(i).getTo().x, lines.get(i).getTo().y));
+            invalidate();
+        }
     }
 }

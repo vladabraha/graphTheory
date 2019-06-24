@@ -21,6 +21,7 @@ public class TabActivity extends AppCompatActivity implements TabLayoutFragment.
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
     private BottomNavigationView bottomNavigationView;
+    private GenerateGraphFragment generateGraphFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +36,11 @@ public class TabActivity extends AppCompatActivity implements TabLayoutFragment.
 
         drawingFragment = new DrawingFragment();
         textFragment = new TextFragment();
+        generateGraphFragment = new GenerateGraphFragment();
         TabLayoutFragment tabLayoutFragment = new TabLayoutFragment();
         fragmentTransaction.add(R.id.activity_group, tabLayoutFragment);
-        fragmentTransaction.add(R.id.activity_group, drawingFragment);
+//        fragmentTransaction.add(R.id.activity_group, drawingFragment);
+        fragmentTransaction.add(R.id.activity_group, generateGraphFragment);
         fragmentTransaction.commit();
 
 
@@ -135,7 +138,8 @@ public class TabActivity extends AppCompatActivity implements TabLayoutFragment.
         //zkontroluje, že už tam neni drawing fragment a kdyžtak tam hodi text fragment
         if (fragmentManager.getFragments().contains(drawingFragment)) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.remove(drawingFragment);
+//            fragmentTransaction.remove(drawingFragment);
+            fragmentTransaction.remove(generateGraphFragment);
             fragmentTransaction.add(R.id.activity_group, textFragment);
             fragmentTransaction.commit();
             bottomNavigationView.setVisibility(View.GONE);
@@ -145,8 +149,10 @@ public class TabActivity extends AppCompatActivity implements TabLayoutFragment.
     private void addDrawingFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//        fragmentTransaction.remove(textFragment);
+//        fragmentTransaction.add(R.id.activity_group, drawingFragment);
         fragmentTransaction.remove(textFragment);
-        fragmentTransaction.add(R.id.activity_group, drawingFragment);
+        fragmentTransaction.add(R.id.activity_group, generateGraphFragment);
         fragmentTransaction.commit();
         bottomNavigationView.setVisibility(View.VISIBLE);
     }

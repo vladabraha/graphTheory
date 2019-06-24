@@ -209,6 +209,7 @@ public class PaintView extends View {
     }
 
     private void touchStartCircle(float x, float y) {
+        Log.d("hoo", x + " " + y);
         for (Coordinate coordinate : circleCoordinates) {
             if (checkIsInCircle(coordinate.x, coordinate.y, x, y)) {
                 Log.d("hoo", (x + " " + y + "coordinates of circle " + coordinate.x + " " + coordinate.y ));

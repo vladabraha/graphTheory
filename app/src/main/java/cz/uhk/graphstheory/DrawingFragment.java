@@ -29,15 +29,10 @@ import cz.uhk.graphstheory.model.MapViewModel;
 public class DrawingFragment extends Fragment implements TabActivity.OnFragmentInteractionListener {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+//    private static final String ARG_PARAM1 = "param1";
+//    private static final String ARG_PARAM2 = "param2";
 
     private PaintView paintView;
-
-
-    private String mParam1;
-    private String mParam2;
-
     private MapViewModel mapViewModel;
 
 //    private OnFragmentInteractionListener mListener;
