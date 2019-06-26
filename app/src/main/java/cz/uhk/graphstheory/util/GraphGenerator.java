@@ -6,7 +6,6 @@ import android.util.SparseArray;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import cz.uhk.graphstheory.model.Coordinate;
 import cz.uhk.graphstheory.model.CustomLine;
@@ -22,6 +21,7 @@ public class GraphGenerator {
      * @return generated map
      */
     public static Map generateMap(int height, int width, int BRUSH_SIZE, int amountOfNodes) {
+        Log.d("hoo", String.valueOf(amountOfNodes));
         ArrayList<Coordinate> circles = generateNodes(height - BRUSH_SIZE, width - BRUSH_SIZE, BRUSH_SIZE, amountOfNodes);
         ArrayList<CustomLine> customLines = generateRandomEdges(circles);
         return new Map(customLines, circles);
@@ -36,7 +36,7 @@ public class GraphGenerator {
     private static ArrayList<CustomLine> generateRandomEdges(ArrayList<Coordinate> circlesPoints) {
 
         int amountOfEdges = (int) (Math.random() * circlesPoints.size()); //nahodny pocet hran
-        if (amountOfEdges < 0) amountOfEdges++;
+        if (amountOfEdges < 1) amountOfEdges++;
 
         //vezmeme nahodny uzel na indexu a mrkneme na seznam, se kterymi dalsimi prvky je spojen
         //pokud neni jeste spojen s nahodnym uzlem, je dany uzel pridan do seznamu
@@ -104,9 +104,10 @@ public class GraphGenerator {
 
             boolean isInOtherCircle = false;
             for (Coordinate coordinate : coordinateArrayList) {
-                Vector2D vectorOfNewCoordinate = new Vector2D(newCoordinate.x, newCoordinate.y);
-                double distance = vectorOfNewCoordinate.distance(new Vector2D(coordinate.x, coordinate.y));
-                if (distance < BRUSH_SIZE) {
+
+                //zkontroluje, zdali neni kolize (common maths na tom nejede)
+                double D = Math.pow(xCoordinate - coordinate.x, 2) + Math.pow(yCoordinate - coordinate.y, 2);
+                if (D <= Math.pow(BRUSH_SIZE + 30, 2)) {
                     isInOtherCircle = true;
                     break;
                 }

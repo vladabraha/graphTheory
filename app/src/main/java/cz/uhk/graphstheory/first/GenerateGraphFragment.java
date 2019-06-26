@@ -79,7 +79,7 @@ public class GenerateGraphFragment extends Fragment {
                 if (!disableListener) {
                     int width = view.getMeasuredWidth();
                     int height = view.getMeasuredHeight();
-                    if (width != 0) graphGeneratedView.setDimensionsForMapGenerator(height, width);
+                    if (width != 0) graphGeneratedView.setDimensionsForMapGeneratorAndGenerateRandomMap(height, width);
                     disableListener = true;
                 }
             }

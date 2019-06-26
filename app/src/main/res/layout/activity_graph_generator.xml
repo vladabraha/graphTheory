@@ -45,14 +45,7 @@
 
             </LinearLayout>
 
-            <!--navigace dole-->
-            <android.support.design.widget.BottomNavigationView
-                android:id="@+id/navigation"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                app:labelVisibilityMode="labeled"
-                app:menu="@menu/settings_options" />
+
 
         </FrameLayout>
 

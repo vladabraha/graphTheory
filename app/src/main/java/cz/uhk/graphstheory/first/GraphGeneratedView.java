@@ -18,7 +18,7 @@ import cz.uhk.graphstheory.util.GraphGenerator;
 
 public class GraphGeneratedView extends View {
 
-    private static final int MAXIMUM_AMOUNT_OF_NODES = 20;
+    private static final int MAXIMUM_AMOUNT_OF_NODES = 10;
     private Bitmap mBitmap;
     private Canvas mCanvas;
     private Paint mBitmapPaint = new Paint(Paint.DITHER_FLAG);
@@ -75,10 +75,10 @@ public class GraphGeneratedView extends View {
 
     }
 
-    public void setDimensionsForMapGenerator(int height, int width){
-        double amountOfEdges = Math.random() * MAXIMUM_AMOUNT_OF_NODES;
+    public void setDimensionsForMapGeneratorAndGenerateRandomMap(int height, int width){
+        int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
         if (amountOfEdges == 0 || amountOfEdges == 1) amountOfEdges += 2;
-        setMap(GraphGenerator.generateMap(height, width, BRUSH_SIZE, (int) amountOfEdges));
+        setMap(GraphGenerator.generateMap(height, width, BRUSH_SIZE, amountOfEdges));
     }
 
     /**

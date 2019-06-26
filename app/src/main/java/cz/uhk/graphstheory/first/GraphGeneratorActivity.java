@@ -58,31 +58,6 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
-        bottomNavigationView = findViewById(R.id.navigation);
-        bottomNavigationView.setSelectedItemId(R.id.circle);
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.circle:
-                        drawingFragment.changeDrawingMethod("circle");
-                        return true;
-                    case R.id.line:
-                        drawingFragment.changeDrawingMethod("line");
-                        return true;
-                    case R.id.delete:
-                        drawingFragment.changeDrawingMethod("remove");
-                        return true;
-                    case R.id.clear:
-                        drawingFragment.changeDrawingMethod("clear");
-                        bottomNavigationView.setSelectedItemId(R.id.circle);
-                        drawingFragment.changeDrawingMethod("circle");
-                        return false; // return true if you want the item to be displayed as the selected item
-                    default:
-                        return false;
-                }
-            }
-        });
     }
 
     @Override
@@ -146,7 +121,7 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
             fragmentTransaction.remove(generateGraphFragment);
             fragmentTransaction.add(R.id.generator_activity_group, textFragment);
             fragmentTransaction.commit();
-            bottomNavigationView.setVisibility(View.GONE);
+
         }
     }
 
@@ -156,7 +131,7 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
         fragmentTransaction.remove(textFragment);
         fragmentTransaction.add(R.id.generator_activity_group, generateGraphFragment);
         fragmentTransaction.commit();
-        bottomNavigationView.setVisibility(View.VISIBLE);
+
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
