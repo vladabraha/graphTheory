@@ -19,7 +19,7 @@ import cz.uhk.graphstheory.model.Map;
 import cz.uhk.graphstheory.model.MapViewModel;
 
 
-public class GenerateGraphFragment extends Fragment {
+public class GenerateGraphFragment extends Fragment implements GraphGeneratorActivity.OnFragmentInteractionListener {
 
     private GraphGeneratedView graphGeneratedView;
     private MapViewModel mapViewModel;
@@ -105,6 +105,12 @@ public class GenerateGraphFragment extends Fragment {
         Map map = graphGeneratedView.getMap();
         mapViewModel.setMap(map);
 //        mListener = null;
+    }
+
+    @Override
+    public void changeGeneratedMethod(String method) {
+
+
     }
 
 //    public interface OnFragmentInteractionListener {

@@ -13,6 +13,8 @@ import cz.uhk.graphstheory.model.Map;
 
 public class GraphGenerator {
 
+    private static final int DISTANCE_BETWEEN_NEAREST_NODE = 100;
+
     /**
      * generate random map
      *
@@ -21,7 +23,6 @@ public class GraphGenerator {
      * @return generated map
      */
     public static Map generateMap(int height, int width, int BRUSH_SIZE, int amountOfNodes) {
-        Log.d("hoo", String.valueOf(amountOfNodes));
         ArrayList<Coordinate> circles = generateNodes(height - BRUSH_SIZE, width - BRUSH_SIZE, BRUSH_SIZE, amountOfNodes);
         ArrayList<CustomLine> customLines = generateRandomEdges(circles);
         return new Map(customLines, circles);
@@ -36,7 +37,8 @@ public class GraphGenerator {
     private static ArrayList<CustomLine> generateRandomEdges(ArrayList<Coordinate> circlesPoints) {
 
         int amountOfEdges = (int) (Math.random() * circlesPoints.size()); //nahodny pocet hran
-        if (amountOfEdges < 1) amountOfEdges++;
+        if (amountOfEdges < 6) amountOfEdges++;
+        Log.d("hoo", String.valueOf(amountOfEdges));
 
         //vezmeme nahodny uzel na indexu a mrkneme na seznam, se kterymi dalsimi prvky je spojen
         //pokud neni jeste spojen s nahodnym uzlem, je dany uzel pridan do seznamu
@@ -66,7 +68,7 @@ public class GraphGenerator {
                 createdEdges++;
             }
 
-        } while (createdEdges < amountOfEdges);
+        } while (createdEdges != amountOfEdges);
 
         ArrayList<CustomLine> edges = new ArrayList<>();
 
@@ -100,19 +102,30 @@ public class GraphGenerator {
             if (xCoordinate < BRUSH_SIZE) xCoordinate += BRUSH_SIZE;
             if (yCoordinate < BRUSH_SIZE) yCoordinate += BRUSH_SIZE;
 
-            Coordinate newCoordinate = new Coordinate(xCoordinate, yCoordinate);
 
             boolean isInOtherCircle = false;
             for (Coordinate coordinate : coordinateArrayList) {
-
                 //zkontroluje, zdali neni kolize (common maths na tom nejede)
                 double D = Math.pow(xCoordinate - coordinate.x, 2) + Math.pow(yCoordinate - coordinate.y, 2);
-                if (D <= Math.pow(BRUSH_SIZE + 30, 2)) {
+                if (D <= Math.pow(BRUSH_SIZE, 2)) {
                     isInOtherCircle = true;
-                    break;
                 }
             }
+
+            //kontrola jeste na vzdalenost
+            if (!isInOtherCircle){
+                Vector2D newCoordinate = new Vector2D(xCoordinate,yCoordinate);
+                for (Coordinate oldCoordinate : coordinateArrayList){
+                    Vector2D coordinate = new Vector2D(oldCoordinate.x, oldCoordinate.y);
+                    Log.d("distance", oldCoordinate.x + " " + oldCoordinate.y);
+                    if (coordinate.distance(newCoordinate) < DISTANCE_BETWEEN_NEAREST_NODE){
+                        isInOtherCircle = true;
+                    }
+                }
+
+            }
             if (!isInOtherCircle) {
+                Coordinate newCoordinate = new Coordinate(xCoordinate, yCoordinate);
                 coordinateArrayList.add(newCoordinate);
                 foundedNodes++;
             }

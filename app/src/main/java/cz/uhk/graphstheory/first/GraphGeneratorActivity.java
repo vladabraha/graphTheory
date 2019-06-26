@@ -152,6 +152,6 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
     }
 
     public interface OnFragmentInteractionListener {
-        void changeDrawingMethod(String method);
+        void changeGeneratedMethod(String method);
     }
 }
