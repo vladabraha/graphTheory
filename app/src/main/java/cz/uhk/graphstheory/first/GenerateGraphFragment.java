@@ -1,8 +1,7 @@
-package cz.uhk.graphstheory;
+package cz.uhk.graphstheory.first;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,6 +14,8 @@ import android.view.ViewTreeObserver;
 
 import java.util.Objects;
 
+import cz.uhk.graphstheory.R;
+import cz.uhk.graphstheory.model.Map;
 import cz.uhk.graphstheory.model.MapViewModel;
 
 
@@ -41,11 +42,10 @@ public class GenerateGraphFragment extends Fragment {
      */
     // TODO: Rename and change types and number of parameters
     public static GenerateGraphFragment newInstance(String param1, String param2) {
-        GenerateGraphFragment fragment = new GenerateGraphFragment();
-//        Bundle args = new Bundle();
+        //        Bundle args = new Bundle();
 //
 //        fragment.setArguments(args);
-        return fragment;
+        return new GenerateGraphFragment();
     }
 
     @Override
@@ -102,6 +102,8 @@ public class GenerateGraphFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        Map map = graphGeneratedView.getMap();
+        mapViewModel.setMap(map);
 //        mListener = null;
     }
 

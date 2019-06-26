@@ -1,4 +1,4 @@
-package cz.uhk.graphstheory;
+package cz.uhk.graphstheory.first;
 
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -16,33 +16,37 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
-import cz.uhk.graphstheory.first.GenerateGraphFragment;
+import cz.uhk.graphstheory.DrawingFragment;
+import cz.uhk.graphstheory.R;
+import cz.uhk.graphstheory.TabLayoutFragment;
+import cz.uhk.graphstheory.TextFragment;
 
-public class TabActivity extends AppCompatActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, NavigationView.OnNavigationItemSelectedListener {
+public class GraphGeneratorActivity extends AppCompatActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, NavigationView.OnNavigationItemSelectedListener {
 
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
     private BottomNavigationView bottomNavigationView;
     private GenerateGraphFragment generateGraphFragment;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tab);
+        setContentView(R.layout.activity_graph_generator);
+
         //for navigation drawer
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.graph_generator_toolbar);
         setSupportActionBar(toolbar);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        drawingFragment = new DrawingFragment();
+//        drawingFragment = new DrawingFragment();
         textFragment = new TextFragment();
         generateGraphFragment = new GenerateGraphFragment();
         TabLayoutFragment tabLayoutFragment = new TabLayoutFragment();
-        fragmentTransaction.add(R.id.activity_group, tabLayoutFragment);
-//        fragmentTransaction.add(R.id.activity_group, drawingFragment);
-        fragmentTransaction.add(R.id.activity_group, generateGraphFragment);
+        fragmentTransaction.add(R.id.generator_activity_group, tabLayoutFragment);
+        fragmentTransaction.add(R.id.generator_activity_group, textFragment);
         fragmentTransaction.commit();
 
 
@@ -81,8 +85,6 @@ public class TabActivity extends AppCompatActivity implements TabLayoutFragment.
         });
     }
 
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
@@ -116,10 +118,10 @@ public class TabActivity extends AppCompatActivity implements TabLayoutFragment.
                 removeDrawingFragment();
                 break;
             case 1:
-                removeDrawingFragment();
+                addDrawingFragment();
                 break;
             case 2:
-                addDrawingFragment();
+
                 break;
         }
     }
@@ -138,11 +140,11 @@ public class TabActivity extends AppCompatActivity implements TabLayoutFragment.
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         //zkontroluje, že už tam neni drawing fragment a kdyžtak tam hodi text fragment
-        if (fragmentManager.getFragments().contains(drawingFragment)) {
+        if (fragmentManager.getFragments().contains(generateGraphFragment)) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//            fragmentTransaction.remove(drawingFragment);
+
             fragmentTransaction.remove(generateGraphFragment);
-            fragmentTransaction.add(R.id.activity_group, textFragment);
+            fragmentTransaction.add(R.id.generator_activity_group, textFragment);
             fragmentTransaction.commit();
             bottomNavigationView.setVisibility(View.GONE);
         }
@@ -151,10 +153,8 @@ public class TabActivity extends AppCompatActivity implements TabLayoutFragment.
     private void addDrawingFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//        fragmentTransaction.remove(textFragment);
-//        fragmentTransaction.add(R.id.activity_group, drawingFragment);
         fragmentTransaction.remove(textFragment);
-        fragmentTransaction.add(R.id.activity_group, generateGraphFragment);
+        fragmentTransaction.add(R.id.generator_activity_group, generateGraphFragment);
         fragmentTransaction.commit();
         bottomNavigationView.setVisibility(View.VISIBLE);
     }
@@ -179,5 +179,4 @@ public class TabActivity extends AppCompatActivity implements TabLayoutFragment.
     public interface OnFragmentInteractionListener {
         void changeDrawingMethod(String method);
     }
-
 }

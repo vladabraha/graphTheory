@@ -4,10 +4,10 @@
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".GenerateGraphFragment">
+    tools:context=".first.GenerateGraphFragment">
 
 
-    <cz.uhk.graphstheory.GraphGeneratedView
+    <cz.uhk.graphstheory.first.GraphGeneratedView
         android:id="@+id/graphGeneratedView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />

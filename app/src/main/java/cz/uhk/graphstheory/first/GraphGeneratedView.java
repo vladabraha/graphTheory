@@ -1,4 +1,4 @@
-package cz.uhk.graphstheory;
+package cz.uhk.graphstheory.first;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -31,6 +31,8 @@ public class GraphGeneratedView extends View {
     public static int BRUSH_SIZE = 15;
 
     private Paint mPaint;
+
+
 
     public GraphGeneratedView(Context context, AttributeSet attrs) {
         super(context, attrs);

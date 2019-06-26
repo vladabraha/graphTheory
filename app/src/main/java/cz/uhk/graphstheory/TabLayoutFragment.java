@@ -51,7 +51,7 @@ public class TabLayoutFragment extends Fragment {
         tabLayout.addTab(tabLayout.newTab().setText("Ukázka"));
         tabLayout.addTab(tabLayout.newTab().setText("Procvičování"));
 
-        TabLayout.Tab tab = tabLayout.getTabAt(2);
+        TabLayout.Tab tab = tabLayout.getTabAt(0);
         Objects.requireNonNull(tab).select();
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
