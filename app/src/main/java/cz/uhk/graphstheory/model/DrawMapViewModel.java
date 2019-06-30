@@ -4,7 +4,7 @@ import android.arch.lifecycle.ViewModel;
 
 import cz.uhk.graphstheory.model.Map;
 
-public class MapViewModel extends ViewModel {
+public class DrawMapViewModel extends ViewModel {
     public Map map;
 
     public Map getMap() {

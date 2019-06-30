@@ -45,6 +45,13 @@
 
             </LinearLayout>
 
+            <android.support.design.widget.BottomNavigationView
+                android:id="@+id/graph_generator_navigation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                app:labelVisibilityMode="labeled"
+                app:menu="@menu/settings_options" />
 
 
         </FrameLayout>

@@ -15,14 +15,15 @@ import android.view.ViewTreeObserver;
 import java.util.Objects;
 
 import cz.uhk.graphstheory.R;
+import cz.uhk.graphstheory.model.DrawMapViewModel;
+import cz.uhk.graphstheory.model.GeneratedMapViewModel;
 import cz.uhk.graphstheory.model.Map;
-import cz.uhk.graphstheory.model.MapViewModel;
 
 
 public class GenerateGraphFragment extends Fragment implements GraphGeneratorActivity.OnFragmentInteractionListener {
 
     private GraphGeneratedView graphGeneratedView;
-    private MapViewModel mapViewModel;
+    private GeneratedMapViewModel generatedMapViewModel;
 
     boolean disableListener = false;
 
@@ -57,7 +58,7 @@ public class GenerateGraphFragment extends Fragment implements GraphGeneratorAct
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        mapViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(MapViewModel.class);
+        generatedMapViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(GeneratedMapViewModel.class);
         return inflater.inflate(R.layout.fragment_generate_graph, container, false);
     }
 
@@ -68,8 +69,8 @@ public class GenerateGraphFragment extends Fragment implements GraphGeneratorAct
         DisplayMetrics metrics = new DisplayMetrics();
         Objects.requireNonNull(getActivity()).getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
         graphGeneratedView.init(metrics);
-        if (mapViewModel.getMap() != null) {
-            graphGeneratedView.setMap(mapViewModel.getMap());
+        if (generatedMapViewModel.getMap() != null) {
+            graphGeneratedView.setMap(generatedMapViewModel.getMap());
         }
 
         view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -83,7 +84,6 @@ public class GenerateGraphFragment extends Fragment implements GraphGeneratorAct
                 }
             }
         });
-
     }
 
 
@@ -102,7 +102,7 @@ public class GenerateGraphFragment extends Fragment implements GraphGeneratorAct
     public void onDetach() {
         super.onDetach();
         Map map = graphGeneratedView.getMap();
-        mapViewModel.setMap(map);
+        generatedMapViewModel.setMap(map);
 //        mListener = null;
     }
 

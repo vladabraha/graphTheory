@@ -336,7 +336,7 @@ public class PaintView extends View {
     }
 
     /**
-     * get map for MapViewModel
+     * get map for DrawMapViewModel
      */
     public Map getMap() {
 

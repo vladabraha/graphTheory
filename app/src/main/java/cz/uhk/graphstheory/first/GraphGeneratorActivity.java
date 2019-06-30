@@ -41,7 +41,7 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-//        drawingFragment = new DrawingFragment();
+         drawingFragment = new DrawingFragment();
         textFragment = new TextFragment();
         generateGraphFragment = new GenerateGraphFragment();
         TabLayoutFragment tabLayoutFragment = new TabLayoutFragment();
@@ -58,6 +58,31 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
+        bottomNavigationView = findViewById(R.id.graph_generator_navigation);
+        bottomNavigationView.setSelectedItemId(R.id.circle);
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.circle:
+                        drawingFragment.changeDrawingMethod("circle");
+                        return true;
+                    case R.id.line:
+                        drawingFragment.changeDrawingMethod("line");
+                        return true;
+                    case R.id.delete:
+                        drawingFragment.changeDrawingMethod("remove");
+                        return true;
+                    case R.id.clear:
+                        drawingFragment.changeDrawingMethod("clear");
+                        bottomNavigationView.setSelectedItemId(R.id.circle);
+                        drawingFragment.changeDrawingMethod("circle");
+                        return false; // return true if you want the item to be displayed as the selected item
+                    default:
+                        return false;
+                }
+            }
+        });
     }
 
     @Override
@@ -90,16 +115,17 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
     public void tableLayoutSelectedChange(int number) {
         switch (number) {
             case 0:
-                removeDrawingFragment();
+                changeToTextFragment();
                 break;
             case 1:
-                addDrawingFragment();
+                changeToEducationFragment();
                 break;
             case 2:
-
+                changeToDrawingFragment();
                 break;
         }
     }
+
 
     @Override
     public void onBackPressed() {
@@ -111,26 +137,62 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
         }
     }
 
-    private void removeDrawingFragment() {
+    private void changeToDrawingFragment() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        if (fragmentManager.getFragments().contains(textFragment)) {
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.remove(textFragment);
+            fragmentTransaction.add(R.id.generator_activity_group, drawingFragment);
+            fragmentTransaction.commit();
+            bottomNavigationView.setVisibility(View.VISIBLE);
+
+        }
+        else if (fragmentManager.getFragments().contains(generateGraphFragment)){
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.remove(generateGraphFragment);
+            fragmentTransaction.add(R.id.generator_activity_group, drawingFragment);
+            fragmentTransaction.commit();
+            bottomNavigationView.setVisibility(View.VISIBLE);
+        }
+    }
+    private void changeToTextFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         //zkontroluje, že už tam neni drawing fragment a kdyžtak tam hodi text fragment
         if (fragmentManager.getFragments().contains(generateGraphFragment)) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
             fragmentTransaction.remove(generateGraphFragment);
             fragmentTransaction.add(R.id.generator_activity_group, textFragment);
             fragmentTransaction.commit();
-
+            bottomNavigationView.setVisibility(View.GONE);
+        }
+        else if (fragmentManager.getFragments().contains(drawingFragment)){
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.remove(drawingFragment);
+            fragmentTransaction.add(R.id.generator_activity_group, textFragment);
+            fragmentTransaction.commit();
+            bottomNavigationView.setVisibility(View.GONE);
         }
     }
 
-    private void addDrawingFragment() {
+    private void changeToEducationFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.remove(textFragment);
-        fragmentTransaction.add(R.id.generator_activity_group, generateGraphFragment);
-        fragmentTransaction.commit();
+
+        if (fragmentManager.getFragments().contains(textFragment)) {
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.remove(textFragment);
+            fragmentTransaction.add(R.id.generator_activity_group, generateGraphFragment);
+            fragmentTransaction.commit();
+            bottomNavigationView.setVisibility(View.GONE);
+        }
+        else if (fragmentManager.getFragments().contains(drawingFragment)){
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.remove(drawingFragment);
+            fragmentTransaction.add(R.id.generator_activity_group, generateGraphFragment);
+            fragmentTransaction.commit();
+            bottomNavigationView.setVisibility(View.GONE);
+        }
 
     }
 

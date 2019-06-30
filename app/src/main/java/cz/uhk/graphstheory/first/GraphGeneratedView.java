@@ -154,6 +154,8 @@ public class GraphGeneratedView extends View {
                     downXCoordinate = circleCoordinate.x;
                     downYCoordinate = circleCoordinate.y;
                     isCircleDragged = true;
+                }else {
+                    isCircleDragged = false;
                 }
                 invalidate();
                 break;
@@ -212,7 +214,7 @@ public class GraphGeneratedView extends View {
 
 
     /**
-     * get map for MapViewModel
+     * get map for DrawMapViewModel
      */
     public Map getMap() {
 
