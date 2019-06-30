@@ -1,5 +1,6 @@
 package cz.uhk.graphstheory.first;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -7,10 +8,12 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.ArrayList;
 
+import cz.uhk.graphstheory.model.Circle;
 import cz.uhk.graphstheory.model.Coordinate;
 import cz.uhk.graphstheory.model.CustomLine;
 import cz.uhk.graphstheory.model.Map;
@@ -19,8 +22,8 @@ import cz.uhk.graphstheory.util.PathGenerator;
 
 public class GraphGeneratedView extends View {
 
-    private static final int MAXIMUM_AMOUNT_OF_NODES = 10;
-    private static final int MINIMUM_AMOUNT_OF_NODES = 3;
+    private static final int MAXIMUM_AMOUNT_OF_NODES = 12;
+    private static final int MINIMUM_AMOUNT_OF_NODES = 4;
     private Bitmap mBitmap;
     private Canvas mCanvas;
     private Paint mBitmapPaint = new Paint(Paint.DITHER_FLAG);
@@ -36,7 +39,9 @@ public class GraphGeneratedView extends View {
 
     private Paint mPaint;
 
-
+    float downXCoordinate;
+    float downYCoordinate;
+    boolean isCircleDragged = false;
 
     public GraphGeneratedView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -133,6 +138,78 @@ public class GraphGeneratedView extends View {
         canvas.restore();
 
     }
+
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        float x = event.getX();
+        float y = event.getY();
+
+
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                Coordinate circleCoordinate;
+                circleCoordinate = isInAnyCircle(x, y);
+                if (circleCoordinate != null){
+                    downXCoordinate = circleCoordinate.x;
+                    downYCoordinate = circleCoordinate.y;
+                    isCircleDragged = true;
+                }
+                invalidate();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                if (isCircleDragged){
+                    updateCoordinates(downXCoordinate, downYCoordinate, x, y);
+                    downXCoordinate = x;
+                    downYCoordinate = y;
+                }
+                invalidate();
+                break;
+
+        }
+        return true;
+    }
+
+    private void updateCoordinates(float downXCoordinate, float downYCoordinate, float x, float y){
+        for (Coordinate coordinate : circleCoordinates){
+           if (coordinate.x == downXCoordinate && coordinate.y == downYCoordinate){
+               coordinate.x = x;
+               coordinate.y = y;
+           }
+        }
+
+        //to same pro primky
+        for (Coordinate coordinate : allLineList){
+            if (coordinate.x == downXCoordinate && coordinate.y == downYCoordinate){
+                coordinate.x = x;
+                coordinate.y = y;
+            }
+        }
+
+        //to same pro vybarvenou cestu
+        for (Coordinate coordinate : pathLineList){
+            if (coordinate.x == downXCoordinate && coordinate.y == downYCoordinate){
+                coordinate.x = x;
+                coordinate.y = y;
+            }
+        }
+    }
+
+    private Coordinate isInAnyCircle(float x, float y) {
+        for (Coordinate coordinate : circleCoordinates){
+            if (checkIsInTheCircle(coordinate.x, coordinate.y, x, y)){
+                return coordinate;
+            }
+        }
+        return null;
+
+    }
+
+    private boolean checkIsInTheCircle(float circle_x, float circle_y, float point_x, float point_y) {
+        double D = Math.pow(point_x - circle_x, 2) + Math.pow(point_y - circle_y, 2);
+        return D <= Math.pow(BRUSH_SIZE + 30, 2);
+    }
+
 
     /**
      * get map for MapViewModel

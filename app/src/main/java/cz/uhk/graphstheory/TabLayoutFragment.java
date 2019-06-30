@@ -27,7 +27,7 @@ public class TabLayoutFragment extends Fragment {
         // Required empty public constructor
     }
 
-    // TODO: Rename and change types and number of parameters
+
     public static TabLayoutFragment newInstance(String param1, String param2) {
 
         return new TabLayoutFragment();

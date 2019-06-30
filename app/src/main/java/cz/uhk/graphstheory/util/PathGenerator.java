@@ -18,7 +18,7 @@ public class PathGenerator {
      */
     public static ArrayList<Coordinate> generateCesta(Map map) {
         int pathLength = (int) (Math.random() * map.getCircles().size());
-        if (pathLength < 6) pathLength = 6;
+        if (pathLength < ((map.getCircles().size() / 2) + 1)) pathLength = (map.getCircles().size() / 2) + 1;
 
         List<Integer> usedIndexes = new ArrayList<>(pathLength);
         for (int i = 0; i < pathLength; i++) {

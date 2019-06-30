@@ -40,7 +40,6 @@ public class GenerateGraphFragment extends Fragment implements GraphGeneratorAct
      * @param param2 Parameter 2.
      * @return A new instance of fragment GenerateGraphFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static GenerateGraphFragment newInstance(String param1, String param2) {
         //        Bundle args = new Bundle();
 //
@@ -114,7 +113,7 @@ public class GenerateGraphFragment extends Fragment implements GraphGeneratorAct
     }
 
 //    public interface OnFragmentInteractionListener {
-//        // TODO: Update argument type and name
+
 //        void onFragmentInteraction(Uri uri);
 //    }
 }
