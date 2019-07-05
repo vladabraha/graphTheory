@@ -14,8 +14,8 @@ import android.view.ViewGroup;
 
 import java.util.Objects;
 
+import cz.uhk.graphstheory.model.DrawMapViewModel;
 import cz.uhk.graphstheory.model.Map;
-import cz.uhk.graphstheory.model.MapViewModel;
 
 
 ///**
@@ -29,16 +29,11 @@ import cz.uhk.graphstheory.model.MapViewModel;
 public class DrawingFragment extends Fragment implements TabActivity.OnFragmentInteractionListener {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+//    private static final String ARG_PARAM1 = "param1";
+//    private static final String ARG_PARAM2 = "param2";
 
     private PaintView paintView;
-
-
-    private String mParam1;
-    private String mParam2;
-
-    private MapViewModel mapViewModel;
+    private DrawMapViewModel drawMapViewModel;
 
 //    private OnFragmentInteractionListener mListener;
 
@@ -70,7 +65,7 @@ public class DrawingFragment extends Fragment implements TabActivity.OnFragmentI
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        mapViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(MapViewModel.class);
+        drawMapViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(DrawMapViewModel.class);
         return inflater.inflate(R.layout.fragment_drawing, container, false);
     }
 
@@ -81,8 +76,8 @@ public class DrawingFragment extends Fragment implements TabActivity.OnFragmentI
         DisplayMetrics metrics = new DisplayMetrics();
         Objects.requireNonNull(getActivity()).getWindowManager().getDefaultDisplay().getMetrics(metrics);
         paintView.init(metrics);
-        if (mapViewModel.getMap() != null){
-            paintView.setMap(mapViewModel.getMap());
+        if (drawMapViewModel.getMap() != null){
+            paintView.setMap(drawMapViewModel.getMap());
         }
     }
 
@@ -101,7 +96,7 @@ public class DrawingFragment extends Fragment implements TabActivity.OnFragmentI
     public void onDetach() {
         super.onDetach();
         Map map = paintView.getMap();
-        mapViewModel.setMap(map);
+        drawMapViewModel.setMap(map);
     }
 
     @Override
