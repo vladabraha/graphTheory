@@ -1,7 +1,9 @@
 package cz.uhk.graphstheory.first;
 
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -15,11 +17,15 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import cz.uhk.graphstheory.DrawingFragment;
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.TabLayoutFragment;
-import cz.uhk.graphstheory.TextFragment;
+import cz.uhk.graphstheory.util.GraphGenerator;
 
 public class GraphGeneratorActivity extends AppCompatActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, NavigationView.OnNavigationItemSelectedListener {
 
@@ -27,12 +33,14 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
     private TextFragment textFragment;
     private BottomNavigationView bottomNavigationView;
     private GenerateGraphFragment generateGraphFragment;
-
+    private FloatingActionButton floatingActionButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_graph_generator);
+
+        floatingActionButton = findViewById(R.id.floating_action_button_generate_graph);
 
         //for navigation drawer
         Toolbar toolbar = findViewById(R.id.graph_generator_toolbar);
@@ -41,7 +49,7 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-         drawingFragment = new DrawingFragment();
+        drawingFragment = new DrawingFragment();
         textFragment = new TextFragment();
         generateGraphFragment = new GenerateGraphFragment();
         TabLayoutFragment tabLayoutFragment = new TabLayoutFragment();
@@ -49,6 +57,12 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
         fragmentTransaction.add(R.id.generator_activity_group, textFragment);
         fragmentTransaction.commit();
 
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(GraphGeneratorActivity.this, "This is my Toast message!", Toast.LENGTH_LONG).show();
+            }
+        });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -147,6 +161,13 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
             fragmentTransaction.commit();
             bottomNavigationView.setVisibility(View.VISIBLE);
 
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    floatingActionButton.show();
+                }
+            }, 5000);
+
         }
         else if (fragmentManager.getFragments().contains(generateGraphFragment)){
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -154,6 +175,14 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
             fragmentTransaction.add(R.id.generator_activity_group, drawingFragment);
             fragmentTransaction.commit();
             bottomNavigationView.setVisibility(View.VISIBLE);
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    floatingActionButton.show();
+                }
+            }, 5000);
+
         }
     }
     private void changeToTextFragment() {
@@ -166,6 +195,7 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
             fragmentTransaction.add(R.id.generator_activity_group, textFragment);
             fragmentTransaction.commit();
             bottomNavigationView.setVisibility(View.GONE);
+            floatingActionButton.hide();
         }
         else if (fragmentManager.getFragments().contains(drawingFragment)){
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -173,6 +203,7 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
             fragmentTransaction.add(R.id.generator_activity_group, textFragment);
             fragmentTransaction.commit();
             bottomNavigationView.setVisibility(View.GONE);
+            floatingActionButton.hide();
         }
     }
 
@@ -185,6 +216,7 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
             fragmentTransaction.add(R.id.generator_activity_group, generateGraphFragment);
             fragmentTransaction.commit();
             bottomNavigationView.setVisibility(View.GONE);
+            floatingActionButton.hide();
         }
         else if (fragmentManager.getFragments().contains(drawingFragment)){
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -192,6 +224,7 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
             fragmentTransaction.add(R.id.generator_activity_group, generateGraphFragment);
             fragmentTransaction.commit();
             bottomNavigationView.setVisibility(View.GONE);
+            floatingActionButton.hide();
         }
 
     }
