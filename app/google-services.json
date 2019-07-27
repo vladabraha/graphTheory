@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "266251862501",
+    "firebase_url": "https://graphstheory-161eb.firebaseio.com",
+    "project_id": "graphstheory-161eb",
+    "storage_bucket": "graphstheory-161eb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:266251862501:android:56311a455e1a1bbf",
+        "android_client_info": {
+          "package_name": "cz.uhk.graphstheory"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "266251862501-c4n980v4jvgcscpugb2l4cju50eiq9lt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqaBFrCvrKyRz-avXrxujFlKdTtUa4oOA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "266251862501-c4n980v4jvgcscpugb2l4cju50eiq9lt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
