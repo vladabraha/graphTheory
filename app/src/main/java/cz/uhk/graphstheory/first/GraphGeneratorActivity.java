@@ -22,6 +22,7 @@ import android.widget.Toast;
 import cz.uhk.graphstheory.DrawingFragment;
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.TabLayoutFragment;
+import cz.uhk.graphstheory.database.DatabaseConnector;
 
 public class GraphGeneratorActivity extends AppCompatActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, NavigationView.OnNavigationItemSelectedListener {
 
@@ -57,6 +58,8 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
             @Override
             public void onClick(View v) {
                 Toast.makeText(GraphGeneratorActivity.this, "This is my Toast message!", Toast.LENGTH_LONG).show();
+//                DatabaseConnector databaseConnector = new DatabaseConnector();
+//                databaseConnector.writeFirstActivityValue("test");
             }
         });
 
