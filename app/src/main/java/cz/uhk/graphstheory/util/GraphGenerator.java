@@ -70,12 +70,26 @@ public class GraphGenerator {
         } while (createdEdges < amountOfEdges);
 
         //kontrola, zdali neni nejaky uzel osamocen (graf pak vypada divne)
-        for (int i = 0; i < circlesPoints.size(); i++){
-            boolean isIndexInTheList = false;
-            for (int j = 0; j < connectedNodes.size(); j++){
-                ArrayList<Integer> arrayList = connectedNodes.get(j);
-                if (arrayList.contains(i)){
-                    isIndexInTheList = true;
+        for (int i = 0; i < circlesPoints.size(); i++) { //vezmeme prvni node
+            //sparse array může mít zaplenene jenom nektere indexy (např. když má size 2, tak může mít zaplneny jenom index 1 a 5 a mezitím nic -> velikost 2)
+            boolean isNodeConnectedToAnotherNode = false;
+
+            for (int j = 0; j < connectedNodes.size(); j++) { //prohledame vsechny seznamy, zdali je v nějakem -> tzn. je pripojen k jinemu
+                //hledani indexu s nenulovym seznamem
+                boolean isIndexNotEmpty = false;
+                ArrayList<Integer> arrayList;
+                int next = 0;
+                do {
+                    arrayList = connectedNodes.get(j + next);
+                    if (arrayList != null) {
+                        isIndexNotEmpty = true; //mame index, hura
+                    } else {
+                        next++;
+                    }
+                } while (!isIndexNotEmpty);
+
+                if (arrayList.contains(i)) { //mrkneme, zdali dany seznam obsahuje naš node
+                    isNodeConnectedToAnotherNode = true; //pokud ano, hura, tenhle node je propojen jdeme na dalsi
                     break;
                 }
             }

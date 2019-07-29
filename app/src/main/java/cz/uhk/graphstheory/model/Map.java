@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class Map {
     private ArrayList<CustomLine> customLines;
     private ArrayList<Coordinate> circles;
-    private ArrayList<CustomLine> pathLineList = new ArrayList<>();
+    private ArrayList<CustomLine> redLineList = new ArrayList<>();
 
 
     public Map(ArrayList<CustomLine> customLines, ArrayList<Coordinate> circles) {
@@ -14,18 +14,18 @@ public class Map {
         this.circles = circles;
     }
 
-    public Map(ArrayList<CustomLine> customLines, ArrayList<Coordinate> circles, ArrayList<CustomLine> pathLineList) {
+    public Map(ArrayList<CustomLine> customLines, ArrayList<Coordinate> circles, ArrayList<CustomLine> redLineList) {
         this.customLines = customLines;
         this.circles = circles;
-        this.pathLineList = pathLineList;
+        this.redLineList = redLineList;
     }
 
-    public ArrayList<CustomLine> getPathLineList() {
-        return pathLineList;
+    public ArrayList<CustomLine> getRedLineList() {
+        return redLineList;
     }
 
-    public void setPathLineList(ArrayList<CustomLine> pathLineList) {
-        this.pathLineList = pathLineList;
+    public void setRedLineList(ArrayList<CustomLine> redLineList) {
+        this.redLineList = redLineList;
     }
 
     public ArrayList<CustomLine> getCustomLines() {

@@ -83,6 +83,9 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
                     case R.id.line:
                         drawingFragment.changeDrawingMethod("line");
                         return true;
+                    case R.id.path:
+                        drawingFragment.changeDrawingMethod("path");
+                        return true;
                     case R.id.delete:
                         drawingFragment.changeDrawingMethod("remove");
                         return true;

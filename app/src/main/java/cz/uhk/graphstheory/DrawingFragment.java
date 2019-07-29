@@ -105,6 +105,9 @@ public class DrawingFragment extends Fragment implements TabActivity.OnFragmentI
             case "line":
                 paintView.line();
                 break;
+            case "path":
+                paintView.path();
+                break;
             case "circle":
                 paintView.circle();
                 break;
