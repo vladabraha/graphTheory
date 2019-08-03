@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -23,6 +22,9 @@ import cz.uhk.graphstheory.model.Coordinate;
 import cz.uhk.graphstheory.model.CustomLine;
 import cz.uhk.graphstheory.model.Map;
 
+/**
+ * obecna trida pro kresleni - bude pouzita ve vsech kreslicich prvcich
+ */
 public class PaintView extends View {
 
     public static int BRUSH_SIZE = 15;
@@ -50,7 +52,7 @@ public class PaintView extends View {
 
     private ArrayList<Coordinate> circleCoordinates = new ArrayList<>();
     private ArrayList<Coordinate> allLineList = new ArrayList<>(); //seznam všech vytvořených line, ktere propojuji kruhy
-    private ArrayList<Coordinate> pathLineList = new ArrayList<>(); //seznam vytvořené cesty
+    private ArrayList<Coordinate> redLineList = new ArrayList<>(); //seznam vytvořené cesty
     private boolean circle = true;
     private boolean line = false;
     private boolean remove = false;
@@ -94,6 +96,7 @@ public class PaintView extends View {
         fingerPaths.clear();
         lineCoordinates.clear();
         circleCoordinates.clear();
+        redLineList.clear();
         allLineList.clear();
         circle();
         invalidate();
@@ -169,13 +172,13 @@ public class PaintView extends View {
             }
         }
 
-        for (int i = 0; i < pathLineList.size(); i++) {
+        for (int i = 0; i < redLineList.size(); i++) {
             if (i % 2 != 0) {
                 mPaint.setColor(PATH_COLOR);
                 mPaint.setStrokeWidth(BRUSH_SIZE);
 
-                if (!pathLineList.isEmpty())
-                    mCanvas.drawLine(pathLineList.get(i).x, pathLineList.get(i).y, pathLineList.get(i - 1).x, pathLineList.get(i - 1).y, mPaint);
+                if (!redLineList.isEmpty())
+                    mCanvas.drawLine(redLineList.get(i).x, redLineList.get(i).y, redLineList.get(i - 1).x, redLineList.get(i - 1).y, mPaint);
             }
         }
 
@@ -277,6 +280,19 @@ public class PaintView extends View {
                         }
                     }
                 }
+                for (int i = 0; i < redLineList.size(); i++) {
+                    if (redLineList.get(i).x == coordinate.x && redLineList.get(i).y == coordinate.y) {
+                        if (i % 2 == 0) {
+                            redLineList.remove(i);
+                            redLineList.remove(i);
+                            i = i - 1; //abychom nepřeskočili žádnou hranu
+                        } else {
+                            redLineList.remove(i - 1);
+                            redLineList.remove(i - 1);
+                            i = i - 2; //abychom nepřeskočili žádnou hranu
+                        }
+                    }
+                }
                 break;
             }
         }
@@ -289,6 +305,18 @@ public class PaintView extends View {
                 if (segment.distance(new Vector2D(x, y)) < TOUCH_TOLERANCE_FINGER_TAPPED) {
                     allLineList.remove(i);
                     allLineList.remove(i - 1);
+                    break;
+                }
+            }
+        }
+
+        for (int i = 0; i < redLineList.size(); i++) {
+            if (i % 2 != 0) {
+                Line line = new Line(new Vector2D(redLineList.get(i - 1).x, redLineList.get(i - 1).y), new Vector2D(redLineList.get(i).x, redLineList.get(i).y), 1); //přímka
+                Segment segment = new Segment(new Vector2D(redLineList.get(i - 1).x, redLineList.get(i - 1).y), new Vector2D(redLineList.get(i).x, redLineList.get(i).y), line); //úsečka
+                if (segment.distance(new Vector2D(x, y)) < TOUCH_TOLERANCE_FINGER_TAPPED) {
+                    redLineList.remove(i);
+                    redLineList.remove(i - 1);
                     break;
                 }
             }
@@ -315,8 +343,8 @@ public class PaintView extends View {
                         allLineList.add(firstLineCoordinate);
                         allLineList.add(secondLineCoordinate);
                     } else if (path) {
-                        pathLineList.add(firstLineCoordinate);
-                        pathLineList.add(secondLineCoordinate);
+                        redLineList.add(firstLineCoordinate);
+                        redLineList.add(secondLineCoordinate);
                     }
                 }
             }
@@ -373,7 +401,15 @@ public class PaintView extends View {
                 lines.add(line);
             }
         }
-        return new Map(lines, circleCoordinates);
+
+        ArrayList<CustomLine> path = new ArrayList<>();
+        for (int x = 0; x < redLineList.size(); x++){
+            if (x % 2 != 0) {
+                CustomLine line = new CustomLine(redLineList.get(x - 1), redLineList.get(x));
+                path.add(line);
+            }
+        }
+        return new Map(lines, circleCoordinates, path);
     }
 
     public void setMap(Map map) {

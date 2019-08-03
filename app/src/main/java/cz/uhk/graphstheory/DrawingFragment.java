@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import java.util.Objects;
 
+import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
 import cz.uhk.graphstheory.model.DrawMapViewModel;
 import cz.uhk.graphstheory.model.Map;
 
@@ -21,12 +22,12 @@ import cz.uhk.graphstheory.model.Map;
 ///**
 // * A simple {@link Fragment} subclass.
 // * Activities that contain this fragment must implement the
-// * {@link DrawingFragment.OnFragmentInteractionListener} interface
+// * {@link DrawingFragment.GraphListener} interface
 // * to handle interaction events.
 // * Use the {@link DrawingFragment#newInstance} factory method to
 // * create an instance of this fragment.
 // */
-public class DrawingFragment extends Fragment implements TabActivity.OnFragmentInteractionListener {
+public class DrawingFragment extends Fragment implements TabActivity.OnFragmentInteractionListener, DrawingFragmentListener {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 //    private static final String ARG_PARAM1 = "param1";
@@ -35,7 +36,7 @@ public class DrawingFragment extends Fragment implements TabActivity.OnFragmentI
     private PaintView paintView;
     private DrawMapViewModel drawMapViewModel;
 
-//    private OnFragmentInteractionListener mListener;
+//    private GraphListener mListener;
 
     public DrawingFragment() {
         // Required empty public constructor
@@ -84,11 +85,11 @@ public class DrawingFragment extends Fragment implements TabActivity.OnFragmentI
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
+//        if (context instanceof GraphListener) {
+//            mListener = (GraphListener) context;
 //        } else {
 //            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
+//                    + " must implement GraphListener");
 //        }
     }
 
@@ -121,4 +122,8 @@ public class DrawingFragment extends Fragment implements TabActivity.OnFragmentI
         }
     }
 
+    @Override
+    public Map getUserGraph() {
+        return paintView.getMap();
+    }
 }

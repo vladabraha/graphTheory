@@ -19,6 +19,9 @@ import cz.uhk.graphstheory.model.Map;
 import cz.uhk.graphstheory.util.GraphGenerator;
 import cz.uhk.graphstheory.util.PathGenerator;
 
+/**
+ * trida slouzici jenom pro vygenerovani jednoho grafu (mozna toho da i vic?)
+ */
 public class GraphGeneratedView extends View {
 
     private static final int MAXIMUM_AMOUNT_OF_NODES = 12;

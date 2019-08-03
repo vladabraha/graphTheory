@@ -8,4 +8,8 @@ public class Coordinate {
         this.x = x;
         this.y = y;
     }
+
+    public boolean equal(Coordinate coordinate){
+        return coordinate.x == this.x && coordinate.y == this.y;
+    }
 }

@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,14 +20,14 @@ import cz.uhk.graphstheory.model.GeneratedMapViewModel;
 import cz.uhk.graphstheory.model.Map;
 
 
-public class GenerateGraphFragment extends Fragment implements GraphGeneratorActivity.OnFragmentInteractionListener {
+public class GenerateGraphFragment extends Fragment {
 
     private GraphGeneratedView graphGeneratedView;
     private GeneratedMapViewModel generatedMapViewModel;
 
     boolean disableListener = false;
 
-//    private OnFragmentInteractionListener mListener;
+//    private GraphListener mListener;
 
     public GenerateGraphFragment() {
         // Required empty public constructor
@@ -89,11 +90,11 @@ public class GenerateGraphFragment extends Fragment implements GraphGeneratorAct
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
+//        if (context instanceof GraphListener) {
+//            mListener = (GraphListener) context;
 //        } else {
 //            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
+//                    + " must implement GraphListener");
 //        }
     }
 
@@ -105,14 +106,5 @@ public class GenerateGraphFragment extends Fragment implements GraphGeneratorAct
 //        mListener = null;
     }
 
-    @Override
-    public void changeGeneratedMethod(String method) {
 
-
-    }
-
-//    public interface OnFragmentInteractionListener {
-
-//        void onFragmentInteraction(Uri uri);
-//    }
 }

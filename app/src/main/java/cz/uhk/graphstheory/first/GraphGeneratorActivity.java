@@ -20,9 +20,10 @@ import android.view.View;
 import android.widget.Toast;
 
 import cz.uhk.graphstheory.DrawingFragment;
+import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.TabLayoutFragment;
-import cz.uhk.graphstheory.database.DatabaseConnector;
+import cz.uhk.graphstheory.util.GraphChecker;
 
 public class GraphGeneratorActivity extends AppCompatActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, NavigationView.OnNavigationItemSelectedListener {
 
@@ -32,9 +33,11 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
     private GenerateGraphFragment generateGraphFragment;
     private FloatingActionButton floatingActionButton;
 
+    private DrawingFragmentListener drawingFragmentListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_graph_generator);
 
         floatingActionButton = findViewById(R.id.floating_action_button_generate_graph);
@@ -49,6 +52,7 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
         drawingFragment = new DrawingFragment();
         textFragment = new TextFragment();
         generateGraphFragment = new GenerateGraphFragment();
+        drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         TabLayoutFragment tabLayoutFragment = new TabLayoutFragment();
         fragmentTransaction.add(R.id.generator_activity_group, tabLayoutFragment);
         fragmentTransaction.add(R.id.generator_activity_group, textFragment);
@@ -57,7 +61,9 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(GraphGeneratorActivity.this, "This is my Toast message!", Toast.LENGTH_LONG).show();
+                //todo tady osetrit co dal
+                boolean isValid = GraphChecker.checkIfGraphContainsCesta(drawingFragment.getUserGraph());
+                Toast.makeText(GraphGeneratorActivity.this, String.valueOf(isValid), Toast.LENGTH_LONG).show();
 //                DatabaseConnector databaseConnector = new DatabaseConnector();
 //                databaseConnector.writeFirstActivityValue("test");
             }
@@ -246,9 +252,5 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    public interface OnFragmentInteractionListener {
-        void changeGeneratedMethod(String method);
     }
 }
