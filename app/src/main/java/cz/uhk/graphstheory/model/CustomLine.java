@@ -24,4 +24,11 @@ public class CustomLine {
     public void setTo(Coordinate to) {
         this.to = to;
     }
+
+    public boolean isPointInStartOrEndOfLine(Coordinate coordinate){
+        if (coordinate.x == from.x && coordinate.y == from.y){
+            return true;
+        }else return coordinate.x == to.x && coordinate.y == to.y;
+    }
+
 }

@@ -13,13 +13,15 @@ import android.view.View;
 
 import java.util.ArrayList;
 
-import cz.uhk.graphstheory.model.Circle;
 import cz.uhk.graphstheory.model.Coordinate;
 import cz.uhk.graphstheory.model.CustomLine;
 import cz.uhk.graphstheory.model.Map;
 import cz.uhk.graphstheory.util.GraphGenerator;
 import cz.uhk.graphstheory.util.PathGenerator;
 
+/**
+ * trida slouzici jenom pro vygenerovani jednoho grafu (mozna toho da i vic?)
+ */
 public class GraphGeneratedView extends View {
 
     private static final int MAXIMUM_AMOUNT_OF_NODES = 12;
@@ -30,7 +32,7 @@ public class GraphGeneratedView extends View {
 
     private ArrayList<Coordinate> circleCoordinates = new ArrayList<>();
     private ArrayList<Coordinate> allLineList = new ArrayList<>(); //seznam všech vytvořených line, ktere propojuji kruhy
-    private ArrayList<Coordinate> pathLineList = new ArrayList<>();
+    private ArrayList<Coordinate> redLineList = new ArrayList<>();
 
     public static final int DEFAULT_COLOR = Color.BLACK;
     public static final int LINE_COLOR = Color.RED;
@@ -78,19 +80,24 @@ public class GraphGeneratedView extends View {
         mCanvas = new Canvas(mBitmap);  //předá se to cavasu
     }
 
-    public void setDimensionsForMapGeneratorAndGenerateRandomMap(int height, int width){
+    public void generateRandomMapAndSetPath(int height, int width, String type){
         int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
         if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES) amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
         setMap(GraphGenerator.generateMap(height, width, BRUSH_SIZE, amountOfEdges));
-        pathLineList = PathGenerator.generateCesta(getMap());
+        redLineList = PathGenerator.generateCesta(getMap());
+        if (!type.equals("")) changePathGenerator(type);
     }
 
     public void changePathGenerator(String method){
         switch (method){
             //todo dodelat volani generatoru pro dalsi moznosti (cesta, sled, kruznice...)
             case "cesta":
-                pathLineList = PathGenerator.generateCesta(getMap());
+                redLineList = PathGenerator.generateCesta(getMap());
                 break;
+            case "sled":
+
+                break;
+
         }
     }
 
@@ -115,13 +122,13 @@ public class GraphGeneratedView extends View {
             }
         }
 
-        for (int i = 0; i < pathLineList.size(); i++) {
+        for (int i = 0; i < redLineList.size(); i++) {
             if (i % 2 != 0) {
                 mPaint.setColor(LINE_COLOR);
                 mPaint.setStrokeWidth(BRUSH_SIZE);
 
                 if (!allLineList.isEmpty())
-                    mCanvas.drawLine(pathLineList.get(i).x, pathLineList.get(i).y, pathLineList.get(i - 1).x, pathLineList.get(i - 1).y, mPaint);
+                    mCanvas.drawLine(redLineList.get(i).x, redLineList.get(i).y, redLineList.get(i - 1).x, redLineList.get(i - 1).y, mPaint);
             }
         }
 
@@ -189,7 +196,7 @@ public class GraphGeneratedView extends View {
         }
 
         //to same pro vybarvenou cestu
-        for (Coordinate coordinate : pathLineList){
+        for (Coordinate coordinate : redLineList){
             if (coordinate.x == downXCoordinate && coordinate.y == downYCoordinate){
                 coordinate.x = x;
                 coordinate.y = y;
@@ -227,9 +234,9 @@ public class GraphGeneratedView extends View {
         }
 
         ArrayList<CustomLine> path = new ArrayList<>();
-        for (int x = 0; x < pathLineList.size(); x++){
+        for (int x = 0; x < redLineList.size(); x++){
             if (x % 2 != 0) {
-                CustomLine line = new CustomLine(pathLineList.get(x - 1), pathLineList.get(x));
+                CustomLine line = new CustomLine(redLineList.get(x - 1), redLineList.get(x));
                 path.add(line);
             }
         }
@@ -239,7 +246,7 @@ public class GraphGeneratedView extends View {
 
     public void setMap(Map map) {
         ArrayList<CustomLine> lines = map.getCustomLines();
-        ArrayList<CustomLine> path = map.getPathLineList();
+        ArrayList<CustomLine> path = map.getRedLineList();
 
         circleCoordinates = map.getCircles();
         if (!circleCoordinates.isEmpty() || !allLineList.isEmpty()) {
@@ -253,8 +260,8 @@ public class GraphGeneratedView extends View {
         }
 
         for (int i = 0; i < path.size(); i++) {
-            pathLineList.add(new Coordinate(path.get(i).getFrom().x, path.get(i).getFrom().y));
-            pathLineList.add(new Coordinate(path.get(i).getTo().x, path.get(i).getTo().y));
+            redLineList.add(new Coordinate(path.get(i).getFrom().x, path.get(i).getFrom().y));
+            redLineList.add(new Coordinate(path.get(i).getTo().x, path.get(i).getTo().y));
             invalidate();
         }
     }

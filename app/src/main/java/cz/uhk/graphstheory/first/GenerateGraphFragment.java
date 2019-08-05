@@ -1,12 +1,13 @@
 package cz.uhk.graphstheory.first;
 
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,19 +16,18 @@ import android.view.ViewTreeObserver;
 import java.util.Objects;
 
 import cz.uhk.graphstheory.R;
-import cz.uhk.graphstheory.model.DrawMapViewModel;
 import cz.uhk.graphstheory.model.GeneratedMapViewModel;
 import cz.uhk.graphstheory.model.Map;
 
 
-public class GenerateGraphFragment extends Fragment implements GraphGeneratorActivity.OnFragmentInteractionListener {
+public class GenerateGraphFragment extends Fragment {
 
     private GraphGeneratedView graphGeneratedView;
     private GeneratedMapViewModel generatedMapViewModel;
 
-    boolean disableListener = false;
+    private boolean disableListener = false;
 
-//    private OnFragmentInteractionListener mListener;
+//    private GraphListener mListener;
 
     public GenerateGraphFragment() {
         // Required empty public constructor
@@ -79,7 +79,9 @@ public class GenerateGraphFragment extends Fragment implements GraphGeneratorAct
                 if (!disableListener) {
                     int width = view.getMeasuredWidth();
                     int height = view.getMeasuredHeight();
-                    if (width != 0) graphGeneratedView.setDimensionsForMapGeneratorAndGenerateRandomMap(height, width);
+                    if (width != 0) {
+                        graphGeneratedView.generateRandomMapAndSetPath(height, width, "cesta");
+                    }
                     disableListener = true;
                 }
             }
@@ -90,11 +92,11 @@ public class GenerateGraphFragment extends Fragment implements GraphGeneratorAct
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
+//        if (context instanceof GraphListener) {
+//            mListener = (GraphListener) context;
 //        } else {
 //            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
+//                    + " must implement GraphListener");
 //        }
     }
 
@@ -106,14 +108,5 @@ public class GenerateGraphFragment extends Fragment implements GraphGeneratorAct
 //        mListener = null;
     }
 
-    @Override
-    public void changeGeneratedMethod(String method) {
 
-
-    }
-
-//    public interface OnFragmentInteractionListener {
-
-//        void onFragmentInteraction(Uri uri);
-//    }
 }

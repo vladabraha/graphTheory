@@ -1,8 +1,6 @@
 package cz.uhk.graphstheory.model;
 
-import android.arch.lifecycle.ViewModel;
-
-import cz.uhk.graphstheory.model.Map;
+import androidx.lifecycle.ViewModel;
 
 public class DrawMapViewModel extends ViewModel {
     public Map map;

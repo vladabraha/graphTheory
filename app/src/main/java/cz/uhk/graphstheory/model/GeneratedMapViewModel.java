@@ -1,6 +1,6 @@
 package cz.uhk.graphstheory.model;
 
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModel;
 
 public class GeneratedMapViewModel extends ViewModel {
     public Map map;
