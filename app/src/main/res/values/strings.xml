@@ -2,7 +2,6 @@
     <string name="app_name">GraphsTheory</string>
 
 
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -16,8 +15,8 @@
     <string name="line">hrana</string>
     <string name="path">cesta</string>
 
-    <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
+    <string name="menu_first">Cesty</string>
+    <string name="menu_second">Dalsi</string>
     <string name="menu_slideshow">Slideshow</string>
     <string name="menu_tools">Tools</string>
     <string name="menu_share">Share</string>
@@ -39,4 +38,7 @@
 <p>Nullam feugiat, turpis at pulvinar vulputate, erat libero tristique tellus, nec bibendum odio risus sit amet ante. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Duis bibendum, lectus ut viverra rhoncus, dolor nunc faucibus libero, eget facilisis enim ipsum id lacus. Aliquam ante. In rutrum. Sed convallis magna eu sem. Etiam sapien elit, consequat eget, tristique non, venenatis quis, ante. Etiam quis quam. Nullam sapien sem, ornare ac, nonummy non, lobortis a enim. Nunc dapibus tortor vel mi dapibus sollicitudin. Nulla non lectus sed nisl molestie malesuada. Donec vitae arcu.</p>
 
     </string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

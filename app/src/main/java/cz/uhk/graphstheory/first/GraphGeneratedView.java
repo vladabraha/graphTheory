@@ -80,11 +80,12 @@ public class GraphGeneratedView extends View {
         mCanvas = new Canvas(mBitmap);  //předá se to cavasu
     }
 
-    public void setDimensionsForMapGeneratorAndGenerateRandomMap(int height, int width){
+    public void generateRandomMapAndSetPath(int height, int width, String type){
         int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
         if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES) amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
         setMap(GraphGenerator.generateMap(height, width, BRUSH_SIZE, amountOfEdges));
         redLineList = PathGenerator.generateCesta(getMap());
+        if (!type.equals("")) changePathGenerator(type);
     }
 
     public void changePathGenerator(String method){
@@ -93,6 +94,10 @@ public class GraphGeneratedView extends View {
             case "cesta":
                 redLineList = PathGenerator.generateCesta(getMap());
                 break;
+            case "sled":
+
+                break;
+
         }
     }
 

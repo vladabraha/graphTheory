@@ -414,6 +414,7 @@ public class PaintView extends View {
 
     public void setMap(Map map) {
         ArrayList<CustomLine> lines = map.getCustomLines();
+        ArrayList<CustomLine> path = map.getRedLineList();
 
         circleCoordinates = map.getCircles();
         if (!circleCoordinates.isEmpty() || !allLineList.isEmpty()) {
@@ -423,6 +424,12 @@ public class PaintView extends View {
         for (int i = 0; i < lines.size(); i++) {
             allLineList.add(new Coordinate(lines.get(i).getFrom().x, lines.get(i).getFrom().y));
             allLineList.add(new Coordinate(lines.get(i).getTo().x, lines.get(i).getTo().y));
+            invalidate();
+        }
+
+        for (int i = 0; i < path.size(); i++) {
+            redLineList.add(new Coordinate(path.get(i).getFrom().x, path.get(i).getFrom().y));
+            redLineList.add(new Coordinate(path.get(i).getTo().x, path.get(i).getTo().y));
             invalidate();
         }
     }

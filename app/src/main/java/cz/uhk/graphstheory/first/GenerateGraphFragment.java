@@ -25,7 +25,7 @@ public class GenerateGraphFragment extends Fragment {
     private GraphGeneratedView graphGeneratedView;
     private GeneratedMapViewModel generatedMapViewModel;
 
-    boolean disableListener = false;
+    private boolean disableListener = false;
 
 //    private GraphListener mListener;
 
@@ -79,7 +79,9 @@ public class GenerateGraphFragment extends Fragment {
                 if (!disableListener) {
                     int width = view.getMeasuredWidth();
                     int height = view.getMeasuredHeight();
-                    if (width != 0) graphGeneratedView.setDimensionsForMapGeneratorAndGenerateRandomMap(height, width);
+                    if (width != 0) {
+                        graphGeneratedView.generateRandomMapAndSetPath(height, width, "cesta");
+                    }
                     disableListener = true;
                 }
             }

@@ -166,9 +166,9 @@ public class TabActivity extends AppCompatActivity implements TabLayoutFragment.
         // Handle navigation view item clicks here.
         int id = menuItem.getItemId();
 
-        if (id == R.id.nav_home) {
+        if (id == R.id.paths) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.dalsi) {
 
         }
 
