@@ -1,4 +1,4 @@
-package cz.uhk.graphstheory.ui.login;
+package cz.uhk.graphstheory.login;
 
 import android.content.Intent;
 import android.os.Bundle;
