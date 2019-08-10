@@ -8,8 +8,8 @@ import com.google.firebase.database.ValueEventListener
 
 
 class DatabaseConnector{
-    val database = FirebaseDatabase.getInstance()
-    val myRef = database.getReference("first")
+    private val database = FirebaseDatabase.getInstance()
+    private val myRef = database.getReference("first")
     var result: String = ""
 
     fun writeFirstActivityValue(value : String){
@@ -34,5 +34,12 @@ class DatabaseConnector{
             }
         })
         return result
+    }
+
+    fun createUserAccount(name : String, nickname: String, team : String){
+        database.getReference("users").child(name).child("nickname").setValue(nickname)
+        database.getReference("users").child(name).child("team").setValue(team)
+        database.getReference("users").child(name).child("score").setValue(0)
+        database.getReference("users").child(name).child("unlockTopics").setValue(0)
     }
 }

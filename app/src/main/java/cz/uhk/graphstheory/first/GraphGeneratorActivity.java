@@ -6,6 +6,9 @@ import androidx.annotation.NonNull;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.core.view.GravityCompat;
@@ -14,6 +17,8 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
+
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,6 +26,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import cz.uhk.graphstheory.DrawingFragment;
+import cz.uhk.graphstheory.database.DatabaseConnector;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.TabLayoutFragment;
@@ -34,6 +40,8 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
     private BottomNavigationView bottomNavigationView;
     private GenerateGraphFragment generateGraphFragment;
     private FloatingActionButton floatingActionButton;
+
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     private DrawingFragmentListener drawingFragmentListener;
     @Override
@@ -60,15 +68,12 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
         fragmentTransaction.add(R.id.generator_activity_group, textFragment);
         fragmentTransaction.commit();
 
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //todo tady osetrit co dal
-                boolean isValid = GraphChecker.checkIfGraphContainsCesta(drawingFragment.getUserGraph());
-                Toast.makeText(GraphGeneratorActivity.this, String.valueOf(isValid), Toast.LENGTH_LONG).show();
-//                DatabaseConnector databaseConnector = new DatabaseConnector();
+        floatingActionButton.setOnClickListener(v -> {
+            //todo tady osetrit co dal
+            boolean isValid = GraphChecker.checkIfGraphContainsCesta(drawingFragment.getUserGraph());
+            Toast.makeText(GraphGeneratorActivity.this, String.valueOf(isValid), Toast.LENGTH_LONG).show();
+ //                DatabaseConnector databaseConnector = new DatabaseConnector();
 //                databaseConnector.writeFirstActivityValue("test");
-            }
         });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -157,7 +162,7 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            this.finishAffinity(); //exit the app
         }
     }
 
@@ -262,4 +267,5 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 }
