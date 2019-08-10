@@ -1,45 +1,114 @@
 package cz.uhk.graphstheory.database
 
-import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import cz.uhk.graphstheory.model.User
 
 
-class DatabaseConnector{
+class DatabaseConnector {
     private val database = FirebaseDatabase.getInstance()
     private val myRef = database.getReference("first")
-    var result: String = ""
+    private var users = arrayListOf<User>()
 
-    fun writeFirstActivityValue(value : String){
-        // Write a message to the database
-        myRef.setValue(value)
-
-    }
-
-    fun getFirstActivityValue(): String {
-
-        myRef.addValueEventListener(object : ValueEventListener {
+    init {
+        val ref = database.getReference("users")
+        val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                val data = dataSnapshot.getValue(String::class.java)
-                result = data.toString()
+
+                users.clear()
+                for (postSnapshot in dataSnapshot.children) {
+                    val user = postSnapshot.getValue(User::class.java)
+                    if (user != null) {
+                        users.add(user)
+                    }
+                }
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                // Failed to read value
-                Log.w("tag", "Failed to read value.", error.toException())
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Getting Post failed, log a message
             }
-        })
-        return result
+        }
+        ref.addValueEventListener(postListener)
     }
 
-    fun createUserAccount(name : String, nickname: String, team : String){
-        database.getReference("users").child(name).child("nickname").setValue(nickname)
-        database.getReference("users").child(name).child("team").setValue(team)
-        database.getReference("users").child(name).child("score").setValue(0)
-        database.getReference("users").child(name).child("unlockTopics").setValue(0)
+    fun recordUserPoints(userName: String, activity: String) {
+        val user = findUser(userName)
+        if (user != null) {
+
+            val map = user.remainingPointsFromActivity
+
+            val point : Double
+            if (checkIfKeyExist(map, activity)){
+                point = map.getValue(activity)
+            }else{
+                point = 3.0
+                map[activity] = 3.0
+            }
+
+
+            var score = user.score
+            score += point
+
+            database.getReference("users").child(user.uuID).child("score").setValue(score)
+
+            if (point > 0) {
+                map[activity] = (point - 1)
+                database.getReference("users").child(user.uuID).child("remainingPointsFromActivity").setValue(map)
+            }
+        }
+    }
+
+    private fun checkIfKeyExist(map: HashMap<String,Double>, activity: String): Boolean {
+        for (key in map.keys){
+            if (key == activity) return true
+        }
+        return false
+    }
+
+    private fun findUser(email: String): User? {
+        for (user in users) {
+            if (user.email == email) return user
+        }
+        return null
+    }
+
+//    fun getFirstActivityValue(): String {
+//
+//        myRef.addValueEventListener(object : ValueEventListener {
+//            override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                // This method is called once with the initial value and again
+//                // whenever data at this location is updated.
+//                val data = dataSnapshot.getValue(String::class.java)
+//                result = data.toString()
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                // Failed to read value
+//                Log.w("tag", "Failed to read value.", error.toException())
+//            }
+//        })
+//        return result
+//    }
+
+    fun createUserAccount(uuID: String, nickName: String, email: String, team: String) {
+        database.getReference("users").child(uuID).child("email").setValue(email)
+        database.getReference("users").child(uuID).child("nickName").setValue(nickName)
+        database.getReference("users").child(uuID).child("team").setValue(team)
+        database.getReference("users").child(uuID).child("score").setValue(0)
+        database.getReference("users").child(uuID).child("unlockTopics").setValue(0)
+        database.getReference("users").child(uuID).child("uuID").setValue(uuID)
+        val points = HashMap<String, Double>()
+        points["first"] = 0.01
+        database.getReference("users").child(uuID).child("remainingPointsFromActivity").setValue(points)
+
+    }
+
+    fun emailAvailable(nickName: String): Boolean {
+        for (user in users) {
+            if (user.nickName == nickName) return false
+        }
+        return true
     }
 }

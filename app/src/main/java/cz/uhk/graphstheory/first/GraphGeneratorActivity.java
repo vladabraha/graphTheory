@@ -25,6 +25,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.Objects;
+
 import cz.uhk.graphstheory.DrawingFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
@@ -44,6 +46,8 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     private DrawingFragmentListener drawingFragmentListener;
+
+    private DatabaseConnector databaseConnector;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +55,7 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
         setContentView(R.layout.activity_graph_generator);
 
         floatingActionButton = findViewById(R.id.floating_action_button_generate_graph);
+        databaseConnector = new DatabaseConnector();
 
         //for navigation drawer
         Toolbar toolbar = findViewById(R.id.graph_generator_toolbar);
@@ -72,8 +77,11 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
             //todo tady osetrit co dal
             boolean isValid = GraphChecker.checkIfGraphContainsCesta(drawingFragment.getUserGraph());
             Toast.makeText(GraphGeneratorActivity.this, String.valueOf(isValid), Toast.LENGTH_LONG).show();
- //                DatabaseConnector databaseConnector = new DatabaseConnector();
-//                databaseConnector.writeFirstActivityValue("test");
+            if (isValid){
+                String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
+                assert userName != null;
+                databaseConnector.recordUserPoints(userName,"first-first");
+            }
         });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -86,30 +94,27 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
 
         bottomNavigationView = findViewById(R.id.graph_generator_navigation);
         bottomNavigationView.setSelectedItemId(R.id.circle);
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.circle:
-                        drawingFragment.changeDrawingMethod("circle");
-                        return true;
-                    case R.id.line:
-                        drawingFragment.changeDrawingMethod("line");
-                        return true;
-                    case R.id.path:
-                        drawingFragment.changeDrawingMethod("path");
-                        return true;
-                    case R.id.delete:
-                        drawingFragment.changeDrawingMethod("remove");
-                        return true;
-                    case R.id.clear:
-                        drawingFragment.changeDrawingMethod("clear");
-                        bottomNavigationView.setSelectedItemId(R.id.circle);
-                        drawingFragment.changeDrawingMethod("circle");
-                        return false; // return true if you want the item to be displayed as the selected item
-                    default:
-                        return false;
-                }
+        bottomNavigationView.setOnNavigationItemSelectedListener(menuItem -> {
+            switch (menuItem.getItemId()) {
+                case R.id.circle:
+                    drawingFragment.changeDrawingMethod("circle");
+                    return true;
+                case R.id.line:
+                    drawingFragment.changeDrawingMethod("line");
+                    return true;
+                case R.id.path:
+                    drawingFragment.changeDrawingMethod("path");
+                    return true;
+                case R.id.delete:
+                    drawingFragment.changeDrawingMethod("remove");
+                    return true;
+                case R.id.clear:
+                    drawingFragment.changeDrawingMethod("clear");
+                    bottomNavigationView.setSelectedItemId(R.id.circle);
+                    drawingFragment.changeDrawingMethod("circle");
+                    return false; // return true if you want the item to be displayed as the selected item
+                default:
+                    return false;
             }
         });
     }

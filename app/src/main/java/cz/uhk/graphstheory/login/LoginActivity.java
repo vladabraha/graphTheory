@@ -14,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Objects;
+
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.database.DatabaseConnector;
 import cz.uhk.graphstheory.first.GraphGeneratorActivity;
@@ -26,7 +28,6 @@ public class LoginActivity extends AppCompatActivity {
     private EditText nickNameEditText;
     private DatabaseConnector databaseConnector;
 
-    private boolean isAppAlreadyRunning = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.password);
         nickNameEditText = findViewById(R.id.nickname);
 
-        databaseConnector = new DatabaseConnector();
+       databaseConnector = new DatabaseConnector();
 
         loginButton.setOnClickListener((View v) -> {
             String email = usernameEditText.getText().toString();
@@ -64,9 +65,12 @@ public class LoginActivity extends AppCompatActivity {
 
         signUpButton.setOnClickListener((View v) -> {
             String password = passwordEditText.getText().toString();
+            String nickName = nickNameEditText.getText().toString();
 
             if (password.length() < 6) {
                 Toast.makeText(LoginActivity.this, "Heslo musí mít alespoň 6 znaků", Toast.LENGTH_SHORT).show();
+            } else if(!databaseConnector.emailAvailable(nickName)){
+                Toast.makeText(LoginActivity.this, "Tato přezdívka je již zabraná", Toast.LENGTH_SHORT).show();
             } else {
                 Intent fractionIntent = new Intent(this, FractionActivity.class);
                 startActivityForResult(fractionIntent, 1);
@@ -74,13 +78,13 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void registerUser(String email, String nickname, String password, String selectedTeam) {
+    private void registerUser(String email,String password, String selectedTeam) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d("TAG", "createUserWithEmail:success");
-                        createUser(nickname, selectedTeam);
+                        createUser(selectedTeam);
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w("TAG", "createUserWithEmail:failure", task.getException());
@@ -89,11 +93,11 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    private void createUser(String nickname, String selectedTeam) {
+    private void createUser(String selectedTeam) {
         FirebaseUser user = mAuth.getCurrentUser();
-        Log.d("test",user.getUid());
+        Log.d("test", Objects.requireNonNull(user).getUid());
 
-        databaseConnector.createUserAccount(user.getUid(), nickname,  selectedTeam);
+        databaseConnector.createUserAccount(user.getUid(),nickNameEditText.getText().toString(), Objects.requireNonNull(user.getEmail()),  selectedTeam);
     }
 
     @Override
@@ -101,7 +105,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
+        if (currentUser != null && currentUser.getEmail() != null) {
             Intent notificationIntent = new Intent(this, GraphGeneratorActivity.class);
             startActivity(notificationIntent);
         }
@@ -114,9 +118,8 @@ public class LoginActivity extends AppCompatActivity {
             if (resultCode == Activity.RESULT_OK) {
                 String email = usernameEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
-                String nickname = nickNameEditText.getText().toString();
                 String selectedTeam = data.getStringExtra("team");
-                registerUser(email, nickname, password, selectedTeam);
+                registerUser(email, password, selectedTeam);
                 Intent mainIntent = new Intent(this, GraphGeneratorActivity.class);
                 startActivity(mainIntent);
             }
