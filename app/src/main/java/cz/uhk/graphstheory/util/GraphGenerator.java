@@ -6,6 +6,7 @@ import android.util.SparseArray;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import cz.uhk.graphstheory.model.Coordinate;
 import cz.uhk.graphstheory.model.CustomLine;
@@ -35,16 +36,20 @@ public class GraphGenerator {
      * @return list of lines (connecting nodes)
      */
     private static ArrayList<CustomLine> generateRandomEdges(ArrayList<Coordinate> circlesPoints) {
-
-        int amountOfEdges = (int) (Math.random() * circlesPoints.size()); //nahodny pocet hran
+        int amountOfNodes = circlesPoints.size();
+        int maximumOfEdges = (amountOfNodes * (amountOfNodes - 1)) / 2; //viz. definice uplneho grafu
+        int amountOfEdges = (int) (Math.random() * (maximumOfEdges - 1)); //nahodny pocet hran
         if (amountOfEdges < 6) amountOfEdges++;
 
         //vezmeme nahodny uzel na indexu a mrkneme na seznam, se kterymi dalsimi prvky je spojen
         //pokud neni jeste spojen s nahodnym uzlem, je dany uzel pridan do seznamu
         SparseArray<ArrayList<Integer>> connectedNodes = new SparseArray<>(circlesPoints.size());
         int createdEdges = 0;
+        int run = 0;
         do {
+            run++;
             int randomIndex = (int) (Math.random() * (circlesPoints.size() - 1));
+            int randomIndex2 = (int) (Math.random() * (circlesPoints.size() - 1));
             ArrayList<Integer> listOfConnectedNodes = connectedNodes.valueAt(randomIndex); //nahodny uzel
 
             boolean isThisNumberInList = false;
@@ -54,25 +59,26 @@ public class GraphGenerator {
             } else {
                 //koukneme, abychome nepridavali 2 stejne uzly
                 for (Integer integer : listOfConnectedNodes) {
-                    if (integer.equals(createdEdges)) {
+                    if (integer.equals(randomIndex2)) {
                         isThisNumberInList = true;
                     }
                 }
             }
 
             //a pokud tam jeste zadny takovy neni a odkaz neni na sama sebe, tak ho pridame
-            if (!isThisNumberInList && createdEdges != randomIndex) {
-                listOfConnectedNodes.add(createdEdges);
+            if (!isThisNumberInList && randomIndex2 != randomIndex) {
+                listOfConnectedNodes.add(randomIndex2);
                 connectedNodes.put(randomIndex, listOfConnectedNodes);
                 createdEdges++;
             }
 
-        } while (createdEdges < amountOfEdges);
+        } while (createdEdges < amountOfEdges && run < 500);
 
         //kontrola, zdali neni nejaky uzel osamocen (graf pak vypada divne)
         for (int i = 0; i < circlesPoints.size(); i++) { //vezmeme prvni node
             //sparse array může mít zaplenene jenom nektere indexy (např. když má size 2, tak může mít zaplneny jenom index 1 a 5 a mezitím nic -> velikost 2)
             boolean isNodeConnectedToAnotherNode = false;
+            run = 0;
 
             for (int j = 0; j < connectedNodes.size(); j++) { //prohledame vsechny seznamy, zdali je v nějakem -> tzn. je pripojen k jinemu
                 //hledani indexu s nenulovym seznamem
@@ -80,15 +86,16 @@ public class GraphGenerator {
                 ArrayList<Integer> arrayList;
                 int next = 0;
                 do {
+                    run++;
                     arrayList = connectedNodes.get(j + next);
-                    if (arrayList != null) {
+                    if (arrayList != null && !arrayList.isEmpty()) {
                         isIndexNotEmpty = true; //mame index, hura
                     } else {
                         next++;
                     }
-                } while (!isIndexNotEmpty);
+                } while (!isIndexNotEmpty && next < circlesPoints.size() && run < 500);
 
-                if (arrayList.contains(i)) { //mrkneme, zdali dany seznam obsahuje naš node
+                if (Objects.requireNonNull(arrayList).contains(i)) { //mrkneme, zdali dany seznam obsahuje naš node
                     isNodeConnectedToAnotherNode = true; //pokud ano, hura, tenhle node je propojen jdeme na dalsi
                     break;
                 }
@@ -160,7 +167,6 @@ public class GraphGenerator {
                         isInOtherCircle = true;
                     }
                 }
-
             }
             if (!isInOtherCircle) {
                 Coordinate newCoordinate = new Coordinate(xCoordinate, yCoordinate);

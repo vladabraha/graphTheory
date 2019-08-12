@@ -1,13 +1,16 @@
 package cz.uhk.graphstheory.first;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
+
 import androidx.annotation.NonNull;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -15,10 +18,11 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
+
 import androidx.appcompat.widget.Toolbar;
 
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -42,12 +46,14 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
     private BottomNavigationView bottomNavigationView;
     private GenerateGraphFragment generateGraphFragment;
     private FloatingActionButton floatingActionButton;
+    private TabLayoutFragment tabLayoutFragment;
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     private DrawingFragmentListener drawingFragmentListener;
 
     private DatabaseConnector databaseConnector;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,7 +74,7 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
         textFragment = new TextFragment();
         generateGraphFragment = new GenerateGraphFragment();
         drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
-        TabLayoutFragment tabLayoutFragment = new TabLayoutFragment();
+        tabLayoutFragment = new TabLayoutFragment();
         fragmentTransaction.add(R.id.generator_activity_group, tabLayoutFragment);
         fragmentTransaction.add(R.id.generator_activity_group, textFragment);
         fragmentTransaction.commit();
@@ -77,10 +83,8 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
             //todo tady osetrit co dal
             boolean isValid = GraphChecker.checkIfGraphContainsCesta(drawingFragment.getUserGraph());
             Toast.makeText(GraphGeneratorActivity.this, String.valueOf(isValid), Toast.LENGTH_LONG).show();
-            if (isValid){
-                String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
-                assert userName != null;
-                databaseConnector.recordUserPoints(userName,"first-first");
+            if (isValid) {
+                changeActivity();
             }
         });
 
@@ -188,8 +192,7 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
                 }
             }, 5000);
 
-        }
-        else if (fragmentManager.getFragments().contains(generateGraphFragment)){
+        } else if (fragmentManager.getFragments().contains(generateGraphFragment)) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.remove(generateGraphFragment);
             fragmentTransaction.add(R.id.generator_activity_group, drawingFragment);
@@ -205,6 +208,7 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
 
         }
     }
+
     private void changeToTextFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
 
@@ -216,8 +220,7 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
             fragmentTransaction.commit();
             bottomNavigationView.setVisibility(View.GONE);
             floatingActionButton.hide();
-        }
-        else if (fragmentManager.getFragments().contains(drawingFragment)){
+        } else if (fragmentManager.getFragments().contains(drawingFragment)) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.remove(drawingFragment);
             fragmentTransaction.add(R.id.generator_activity_group, textFragment);
@@ -230,6 +233,7 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
     private void changeToEducationFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
 
+        //kontrola, ze se to nezavola 2x a nehodi to chybu
         if (fragmentManager.getFragments().contains(textFragment)) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.remove(textFragment);
@@ -237,8 +241,7 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
             fragmentTransaction.commit();
             bottomNavigationView.setVisibility(View.GONE);
             floatingActionButton.hide();
-        }
-        else if (fragmentManager.getFragments().contains(drawingFragment)){
+        } else if (fragmentManager.getFragments().contains(drawingFragment)) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.remove(drawingFragment);
             fragmentTransaction.add(R.id.generator_activity_group, generateGraphFragment);
@@ -271,6 +274,49 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void changeActivity() {
+
+        //do shared preferences si ukladame posledni otevrenou aktivitu, abychom se mohli tocit do kolecka a neotevirali pripadne porad stejnou aktivitu
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        int displayedActivity = sharedPref.getInt("displayedActivity", 0);
+
+        if (displayedActivity < 3) {
+            displayedActivity++;
+        } else {
+            displayedActivity = 0;
+        }
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt("displayedActivity", displayedActivity);
+        editor.apply();
+
+        //tady tocime jednotlivy aktivity za zaznamenavame skore (tahle metoda se vola jenom po uspesnym vyplneni)
+        String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
+        assert userName != null;
+        switch (displayedActivity) {
+            case 0:
+                databaseConnector.recordUserPoints(userName, "first-first");
+                tabLayoutFragment.switchSelectedTab(1);
+                generateGraphFragment.changeEducationGraph("cesta");
+
+                break;
+            case 1:
+                databaseConnector.recordUserPoints(userName, "first-second");
+                tabLayoutFragment.switchSelectedTab(1);
+                generateGraphFragment.changeEducationGraph("tah");
+                break;
+
+            case 2:
+                databaseConnector.recordUserPoints(userName, "first-third");
+                changeToEducationFragment();
+                break;
+        }
+    }
+
+    public interface ChangeGraphListener {
+        public void changeEducationGraph(String type);
     }
 
 }

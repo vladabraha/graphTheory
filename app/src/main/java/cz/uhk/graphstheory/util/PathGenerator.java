@@ -1,5 +1,7 @@
 package cz.uhk.graphstheory.util;
 
+import android.os.CpuUsageInfo;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +19,8 @@ public class PathGenerator {
      * @return list primek, kterymi prochazi cesta
      */
     public static ArrayList<Coordinate> generateCesta(Map map) {
-        int pathLength = (int) (Math.random() * map.getCircles().size());
+        int numberOfNodes = map.getCircles().size();
+        int pathLength = (int) (Math.random() * numberOfNodes);
         if (pathLength < ((map.getCircles().size() / 2) + 1)) pathLength = (map.getCircles().size() / 2) + 1;
 
         List<Integer> usedIndexes = new ArrayList<>(pathLength);
@@ -40,5 +43,36 @@ public class PathGenerator {
             }
         }
         return path;
+    }
+
+    public static ArrayList<Coordinate> generateTah(Map map){
+        ArrayList<Coordinate> nodes = map.getCircles();
+        int numberOfNodes = map.getCircles().size();
+        int randomNumber = (int) ((((numberOfNodes * (numberOfNodes - 1)) /2 )-1) * Math.random());
+        ArrayList<CustomLine> customLines = new ArrayList<>();
+
+        ArrayList<Coordinate> tah = new ArrayList<>();
+
+
+        for (int i = 0; i < randomNumber; i++){
+            boolean find = false;
+            do{
+                boolean isAvailable = true;
+                int randomNode = (int) (numberOfNodes * Math.random());
+                int randomNode2 = (int) (numberOfNodes * Math.random());
+                for (CustomLine customLine : customLines){
+                    if (customLine.isPointInStartOrEndOfLine(nodes.get(randomNode)) && customLine.isPointInStartOrEndOfLine(nodes.get(randomNode2))) {
+                        isAvailable = false;
+                    }
+                }
+                if (isAvailable){
+                    find = true;
+                    customLines.add(new CustomLine(nodes.get(randomNode), nodes.get(randomNode2)));
+                    tah.add(nodes.get(randomNode));
+                    tah.add(nodes.get(randomNode2));
+                }
+            } while(!find);
+        }
+        return tah;
     }
 }

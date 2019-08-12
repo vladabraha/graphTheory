@@ -21,7 +21,8 @@ import java.util.Objects;
  */
 public class TabLayoutFragment extends Fragment {
 
-    TableLayoutCommunicationInterface tableLayoutCommunicationInterface;
+    private TableLayoutCommunicationInterface tableLayoutCommunicationInterface;
+    private TabLayout tabLayout;
 
     public TabLayoutFragment() {
         // Required empty public constructor
@@ -46,7 +47,7 @@ public class TabLayoutFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_table_layout, container, false);
 
-        TabLayout tabLayout =  view.findViewById(R.id.tabLayout);
+        tabLayout =  view.findViewById(R.id.tabLayout);
         tabLayout.addTab(tabLayout.newTab().setText("Text"));
         tabLayout.addTab(tabLayout.newTab().setText("Ukázka"));
         tabLayout.addTab(tabLayout.newTab().setText("Procvičování"));
@@ -83,6 +84,12 @@ public class TabLayoutFragment extends Fragment {
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + " must implement OnArticleSelectedListener");
         }
+    }
+
+    public void switchSelectedTab(int tabId){
+        TabLayout.Tab tab = tabLayout.getTabAt(tabId);
+        Objects.requireNonNull(tab).select();
+
     }
 
     public interface TableLayoutCommunicationInterface{

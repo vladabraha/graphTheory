@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,12 +19,17 @@ import cz.uhk.graphstheory.model.GeneratedMapViewModel;
 import cz.uhk.graphstheory.model.Map;
 
 
-public class GenerateGraphFragment extends Fragment {
+public class GenerateGraphFragment extends Fragment implements GraphGeneratorActivity.ChangeGraphListener {
 
     private GraphGeneratedView graphGeneratedView;
     private GeneratedMapViewModel generatedMapViewModel;
 
     private boolean disableListener = false;
+
+    private int width;
+    private int height;
+
+    private String type = "";
 
 //    private GraphListener mListener;
 
@@ -77,15 +81,21 @@ public class GenerateGraphFragment extends Fragment {
             @Override
             public void onGlobalLayout() {
                 if (!disableListener) {
-                    int width = view.getMeasuredWidth();
-                    int height = view.getMeasuredHeight();
+                    width = view.getMeasuredWidth();
+                    height = view.getMeasuredHeight();
                     if (width != 0) {
-                        graphGeneratedView.generateRandomMapAndSetPath(height, width, "cesta");
+                        graphGeneratedView.generateRandomMapAndSetPath(height, width);
                     }
                     disableListener = true;
                 }
             }
         });
+
+        //typ "cervene cary", ktera se nad grafem vykresli
+        if (!type.isEmpty()){
+            graphGeneratedView.changePathGenerator(type);
+        }
+
     }
 
 
@@ -108,5 +118,10 @@ public class GenerateGraphFragment extends Fragment {
 //        mListener = null;
     }
 
+    //zmeni typ vykresleni, predava se jako parametr, protoze nejde volat metodu na view, ktere neni jeste vytvoreno
+    @Override
+    public void changeEducationGraph(String type) {
+       this.type = type;
+    }
 
 }

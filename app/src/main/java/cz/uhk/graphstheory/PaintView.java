@@ -258,6 +258,13 @@ public class PaintView extends View {
                 coordinate.y = y;
             }
         }
+        for (Coordinate coordinate : redLineList) {
+            //při tažení se přehodí i souřadnice přímky
+            if (coordinate.x == firstCoordinate.x && coordinate.y == firstCoordinate.y) {
+                coordinate.x = x;
+                coordinate.y = y;
+            }
+        }
         firstCoordinate = new Coordinate(x, y);
         circleCoordinates.add(firstCoordinate);
     }

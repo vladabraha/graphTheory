@@ -25,7 +25,7 @@ import cz.uhk.graphstheory.util.PathGenerator;
 public class GraphGeneratedView extends View {
 
     private static final int MAXIMUM_AMOUNT_OF_NODES = 12;
-    private static final int MINIMUM_AMOUNT_OF_NODES = 4;
+    private static final int MINIMUM_AMOUNT_OF_NODES = 5;
     private Bitmap mBitmap;
     private Canvas mCanvas;
     private Paint mBitmapPaint = new Paint(Paint.DITHER_FLAG);
@@ -80,12 +80,11 @@ public class GraphGeneratedView extends View {
         mCanvas = new Canvas(mBitmap);  //předá se to cavasu
     }
 
-    public void generateRandomMapAndSetPath(int height, int width, String type){
+    public void generateRandomMapAndSetPath(int height, int width){
         int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
         if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES) amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
         setMap(GraphGenerator.generateMap(height, width, BRUSH_SIZE, amountOfEdges));
         redLineList = PathGenerator.generateCesta(getMap());
-        if (!type.equals("")) changePathGenerator(type);
     }
 
     public void changePathGenerator(String method){
@@ -93,11 +92,15 @@ public class GraphGeneratedView extends View {
             //todo dodelat volani generatoru pro dalsi moznosti (cesta, sled, kruznice...)
             case "cesta":
                 redLineList = PathGenerator.generateCesta(getMap());
+                invalidate();
                 break;
-            case "sled":
-
+            case "tah":
+                redLineList = PathGenerator.generateTah(getMap());
+                invalidate();
                 break;
-
+            case "kruznice":
+//                redLineList = PathGenerator.generateTah(getMap());
+                break;
         }
     }
 
