@@ -31,4 +31,11 @@ public class CustomLine {
         }else return coordinate.x == to.x && coordinate.y == to.y;
     }
 
+    public boolean isLineSame(CustomLine customLine){
+        if (from.equal(customLine.getFrom()) || from.equal(customLine.getTo())){
+            return to.equal(customLine.getFrom()) || to.equal(customLine.getTo());
+        }
+        return false;
+    }
+
 }

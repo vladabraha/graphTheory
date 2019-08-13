@@ -13,6 +13,7 @@ public class GraphChecker {
 
             //Jedu od zacatku a kazdy druhy bod zkontroluju, zdali posledni dva body nejsou nekde uz v seznamu predtim (krome poslednich dvou bodu samozrejme)
             ArrayList<CustomLine> path = map.getRedLineList();
+            if (path.size() == 0) return false;
             ArrayList<Coordinate> coordinateArrayList = new ArrayList<>();
 
             for (int i = 0; i < path.size(); i++) {
@@ -39,5 +40,21 @@ public class GraphChecker {
             if (path.size() > 0) return true;
         }
         return Boolean.parseBoolean(null);
+    }
+
+    public static boolean checkIfGraphContainsTah(Map map){
+        ArrayList<CustomLine> redLineList = map.getRedLineList();
+        if (redLineList.size() == 0) return false;
+        ArrayList<CustomLine> alreadyChecked = new ArrayList<>();
+
+        for (CustomLine customLine : redLineList){
+            for (CustomLine customLineAlreadyChecked : alreadyChecked){
+                if (customLine.isLineSame(customLineAlreadyChecked)){
+                    return false;
+                }
+            }
+            alreadyChecked.add(customLine);
+        }
+        return true;
     }
 }

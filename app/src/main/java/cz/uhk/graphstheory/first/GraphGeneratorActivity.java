@@ -80,9 +80,20 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
         fragmentTransaction.commit();
 
         floatingActionButton.setOnClickListener(v -> {
-            //todo tady osetrit co dal
-            boolean isValid = GraphChecker.checkIfGraphContainsCesta(drawingFragment.getUserGraph());
-            Toast.makeText(GraphGeneratorActivity.this, String.valueOf(isValid), Toast.LENGTH_LONG).show();
+            SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+            int displayedActivity = sharedPref.getInt("displayedActivity", 0);
+            boolean isValid = false;
+            switch (displayedActivity){
+                case 0:
+                    isValid = GraphChecker.checkIfGraphContainsCesta(drawingFragment.getUserGraph());
+                    Toast.makeText(GraphGeneratorActivity.this, "cesta je " + (isValid), Toast.LENGTH_LONG).show();
+                    break;
+                case 1:
+                    isValid = GraphChecker.checkIfGraphContainsTah(drawingFragment.getUserGraph());
+                    Toast.makeText(GraphGeneratorActivity.this, "tah je" + isValid, Toast.LENGTH_LONG).show();
+                case 2:
+                    break;
+            }
             if (isValid) {
                 changeActivity();
             }
