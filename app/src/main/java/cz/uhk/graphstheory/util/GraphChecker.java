@@ -57,4 +57,14 @@ public class GraphChecker {
         }
         return true;
     }
+
+    public static boolean checkIfGraphContainsKruznice(Map map){
+        ArrayList<CustomLine> redLineList = map.getRedLineList();
+        if (redLineList.size() < 2) return false;
+        CustomLine startingLine = redLineList.get(0);
+        CustomLine lastLine = redLineList.get(redLineList.size() - 1);
+        if (startingLine.getFrom().equal(lastLine.getTo())){
+            return true;
+        }else return startingLine.getFrom().equal(lastLine.getFrom());
+    }
 }

@@ -99,7 +99,7 @@ public class GraphGeneratedView extends View {
                 invalidate();
                 break;
             case "kruznice":
-//                redLineList = PathGenerator.generateTah(getMap());
+               redLineList = PathGenerator.generateKruznice(getMap());
                 break;
         }
     }

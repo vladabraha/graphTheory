@@ -91,7 +91,10 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
                 case 1:
                     isValid = GraphChecker.checkIfGraphContainsTah(drawingFragment.getUserGraph());
                     Toast.makeText(GraphGeneratorActivity.this, "tah je" + isValid, Toast.LENGTH_LONG).show();
+                    break;
                 case 2:
+                    isValid = GraphChecker.checkIfGraphContainsKruznice(drawingFragment.getUserGraph());
+                    Toast.makeText(GraphGeneratorActivity.this, "kruznice je" + isValid, Toast.LENGTH_LONG).show();
                     break;
             }
             if (isValid) {
@@ -171,6 +174,21 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
                 break;
             case 2:
                 changeToDrawingFragment();
+                SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+                int displayedActivity = sharedPref.getInt("displayedActivity", 0);
+                Log.d("displayedActivity", String.valueOf(displayedActivity));
+
+                switch (displayedActivity){
+                    case 0:
+                        Toast.makeText(this, "Nakresli cestu", Toast.LENGTH_LONG).show();
+                        break;
+                    case 1:
+                        Toast.makeText(this, "Nakresli tah", Toast.LENGTH_LONG).show();
+                        break;
+                    case 2:
+                        Toast.makeText(this, "Nakresli kružnici", Toast.LENGTH_LONG).show();
+                        break;
+                }
                 break;
         }
     }
@@ -293,7 +311,7 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         int displayedActivity = sharedPref.getInt("displayedActivity", 0);
 
-        if (displayedActivity < 3) {
+        if (displayedActivity < 2) {
             displayedActivity++;
         } else {
             displayedActivity = 0;
@@ -310,18 +328,22 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
             case 0:
                 databaseConnector.recordUserPoints(userName, "first-first");
                 tabLayoutFragment.switchSelectedTab(1);
+                Toast.makeText(this, "Teď si ukážeme cestu v grafu", Toast.LENGTH_LONG).show();
                 generateGraphFragment.changeEducationGraph("cesta");
 
                 break;
             case 1:
                 databaseConnector.recordUserPoints(userName, "first-second");
                 tabLayoutFragment.switchSelectedTab(1);
+                Toast.makeText(this, "Teď si ukážeme tah v grafu", Toast.LENGTH_LONG).show();
                 generateGraphFragment.changeEducationGraph("tah");
                 break;
 
             case 2:
                 databaseConnector.recordUserPoints(userName, "first-third");
-                changeToEducationFragment();
+                tabLayoutFragment.switchSelectedTab(1);
+                Toast.makeText(this, "Teď si ukážeme kružnici v grafu", Toast.LENGTH_LONG).show();
+                generateGraphFragment.changeEducationGraph("kruznice");
                 break;
         }
     }

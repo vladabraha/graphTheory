@@ -45,16 +45,22 @@ public class PathGenerator {
         return path;
     }
 
+    /**
+     * z predane mapy vrati nahodne vytvoren tah (kazdy hrana max. jednou)
+     * @param map mapa
+     * @return list primek, kterymi prochazi tah
+     */
     public static ArrayList<Coordinate> generateTah(Map map){
         ArrayList<Coordinate> nodes = map.getCircles();
         int numberOfNodes = map.getCircles().size();
-        int randomNumber = (int) ((((numberOfNodes * (numberOfNodes - 1)) /2 )-1) * Math.random());
+        int randomNumberOfRedLines = (int) ((((numberOfNodes * (numberOfNodes - 1)) /2 )-1) * Math.random());
+        if (randomNumberOfRedLines < 2) randomNumberOfRedLines = 2;
         ArrayList<CustomLine> customLines = new ArrayList<>();
 
         ArrayList<Coordinate> tah = new ArrayList<>();
 
 
-        for (int i = 0; i < randomNumber; i++){
+        for (int i = 0; i < randomNumberOfRedLines; i++){
             boolean find = false;
             do{
                 boolean isAvailable = true;
@@ -74,5 +80,16 @@ public class PathGenerator {
             } while(!find);
         }
         return tah;
+    }
+
+    public static ArrayList<Coordinate> generateKruznice(Map map) {
+        ArrayList<Coordinate> path;
+        do {
+            path = generateCesta(map);
+        }while (path.size() < 4);
+
+        path.add(path.get(path.size() - 1));
+        path.add(path.get(0));
+       return path;
     }
 }
