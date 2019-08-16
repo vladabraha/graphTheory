@@ -52,7 +52,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements Navi
     private FirebaseAuth mAuth;
     private DatabaseConnector databaseConnector;
     TextView navigationDrawerName;
-    TextView navigationDrawerEmail ;
+    TextView navigationDrawerEmail;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,8 +89,9 @@ public abstract class AbstractActivity extends AppCompatActivity implements Navi
 
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.settings_options, menu);
+        //todo zjisit, zdali nechám dropdown menu vpravo nahoře
+//        MenuInflater menuInflater = getMenuInflater();
+//        menuInflater.inflate(R.menu.settings_options, menu);
 
         //set current user to navigation drawer
         navigationDrawerName = findViewById(R.id.navigation_header_name);
@@ -107,23 +108,23 @@ public abstract class AbstractActivity extends AppCompatActivity implements Navi
     }
 
 
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.circle:
-                drawingFragment.changeDrawingMethod("circle");
-                return true;
-            case R.id.line:
-                drawingFragment.changeDrawingMethod("line");
-                return true;
-            case R.id.delete:
-                drawingFragment.changeDrawingMethod("remove");
-                return true;
-            case R.id.clear:
-                drawingFragment.changeDrawingMethod("clear");
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case R.id.circle:
+//                drawingFragment.changeDrawingMethod("circle");
+//                return true;
+//            case R.id.line:
+//                drawingFragment.changeDrawingMethod("line");
+//                return true;
+//            case R.id.delete:
+//                drawingFragment.changeDrawingMethod("remove");
+//                return true;
+//            case R.id.clear:
+//                drawingFragment.changeDrawingMethod("clear");
+//                return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
 
     public void tableLayoutSelectedChange(int number) {

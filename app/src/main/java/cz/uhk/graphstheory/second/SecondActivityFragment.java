@@ -1,11 +1,13 @@
-package cz.uhk.graphstheory.first;
+package cz.uhk.graphstheory.second;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,13 +17,16 @@ import android.view.ViewTreeObserver;
 import java.util.Objects;
 
 import cz.uhk.graphstheory.R;
+import cz.uhk.graphstheory.first.GraphGeneratedView;
 import cz.uhk.graphstheory.model.GeneratedMapViewModel;
 import cz.uhk.graphstheory.model.Map;
 import cz.uhk.graphstheory.util.GraphGenerator;
 import cz.uhk.graphstheory.util.PathGenerator;
 
 
-public class GenerateGraphFragment extends Fragment implements GraphGeneratorActivity.ChangeGraphListener {
+public class SecondActivityFragment extends Fragment {
+
+    private OnFragmentInteractionListener mListener;
 
     private GraphGeneratedView graphGeneratedView;
     private GeneratedMapViewModel generatedMapViewModel;
@@ -36,22 +41,21 @@ public class GenerateGraphFragment extends Fragment implements GraphGeneratorAct
     private static final int MAXIMUM_AMOUNT_OF_NODES = 12;
     private static final int MINIMUM_AMOUNT_OF_NODES = 5;
 
-    public GenerateGraphFragment() {
+    public SecondActivityFragment() {
         // Required empty public constructor
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        generatedMapViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(GeneratedMapViewModel.class);
-        return inflater.inflate(R.layout.fragment_generate_graph, container, false);
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_second_activity, container, false);
     }
 
     @Override
@@ -86,41 +90,45 @@ public class GenerateGraphFragment extends Fragment implements GraphGeneratorAct
 
         //typ "cervene cary", ktera se nad grafem vykresli
         if (!type.isEmpty()){
-            switch (type){
-                case "cesta":
-                    graphGeneratedView.setRedLineList(PathGenerator.generateCesta(graphGeneratedView.getMap()));
-                    graphGeneratedView.invalidate();
-                    break;
-                case "tah":
-                    graphGeneratedView.setRedLineList(PathGenerator.generateTah(graphGeneratedView.getMap()));
-                    graphGeneratedView.invalidate();
-                    break;
-                case "kruznice":
-                    graphGeneratedView.setRedLineList(PathGenerator.generateKruznice(graphGeneratedView.getMap()));
-                    graphGeneratedView.invalidate();
-                    break;
-            }
+
         }
     }
 
+    public void onButtonPressed(Uri uri) {
+        if (mListener != null) {
+            mListener.onFragmentInteraction(uri);
+        }
+    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        Map map = graphGeneratedView.getMap();
-        generatedMapViewModel.setMap(map);
+        mListener = null;
     }
 
-    //zmeni typ vykresleni, predava se jako parametr, protoze nejde volat metodu na view, ktere neni jeste vytvoreno
-    @Override
-    public void changeEducationGraph(String type) {
-       this.type = type;
-    }
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
 
+        void onFragmentInteraction(Uri uri);
+    }
 }

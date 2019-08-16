@@ -24,8 +24,7 @@ import cz.uhk.graphstheory.util.PathGenerator;
  */
 public class GraphGeneratedView extends View {
 
-    private static final int MAXIMUM_AMOUNT_OF_NODES = 12;
-    private static final int MINIMUM_AMOUNT_OF_NODES = 5;
+
     private Bitmap mBitmap;
     private Canvas mCanvas;
     private Paint mBitmapPaint = new Paint(Paint.DITHER_FLAG);
@@ -78,29 +77,6 @@ public class GraphGeneratedView extends View {
 
         mBitmap = Bitmap.createBitmap(displayWidth, displayHeight, Bitmap.Config.ARGB_8888);//vytvoření bitmapy pro kresleni
         mCanvas = new Canvas(mBitmap);  //předá se to cavasu
-    }
-
-    public void generateRandomMapAndSetPath(int height, int width){
-        int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
-        if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES) amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
-        setMap(GraphGenerator.generateMap(height, width, BRUSH_SIZE, amountOfEdges));
-        redLineList = PathGenerator.generateCesta(getMap());
-    }
-
-    public void changePathGenerator(String method){
-        switch (method){
-            case "cesta":
-                redLineList = PathGenerator.generateCesta(getMap());
-                invalidate();
-                break;
-            case "tah":
-                redLineList = PathGenerator.generateTah(getMap());
-                invalidate();
-                break;
-            case "kruznice":
-               redLineList = PathGenerator.generateKruznice(getMap());
-                break;
-        }
     }
 
     /**
@@ -266,5 +242,17 @@ public class GraphGeneratedView extends View {
             redLineList.add(new Coordinate(path.get(i).getTo().x, path.get(i).getTo().y));
             invalidate();
         }
+    }
+
+    public int getBrushSize() {
+        return BRUSH_SIZE;
+    }
+
+    public void setRedLineList(ArrayList<Coordinate> redLineList) {
+        this.redLineList = redLineList;
+    }
+
+    public void invalidateView(){
+        invalidate();
     }
 }

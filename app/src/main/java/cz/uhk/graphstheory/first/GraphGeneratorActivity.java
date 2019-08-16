@@ -11,6 +11,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -28,6 +29,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Objects;
@@ -37,6 +39,7 @@ import cz.uhk.graphstheory.database.DatabaseConnector;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.TabLayoutFragment;
+import cz.uhk.graphstheory.model.User;
 import cz.uhk.graphstheory.second.SecondActivity;
 import cz.uhk.graphstheory.util.GraphChecker;
 
@@ -54,6 +57,8 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
     private DrawingFragmentListener drawingFragmentListener;
 
     private DatabaseConnector databaseConnector;
+    TextView navigationDrawerName;
+    TextView navigationDrawerEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,6 +147,19 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.settings_options, menu);
+
+        //set current user to navigation drawer
+        navigationDrawerName = findViewById(R.id.navigation_header_name);
+        navigationDrawerEmail = findViewById(R.id.navigation_header_email);
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null){
+            navigationDrawerEmail.setText(currentUser.getEmail());
+            User user = databaseConnector.findUser(Objects.requireNonNull(currentUser.getEmail()));
+            if (user != null){
+                navigationDrawerName.setText(user.getNickName());
+            }
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 

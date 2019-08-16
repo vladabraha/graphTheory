@@ -100,13 +100,18 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
                 }
             }
         });
-
-
     }
 
     @Override
     protected GenerateGraphFragment getGraphFragment() {
         return new GenerateGraphFragment();
+    }
+
+    @Override
+     protected void changeToTextFragment(){
+        super.changeToTextFragment();
+        //todo dodelat predani spravneho stringu
+        textFragment.setEducationText("tada");
     }
 
     @Override
