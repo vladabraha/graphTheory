@@ -15,23 +15,27 @@
         <item
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/ic_menu_manage"
-            android:title="@string/menu_slideshow" />
+            android:title="@string/menu_third" />
         <item
             android:id="@+id/nav_tools"
             android:icon="@drawable/ic_menu_manage"
-            android:title="@string/menu_tools" />
+            android:title="@string/menu_fourth" />
+        <item
+            android:id="@+id/nav_share"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/menu_fifth" />
+        <item
+            android:id="@+id/nav_send"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/menu_sixth" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="@string/action_settings">
         <menu>
             <item
-                android:id="@+id/nav_share"
+                android:id="@+id/nav_setting"
                 android:icon="@drawable/ic_menu_manage"
-                android:title="@string/menu_share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_manage"
-                android:title="@string/menu_send" />
+                android:title="@string/action_settings" />
         </menu>
     </item>
 

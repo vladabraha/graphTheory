@@ -89,7 +89,6 @@ public class GraphGeneratedView extends View {
 
     public void changePathGenerator(String method){
         switch (method){
-            //todo dodelat volani generatoru pro dalsi moznosti (cesta, sled, kruznice...)
             case "cesta":
                 redLineList = PathGenerator.generateCesta(getMap());
                 invalidate();

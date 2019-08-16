@@ -67,7 +67,7 @@ class DatabaseConnector {
         return false
     }
 
-    private fun findUser(email: String): User? {
+    fun findUser(email: String): User? {
         for (user in users) {
             if (user.email == email) return user
         }
@@ -111,4 +111,5 @@ class DatabaseConnector {
         }
         return true
     }
+
 }

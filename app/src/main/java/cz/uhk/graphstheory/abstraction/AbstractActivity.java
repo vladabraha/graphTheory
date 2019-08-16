@@ -9,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,14 +24,20 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Objects;
 
 import cz.uhk.graphstheory.DrawingFragment;
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.TabLayoutFragment;
+import cz.uhk.graphstheory.database.DatabaseConnector;
 import cz.uhk.graphstheory.first.GenerateGraphFragment;
 import cz.uhk.graphstheory.first.GraphGeneratorActivity;
 import cz.uhk.graphstheory.first.TextFragment;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
+import cz.uhk.graphstheory.model.User;
 import cz.uhk.graphstheory.second.SecondActivity;
 import cz.uhk.graphstheory.util.GraphChecker;
 
@@ -42,6 +49,10 @@ public abstract class AbstractActivity extends AppCompatActivity implements Navi
     private GenerateGraphFragment generateGraphFragment;
     private FloatingActionButton floatingActionButton;
     private NavigationView navigationView;
+    private FirebaseAuth mAuth;
+    private DatabaseConnector databaseConnector;
+    TextView navigationDrawerName;
+    TextView navigationDrawerEmail ;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +60,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements Navi
         setContentView(R.layout.activity_graph_generator);
         floatingActionButton = findViewById(R.id.floating_action_button_generate_graph);
 
+        databaseConnector = new DatabaseConnector();
 
         //for navigation drawer
         Toolbar toolbar = findViewById(R.id.graph_generator_toolbar);
@@ -68,10 +80,29 @@ public abstract class AbstractActivity extends AppCompatActivity implements Navi
 
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth = FirebaseAuth.getInstance();
+    }
+
+
 
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.settings_options, menu);
+
+        //set current user to navigation drawer
+        navigationDrawerName = findViewById(R.id.navigation_header_name);
+        navigationDrawerEmail = findViewById(R.id.navigation_header_email);
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null){
+            navigationDrawerEmail.setText(currentUser.getEmail());
+            User user = databaseConnector.findUser(Objects.requireNonNull(currentUser.getEmail()));
+            if (user != null){
+                navigationDrawerName.setText(user.getNickName());
+            }
+        }
         return super.onCreateOptionsMenu(menu);
     }
 

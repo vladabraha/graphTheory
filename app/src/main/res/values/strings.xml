@@ -15,12 +15,15 @@
     <string name="line">hrana</string>
     <string name="path">cesta</string>
 
-    <string name="menu_first">Cesty</string>
-    <string name="menu_second">Dalsi</string>
-    <string name="menu_slideshow">Slideshow</string>
-    <string name="menu_tools">Tools</string>
-    <string name="menu_share">Share</string>
-    <string name="menu_send">Send</string>
+    <!--vyjížděcí menu-->
+    <string name="menu_first">Cesta, tah, kružnice</string>
+    <string name="menu_second">Most a artikulace</string>
+    <string name="menu_third">Slideshow</string>
+    <string name="menu_fourth">Tools</string>
+    <string name="menu_fifth">Share</string>
+    <string name="menu_sixth">Send</string>
+
+
     <string name="example_text">
         <h1>Zkušební nadpis</h1>
         <p> takovýhle text je v odstavci </p>
