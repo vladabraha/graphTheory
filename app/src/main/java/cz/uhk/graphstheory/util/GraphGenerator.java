@@ -35,7 +35,7 @@ public class GraphGenerator {
      * @param circlesPoints nodes which should be connected
      * @return list of lines (connecting nodes)
      */
-    private static ArrayList<CustomLine> generateRandomEdges(ArrayList<Coordinate> circlesPoints) {
+    public static ArrayList<CustomLine> generateRandomEdges(ArrayList<Coordinate> circlesPoints) {
         int amountOfNodes = circlesPoints.size();
         int maximumOfEdges = (amountOfNodes * (amountOfNodes - 1)) / 2; //viz. definice uplneho grafu
         int amountOfEdges = (int) (Math.random() * (maximumOfEdges - 1)); //nahodny pocet hran
@@ -179,4 +179,6 @@ public class GraphGenerator {
         } while (shouldRun);
         return coordinateArrayList;
     }
+
+
 }

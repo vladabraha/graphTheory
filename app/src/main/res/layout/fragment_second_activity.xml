@@ -6,7 +6,7 @@
     tools:context=".second.SecondActivityFragment">
 
     <cz.uhk.graphstheory.first.GraphGeneratedView
-        android:id="@+id/graphGeneratedView"
+        android:id="@+id/educationFragment"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 

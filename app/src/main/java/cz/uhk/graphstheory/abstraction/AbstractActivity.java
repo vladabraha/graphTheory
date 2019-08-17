@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -46,7 +47,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements Navi
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
     private BottomNavigationView bottomNavigationView;
-    private GenerateGraphFragment generateGraphFragment;
+    private Fragment educationFragment;
     private FloatingActionButton floatingActionButton;
     private NavigationView navigationView;
     private FirebaseAuth mAuth;
@@ -71,7 +72,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements Navi
 
         drawingFragment = new DrawingFragment();
         textFragment = new TextFragment();
-        generateGraphFragment = getGraphFragment();
+        educationFragment = getGraphFragment();
 
         TabLayoutFragment tabLayoutFragment = new TabLayoutFragment();
         fragmentTransaction.add(R.id.generator_activity_group, tabLayoutFragment);
@@ -159,9 +160,9 @@ public abstract class AbstractActivity extends AppCompatActivity implements Navi
                 }
             }, 5000);
 
-        } else if (fragmentManager.getFragments().contains(generateGraphFragment)) {
+        } else if (fragmentManager.getFragments().contains(educationFragment)) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.remove(generateGraphFragment);
+            fragmentTransaction.remove(educationFragment);
             fragmentTransaction.add(R.id.generator_activity_group, drawingFragment);
             fragmentTransaction.commit();
             showBottomNavigationView();
@@ -181,9 +182,9 @@ public abstract class AbstractActivity extends AppCompatActivity implements Navi
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         //zkontroluje, že už tam neni drawing fragment a kdyžtak tam hodi text fragment
-        if (fragmentManager.getFragments().contains(generateGraphFragment)) {
+        if (fragmentManager.getFragments().contains(educationFragment)) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.remove(generateGraphFragment);
+            fragmentTransaction.remove(educationFragment);
             fragmentTransaction.add(R.id.generator_activity_group, textFragment);
             fragmentTransaction.commit();
             hideBottomNavigationView();
@@ -205,14 +206,14 @@ public abstract class AbstractActivity extends AppCompatActivity implements Navi
         if (fragmentManager.getFragments().contains(textFragment)) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.remove(textFragment);
-            fragmentTransaction.add(R.id.generator_activity_group, generateGraphFragment);
+            fragmentTransaction.add(R.id.generator_activity_group, educationFragment);
             fragmentTransaction.commit();
             hideBottomNavigationView();
             floatingActionButton.hide();
         } else if (fragmentManager.getFragments().contains(drawingFragment)) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.remove(drawingFragment);
-            fragmentTransaction.add(R.id.generator_activity_group, generateGraphFragment);
+            fragmentTransaction.add(R.id.generator_activity_group, educationFragment);
             fragmentTransaction.commit();
             hideBottomNavigationView();
             floatingActionButton.hide();
@@ -227,6 +228,7 @@ public abstract class AbstractActivity extends AppCompatActivity implements Navi
 
         if (id == R.id.paths) {
             // Handle the camera action
+            //todo start activity and finish this one
             Intent notificationIntent = new Intent(this, GraphGeneratorActivity.class);
             startActivity(notificationIntent);
 
@@ -249,8 +251,8 @@ public abstract class AbstractActivity extends AppCompatActivity implements Navi
         return textFragment;
     }
 
-    public GenerateGraphFragment getGenerateGraphFragment() {
-        return generateGraphFragment;
+    public Fragment getGenerateGraphFragment() {
+        return educationFragment;
     }
 
     public BottomNavigationView getBottomNavigationView() {
@@ -271,6 +273,6 @@ public abstract class AbstractActivity extends AppCompatActivity implements Navi
      *
      * @return Fragment
      */
-    protected abstract GenerateGraphFragment getGraphFragment();
+    protected abstract Fragment getGraphFragment();
 }
 

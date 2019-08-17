@@ -10,6 +10,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -19,7 +20,6 @@ import cz.uhk.graphstheory.DrawingFragment;
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.TabLayoutFragment;
 import cz.uhk.graphstheory.abstraction.AbstractActivity;
-import cz.uhk.graphstheory.first.GenerateGraphFragment;
 import cz.uhk.graphstheory.first.TextFragment;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
 import cz.uhk.graphstheory.util.GraphChecker;
@@ -29,7 +29,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
     private BottomNavigationView bottomNavigationView;
-    private GenerateGraphFragment generateGraphFragment;
+    private Fragment educationGraphFragment;
     private FloatingActionButton floatingActionButton;
 
     private DrawingFragmentListener drawingFragmentListener;
@@ -46,7 +46,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
         //get instance of abstraction object
         textFragment = getTextFragment();
         drawingFragment = getDrawingFragment();
-        generateGraphFragment = getGenerateGraphFragment();
+        educationGraphFragment = getGenerateGraphFragment();
         bottomNavigationView = getBottomNavigationView();
         floatingActionButton = getFloatingActionButton();
 
@@ -55,7 +55,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
             @Override
             public void onClick(View v) {
                 //todo tady osetrit co dal
-                boolean isValid = GraphChecker.checkIfGraphContainsCesta(drawingFragment.getUserGraph());
+                boolean isValid = GraphChecker.chechIfGraphIsBipartite(drawingFragment.getUserGraph());
                 Toast.makeText(SecondActivity.this, String.valueOf(isValid), Toast.LENGTH_LONG).show();
 //                DatabaseConnector databaseConnector = new DatabaseConnector();
 //                databaseConnector.writeFirstActivityValue("test");
@@ -103,8 +103,8 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
     }
 
     @Override
-    protected GenerateGraphFragment getGraphFragment() {
-        return new GenerateGraphFragment();
+    protected Fragment getGraphFragment() {
+        return new SecondActivityFragment();
     }
 
     @Override

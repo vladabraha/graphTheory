@@ -57,7 +57,7 @@ public class GenerateGraphFragment extends Fragment implements GraphGeneratorAct
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        graphGeneratedView = Objects.requireNonNull(getView()).findViewById(R.id.graphGeneratedView);
+        graphGeneratedView = Objects.requireNonNull(getView()).findViewById(R.id.eductionGraphView);
         DisplayMetrics metrics = new DisplayMetrics();
         Objects.requireNonNull(getActivity()).getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
         graphGeneratedView.init(metrics);

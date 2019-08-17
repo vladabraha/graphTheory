@@ -67,4 +67,9 @@ public class GraphChecker {
             return true;
         }else return startingLine.getFrom().equal(lastLine.getFrom());
     }
+
+    public static boolean chechIfGraphIsBipartite(Map map){
+        //todo dodelat implementtaci checkeru
+        return false;
+    }
 }

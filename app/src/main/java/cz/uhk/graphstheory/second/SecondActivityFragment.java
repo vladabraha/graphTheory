@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -14,10 +15,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.first.GraphGeneratedView;
+import cz.uhk.graphstheory.model.Coordinate;
+import cz.uhk.graphstheory.model.CustomLine;
 import cz.uhk.graphstheory.model.GeneratedMapViewModel;
 import cz.uhk.graphstheory.model.Map;
 import cz.uhk.graphstheory.util.GraphGenerator;
@@ -54,6 +58,8 @@ public class SecondActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        //getView modal for current activity
+        generatedMapViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(GeneratedMapViewModel.class);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_second_activity, container, false);
     }
@@ -61,7 +67,7 @@ public class SecondActivityFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        graphGeneratedView = Objects.requireNonNull(getView()).findViewById(R.id.graphGeneratedView);
+        graphGeneratedView = Objects.requireNonNull(getView()).findViewById(R.id.educationFragment);
         DisplayMetrics metrics = new DisplayMetrics();
         Objects.requireNonNull(getActivity()).getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
         graphGeneratedView.init(metrics);
@@ -76,22 +82,38 @@ public class SecondActivityFragment extends Fragment {
                     width = view.getMeasuredWidth();
                     height = view.getMeasuredHeight();
                     if (width != 0) {
+
+                        //set init bipartitní graf educational fragment
                         int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
                         if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES) amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
                         int BRUSH_SIZE = graphGeneratedView.getBrushSize();
-                        Map mapToSet = GraphGenerator.generateMap(height, width, BRUSH_SIZE, amountOfEdges);
+                        ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfEdges);
+
+                        //myšlenka - mam body, vezmu polovinu a nějak je spojim
+                        //vezmu druhou polovinu a nejak je spojim. Mezi prvni a druhou půlkou neni žádný propoj - bipartitni graf
+                        ArrayList<Coordinate> firstPartOfNodes  = new ArrayList<>();
+                        ArrayList<Coordinate> secondPartOfNodes = new ArrayList<>();
+                        for (int i = 0; i < nodesToSet.size() - 1 ; i++){
+                            if (i < (nodesToSet.size() / 2)){
+                                firstPartOfNodes.add(nodesToSet.get(i));
+                            }else {
+                                secondPartOfNodes.add(nodesToSet.get(i));
+                            }
+                        }
+
+                        //todo rename variables
+                        ArrayList<CustomLine> firstPartOfBiparite = GraphGenerator.generateRandomEdges(firstPartOfNodes);
+                        ArrayList<CustomLine> secondPartOfBiparite = GraphGenerator.generateRandomEdges(secondPartOfNodes);
+
+                        firstPartOfBiparite.addAll(secondPartOfBiparite);
+                        Map mapToSet = new Map(firstPartOfBiparite, nodesToSet);
                         graphGeneratedView.setMap(mapToSet);
-                        graphGeneratedView.setRedLineList(PathGenerator.generateCesta(graphGeneratedView.getMap()));
+//                        graphGeneratedView.setRedLineList(PathGenerator.generateCesta(graphGeneratedView.getMap()));
                     }
                     disableListener = true;
                 }
             }
         });
-
-        //typ "cervene cary", ktera se nad grafem vykresli
-        if (!type.isEmpty()){
-
-        }
     }
 
     public void onButtonPressed(Uri uri) {
@@ -103,17 +125,21 @@ public class SecondActivityFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+        //vhodi chybu pokud neni implementovany listener
+//        if (context instanceof OnFragmentInteractionListener) {
+//            mListener = (OnFragmentInteractionListener) context;
+//        } else {
+//            throw new RuntimeException(context.toString()
+//                    + " must implement OnFragmentInteractionListener");
+//        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        //set current map to view modal when fragment detached
+        Map map = graphGeneratedView.getMap();
+        generatedMapViewModel.setMap(map);
         mListener = null;
     }
 
