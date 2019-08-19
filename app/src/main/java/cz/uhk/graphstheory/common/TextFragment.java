@@ -1,4 +1,4 @@
-package cz.uhk.graphstheory.first;
+package cz.uhk.graphstheory.common;
 
 import android.content.Context;
 import android.os.Bundle;

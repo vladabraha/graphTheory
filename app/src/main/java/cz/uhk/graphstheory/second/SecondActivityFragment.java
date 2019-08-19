@@ -19,13 +19,12 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import cz.uhk.graphstheory.R;
-import cz.uhk.graphstheory.first.GraphGeneratedView;
+import cz.uhk.graphstheory.common.GraphGeneratedView;
 import cz.uhk.graphstheory.model.Coordinate;
 import cz.uhk.graphstheory.model.CustomLine;
 import cz.uhk.graphstheory.model.GeneratedMapViewModel;
 import cz.uhk.graphstheory.model.Map;
 import cz.uhk.graphstheory.util.GraphGenerator;
-import cz.uhk.graphstheory.util.PathGenerator;
 
 
 public class SecondActivityFragment extends Fragment {
@@ -56,18 +55,18 @@ public class SecondActivityFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         //getView modal for current activity
         generatedMapViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(GeneratedMapViewModel.class);
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_second_activity, container, false);
+        return inflater.inflate(R.layout.fragment_generate_graph, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        graphGeneratedView = Objects.requireNonNull(getView()).findViewById(R.id.educationFragment);
+        graphGeneratedView = Objects.requireNonNull(getView()).findViewById(R.id.eductionGraphView);
         DisplayMetrics metrics = new DisplayMetrics();
         Objects.requireNonNull(getActivity()).getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
         graphGeneratedView.init(metrics);

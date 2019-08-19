@@ -13,19 +13,19 @@
             android:icon="@drawable/ic_menu_manage"
             android:title="@string/menu_second" />
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/nav_third"
             android:icon="@drawable/ic_menu_manage"
             android:title="@string/menu_third" />
         <item
-            android:id="@+id/nav_tools"
+            android:id="@+id/nav_fourth"
             android:icon="@drawable/ic_menu_manage"
             android:title="@string/menu_fourth" />
         <item
-            android:id="@+id/nav_share"
+            android:id="@+id/nav_fifth"
             android:icon="@drawable/ic_menu_manage"
             android:title="@string/menu_fifth" />
         <item
-            android:id="@+id/nav_send"
+            android:id="@+id/nav_sixth"
             android:icon="@drawable/ic_menu_manage"
             android:title="@string/menu_sixth" />
     </group>

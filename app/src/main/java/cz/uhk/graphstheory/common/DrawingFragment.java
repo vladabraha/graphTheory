@@ -1,4 +1,4 @@
-package cz.uhk.graphstheory;
+package cz.uhk.graphstheory.common;
 
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 
 import java.util.Objects;
 
+import cz.uhk.graphstheory.R;
+import cz.uhk.graphstheory.TabActivity;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
 import cz.uhk.graphstheory.model.DrawMapViewModel;
 import cz.uhk.graphstheory.model.Map;

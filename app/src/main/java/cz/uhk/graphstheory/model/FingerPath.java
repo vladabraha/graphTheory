@@ -1,4 +1,4 @@
-package cz.uhk.graphstheory;
+package cz.uhk.graphstheory.model;
 
 
 import android.graphics.Path;

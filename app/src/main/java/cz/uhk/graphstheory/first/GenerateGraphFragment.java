@@ -14,6 +14,7 @@ import android.view.ViewTreeObserver;
 
 import java.util.Objects;
 
+import cz.uhk.graphstheory.common.GraphGeneratedView;
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.model.GeneratedMapViewModel;
 import cz.uhk.graphstheory.model.Map;

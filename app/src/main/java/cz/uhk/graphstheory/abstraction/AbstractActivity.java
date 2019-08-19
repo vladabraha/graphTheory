@@ -1,19 +1,13 @@
 package cz.uhk.graphstheory.abstraction;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -30,17 +24,15 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Objects;
 
-import cz.uhk.graphstheory.DrawingFragment;
+import cz.uhk.graphstheory.common.DrawingFragment;
 import cz.uhk.graphstheory.R;
-import cz.uhk.graphstheory.TabLayoutFragment;
+import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
-import cz.uhk.graphstheory.first.GenerateGraphFragment;
 import cz.uhk.graphstheory.first.GraphGeneratorActivity;
-import cz.uhk.graphstheory.first.TextFragment;
-import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
+import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.model.User;
 import cz.uhk.graphstheory.second.SecondActivity;
-import cz.uhk.graphstheory.util.GraphChecker;
+import cz.uhk.graphstheory.third.ThirdActivity;
 
 public abstract class AbstractActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -234,6 +226,9 @@ public abstract class AbstractActivity extends AppCompatActivity implements Navi
 
         } else if (id == R.id.dalsi) {
             Intent notificationIntent = new Intent(this, SecondActivity.class);
+            startActivity(notificationIntent);
+        }else if (id == R.id.nav_third){
+            Intent notificationIntent = new Intent(this, ThirdActivity.class);
             startActivity(notificationIntent);
         }
 

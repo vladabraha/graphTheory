@@ -1,9 +1,4 @@
-package cz.uhk.graphstheory.second;
-
-import android.os.Bundle;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
+package cz.uhk.graphstheory.third;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -11,6 +6,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -22,9 +22,10 @@ import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.abstraction.AbstractActivity;
 import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
+import cz.uhk.graphstheory.second.SecondActivityFragment;
 import cz.uhk.graphstheory.util.GraphChecker;
 
-public class SecondActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface {
+public class ThirdActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface  {
 
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
@@ -37,7 +38,6 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
         //for navigation drawer
         Toolbar toolbar = findViewById(R.id.graph_generator_toolbar);
@@ -54,7 +54,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
         floatingActionButton.setOnClickListener(v -> {
             //todo tady osetrit co dal
             boolean isValid = GraphChecker.chechIfGraphIsBipartite(drawingFragment.getUserGraph());
-            Toast.makeText(SecondActivity.this, String.valueOf(isValid), Toast.LENGTH_LONG).show();
+            Toast.makeText(ThirdActivity.this, String.valueOf(isValid), Toast.LENGTH_LONG).show();
 //                DatabaseConnector databaseConnector = new DatabaseConnector();
 //                databaseConnector.writeFirstActivityValue("test");
         });
@@ -67,7 +67,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.dalsi); //tady treba hodit, co se ma zvyraznit
+        navigationView.setCheckedItem(R.id.nav_third); //tady treba hodit, co se ma zvyraznit
 
         bottomNavigationView = findViewById(R.id.graph_generator_navigation);
         bottomNavigationView.setSelectedItemId(R.id.circle);
@@ -105,7 +105,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
     }
 
     @Override
-     protected void changeToTextFragment(){
+    protected void changeToTextFragment(){
         super.changeToTextFragment();
         //todo dodelat predani spravneho stringu
         textFragment.setEducationText("tada");
@@ -130,6 +130,5 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
             super.onBackPressed();
         }
     }
-
 
 }

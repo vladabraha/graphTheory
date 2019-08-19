@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:fillViewport="true"
     android:scrollbars="vertical"
-    tools:context=".first.TextFragment">
+    tools:context=".common.TextFragment">
 
     <TextView
         android:id="@+id/textView_education_description"

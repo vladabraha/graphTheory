@@ -16,8 +16,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import cz.uhk.graphstheory.R;
+import cz.uhk.graphstheory.common.DrawingFragment;
+import cz.uhk.graphstheory.common.TabLayoutFragment;
+import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.first.GenerateGraphFragment;
-import cz.uhk.graphstheory.first.TextFragment;
 
 public class TabActivity extends AppCompatActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, NavigationView.OnNavigationItemSelectedListener {
 

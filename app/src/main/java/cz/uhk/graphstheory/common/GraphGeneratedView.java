@@ -1,4 +1,4 @@
-package cz.uhk.graphstheory.first;
+package cz.uhk.graphstheory.common;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

@@ -1,4 +1,4 @@
-package cz.uhk.graphstheory;
+package cz.uhk.graphstheory.common;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import cz.uhk.graphstheory.model.Coordinate;
 
 import cz.uhk.graphstheory.model.CustomLine;
+import cz.uhk.graphstheory.model.FingerPath;
 import cz.uhk.graphstheory.model.Map;
 
 /**

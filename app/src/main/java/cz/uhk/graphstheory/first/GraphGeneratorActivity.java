@@ -34,11 +34,12 @@ import android.widget.Toast;
 
 import java.util.Objects;
 
-import cz.uhk.graphstheory.DrawingFragment;
+import cz.uhk.graphstheory.common.DrawingFragment;
+import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
 import cz.uhk.graphstheory.R;
-import cz.uhk.graphstheory.TabLayoutFragment;
+import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.model.User;
 import cz.uhk.graphstheory.second.SecondActivity;
 import cz.uhk.graphstheory.util.GraphChecker;

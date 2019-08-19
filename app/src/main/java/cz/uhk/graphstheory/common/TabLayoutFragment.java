@@ -1,4 +1,4 @@
-package cz.uhk.graphstheory;
+package cz.uhk.graphstheory.common;
 
 
 import android.content.Context;
@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 
 
 import java.util.Objects;
+
+import cz.uhk.graphstheory.R;
 
 
 /**
