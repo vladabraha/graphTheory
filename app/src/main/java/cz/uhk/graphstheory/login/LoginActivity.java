@@ -83,14 +83,16 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
+                        //this method is called asynchronously -> never called as classic method
                         Log.d("TAG", "createUserWithEmail:success");
-                        createUser(selectedTeam);
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w("TAG", "createUserWithEmail:failure", task.getException());
                         Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                     }
-                });
+                }).addOnSuccessListener(this, task -> {
+                    createUser(selectedTeam);
+        });
     }
 
     private void createUser(String selectedTeam) {
