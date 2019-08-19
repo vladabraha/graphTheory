@@ -58,7 +58,7 @@ public class GraphChecker {
         return true;
     }
 
-    public static boolean checkIfGraphContainsKruznice(Map map){
+    public static boolean checkIfGraphContainsCycle(Map map){
         ArrayList<CustomLine> redLineList = map.getRedLineList();
         if (redLineList.size() < 2) return false;
         CustomLine startingLine = redLineList.get(0);
@@ -69,7 +69,72 @@ public class GraphChecker {
     }
 
     public static boolean chechIfGraphIsBipartite(Map map){
-        //todo dodelat implementtaci checkeru
-        return false;
+        ArrayList<CustomLine> customLines = map.getCustomLines();
+        ArrayList<CustomLine> customLinesCloned = (ArrayList<CustomLine>) map.getCustomLines().clone();
+        ArrayList<Coordinate> alreadyFound = new ArrayList<>();
+        ArrayList<Coordinate> circles = map.getCircles();
+
+        if (customLines.size() < 2) return false;
+
+        //vezmi prvni primku, hod si z ni body do seznamu
+        //projdi vsechny primky a koukni se, jestli maji jeden bod koncici v nekterem z techto nodu
+        //pokud ano, odstran tutu primku z dalsiho hledani a nove propojujici bod pridej do seznamu (pouze pokud tam jeste neni)
+        //na konci porovnej, zdali je seznam s body stejne velky jako puvodni, pokud ano, neni tam zadny bipartnitni, jinak je
+        alreadyFound.add(customLines.get(0).getFrom());
+        alreadyFound.add(customLines.get(0).getTo());
+        customLinesCloned.remove(0);
+
+        boolean shouldRun;
+        boolean shouldBreak; //this is for currentModificationException
+        do {
+            shouldBreak = false;
+            for (CustomLine customLine : customLinesCloned){
+                for (Coordinate coordinate : alreadyFound){
+                    if (customLine.getFrom().equal(coordinate)){ //pokud je bod uz v nasem prvotnim seznamu
+                           //kontrola, ze bod jeste nemame v seznamu
+                        boolean isItNewNode = true;
+                        for (Coordinate coordinateAlreadyAdded : alreadyFound){
+                            if (coordinateAlreadyAdded.equal(customLine.getTo())){
+                                isItNewNode = false;
+                            }
+                        }
+                        customLinesCloned.remove(customLine); //smazani, abychom to nehledali do nekonecna, hledame od prazdneho seznamu
+                        shouldBreak = true;
+                        if (isItNewNode){ //pokud nemame, tak ho pridej do seznamu
+                            alreadyFound.add(customLine.getTo());
+                            break;
+                        }
+                    }else if(customLine.getTo().equal(coordinate)){
+                        boolean isItNewNode = true;
+                        for (Coordinate coordinateAlreadyAdded : alreadyFound){
+                            if (coordinateAlreadyAdded.equal(customLine.getFrom())){
+                                isItNewNode = false;
+                            }
+                        }
+                        if (isItNewNode){
+                            alreadyFound.add(customLine.getFrom());
+                            break;
+                        }
+                        customLinesCloned.remove(customLine); //smazani, abychom to nehledali do nekonecna, hledame od prazdneho seznamu
+                        shouldBreak = true;
+                    }
+                }
+                if (shouldBreak) break;
+            }
+            //check if list of lines contains any point heading to our list of nodes
+            //if not, algorithm stops
+            shouldRun = false;
+            for (CustomLine customLine : customLinesCloned){
+                for (Coordinate coordinate : alreadyFound){
+                    if (customLine.getTo().equal(coordinate) || customLine.getFrom().equal(coordinate)){
+                        shouldRun = true;
+                        break;
+                    }
+                }
+                if (shouldRun) break;
+            }
+        }while (shouldRun);
+
+        return alreadyFound.size() != circles.size();
     }
 }

@@ -99,7 +99,7 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
                     Toast.makeText(GraphGeneratorActivity.this, "tah je" + isValid, Toast.LENGTH_LONG).show();
                     break;
                 case 2:
-                    isValid = GraphChecker.checkIfGraphContainsKruznice(drawingFragment.getUserGraph());
+                    isValid = GraphChecker.checkIfGraphContainsCycle(drawingFragment.getUserGraph());
                     Toast.makeText(GraphGeneratorActivity.this, "kruznice je" + isValid, Toast.LENGTH_LONG).show();
                     break;
             }
