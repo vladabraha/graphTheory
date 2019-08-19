@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import cz.uhk.graphstheory.R;
+import cz.uhk.graphstheory.abstraction.AbstractFragment;
 import cz.uhk.graphstheory.common.GraphGeneratedView;
 import cz.uhk.graphstheory.model.Coordinate;
 import cz.uhk.graphstheory.model.CustomLine;
@@ -27,19 +28,13 @@ import cz.uhk.graphstheory.model.Map;
 import cz.uhk.graphstheory.util.GraphGenerator;
 
 
-public class SecondActivityFragment extends Fragment {
-
-    private OnFragmentInteractionListener mListener;
-
-    private GraphGeneratedView graphGeneratedView;
-    private GeneratedMapViewModel generatedMapViewModel;
+public class SecondActivityFragment extends AbstractFragment {
 
     private boolean disableListener = false;
 
     private int width;
     private int height;
 
-    private String type = "";
 
     private static final int MAXIMUM_AMOUNT_OF_NODES = 12;
     private static final int MINIMUM_AMOUNT_OF_NODES = 5;
@@ -50,29 +45,9 @@ public class SecondActivityFragment extends Fragment {
 
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        //getView modal for current activity
-        generatedMapViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(GeneratedMapViewModel.class);
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_generate_graph, container, false);
-    }
-
-    @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        graphGeneratedView = Objects.requireNonNull(getView()).findViewById(R.id.eductionGraphView);
-        DisplayMetrics metrics = new DisplayMetrics();
-        Objects.requireNonNull(getActivity()).getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
-        graphGeneratedView.init(metrics);
-        if (generatedMapViewModel.getMap() != null) {
-            graphGeneratedView.setMap(generatedMapViewModel.getMap());
-        }
+        super.onViewCreated(view, savedInstanceState);
 
         view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -85,7 +60,7 @@ public class SecondActivityFragment extends Fragment {
                         //set init bipartitní graf educational fragment
                         int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
                         if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES) amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
-                        int BRUSH_SIZE = graphGeneratedView.getBrushSize();
+                        int BRUSH_SIZE = getGraphGeneratedView().getBrushSize();
                         ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfEdges);
 
                         //myšlenka - mam body, vezmu polovinu a nějak je spojim
@@ -106,7 +81,7 @@ public class SecondActivityFragment extends Fragment {
 
                         firstPartOfBiparite.addAll(secondPartOfBiparite);
                         Map mapToSet = new Map(firstPartOfBiparite, nodesToSet);
-                        graphGeneratedView.setMap(mapToSet);
+                        getGraphGeneratedView().setMap(mapToSet);
 //                        graphGeneratedView.setRedLineList(PathGenerator.generateCesta(graphGeneratedView.getMap()));
                     }
                     disableListener = true;
@@ -115,45 +90,4 @@ public class SecondActivityFragment extends Fragment {
         });
     }
 
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        //vhodi chybu pokud neni implementovany listener
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        //set current map to view modal when fragment detached
-        Map map = graphGeneratedView.getMap();
-        generatedMapViewModel.setMap(map);
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-
-        void onFragmentInteraction(Uri uri);
-    }
 }
