@@ -14,6 +14,7 @@
         tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".third.ThirdActivity"
+            android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".login.FractionActivity" />
         <activity
@@ -27,6 +28,7 @@
         </activity>
         <activity
             android:name=".second.SecondActivity"
+            android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".first.GraphGeneratorActivity"

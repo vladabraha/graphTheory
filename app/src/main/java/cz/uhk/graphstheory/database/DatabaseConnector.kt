@@ -9,7 +9,7 @@ import cz.uhk.graphstheory.model.User
 
 class DatabaseConnector {
     private val database = FirebaseDatabase.getInstance()
-    private val myRef = database.getReference("first")
+
     private var users = arrayListOf<User>()
 
     init {
@@ -74,23 +74,6 @@ class DatabaseConnector {
         return null
     }
 
-//    fun getFirstActivityValue(): String {
-//
-//        myRef.addValueEventListener(object : ValueEventListener {
-//            override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                // This method is called once with the initial value and again
-//                // whenever data at this location is updated.
-//                val data = dataSnapshot.getValue(String::class.java)
-//                result = data.toString()
-//            }
-//
-//            override fun onCancelled(error: DatabaseError) {
-//                // Failed to read value
-//                Log.w("tag", "Failed to read value.", error.toException())
-//            }
-//        })
-//        return result
-//    }
 
     fun createUserAccount(uuID: String, nickName: String, email: String, team: String) {
         database.getReference("users").child(uuID).child("email").setValue(email)

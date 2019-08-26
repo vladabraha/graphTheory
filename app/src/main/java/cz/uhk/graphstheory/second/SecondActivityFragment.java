@@ -67,7 +67,7 @@ public class SecondActivityFragment extends AbstractFragment {
                         //vezmu druhou polovinu a nejak je spojim. Mezi prvni a druhou půlkou neni žádný propoj - bipartitni graf
                         ArrayList<Coordinate> firstPartOfNodes  = new ArrayList<>();
                         ArrayList<Coordinate> secondPartOfNodes = new ArrayList<>();
-                        for (int i = 0; i < nodesToSet.size() - 1 ; i++){
+                        for (int i = 0; i < nodesToSet.size(); i++){
                             if (i < (nodesToSet.size() / 2)){
                                 firstPartOfNodes.add(nodesToSet.get(i));
                             }else {
@@ -75,12 +75,11 @@ public class SecondActivityFragment extends AbstractFragment {
                             }
                         }
 
-                        //todo rename variables
-                        ArrayList<CustomLine> firstPartOfBiparite = GraphGenerator.generateRandomEdges(firstPartOfNodes);
-                        ArrayList<CustomLine> secondPartOfBiparite = GraphGenerator.generateRandomEdges(secondPartOfNodes);
+                        ArrayList<CustomLine> firstPartOfBipartite = GraphGenerator.generateRandomEdges(firstPartOfNodes);
+                        ArrayList<CustomLine> secondPartOfBipartite = GraphGenerator.generateRandomEdges(secondPartOfNodes);
 
-                        firstPartOfBiparite.addAll(secondPartOfBiparite);
-                        Map mapToSet = new Map(firstPartOfBiparite, nodesToSet);
+                        firstPartOfBipartite.addAll(secondPartOfBipartite);
+                        Map mapToSet = new Map(firstPartOfBipartite, nodesToSet);
                         getGraphGeneratedView().setMap(mapToSet);
 //                        graphGeneratedView.setRedLineList(PathGenerator.generateCesta(graphGeneratedView.getMap()));
                     }
