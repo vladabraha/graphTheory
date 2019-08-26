@@ -90,9 +90,7 @@ public class LoginActivity extends AppCompatActivity {
                         Log.w("TAG", "createUserWithEmail:failure", task.getException());
                         Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                     }
-                }).addOnSuccessListener(this, task -> {
-                    createUser(selectedTeam);
-        });
+                }).addOnSuccessListener(this, task -> createUser(selectedTeam));
     }
 
     private void createUser(String selectedTeam) {

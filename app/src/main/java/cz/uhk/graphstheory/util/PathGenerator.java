@@ -20,7 +20,7 @@ public class PathGenerator {
      */
     public static ArrayList<Coordinate> generateCesta(Map map) {
         int numberOfNodes = map.getCircles().size();
-        int pathLength = (int) (Math.random() * numberOfNodes);
+        int pathLength = (int) Math.round(Math.random() * numberOfNodes);
         if (pathLength < ((map.getCircles().size() / 2) + 1)) pathLength = (map.getCircles().size() / 2) + 1;
 
         List<Integer> usedIndexes = new ArrayList<>(pathLength);
@@ -58,7 +58,6 @@ public class PathGenerator {
         ArrayList<CustomLine> customLines = new ArrayList<>();
 
         ArrayList<Coordinate> tah = new ArrayList<>();
-
 
         for (int i = 0; i < randomNumberOfRedLines; i++){
             boolean find = false;

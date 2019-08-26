@@ -38,29 +38,46 @@ public class GraphGenerator {
     public static ArrayList<CustomLine> generateRandomEdges(ArrayList<Coordinate> circlesPoints) {
         int amountOfNodes = circlesPoints.size();
         int maximumOfEdges = (amountOfNodes * (amountOfNodes - 1)) / 2; //viz. definice uplneho grafu
-        int amountOfEdges = (int) (Math.random() * (maximumOfEdges - 1)); //nahodny pocet hran
-        if (amountOfEdges < 6) amountOfEdges++;
+        int amountOfEdges = (int) Math.round(Math.random() * maximumOfEdges); //nahodny pocet hran
+        if (amountOfEdges < maximumOfEdges) amountOfEdges++;
 
         //vezmeme nahodny uzel na indexu a mrkneme na seznam, se kterymi dalsimi prvky je spojen
         //pokud neni jeste spojen s nahodnym uzlem, je dany uzel pridan do seznamu
         SparseArray<ArrayList<Integer>> connectedNodes = new SparseArray<>(circlesPoints.size());
         int createdEdges = 0;
         int run = 0;
+        int RUN_THRESHOLD = 500;
         do {
             run++;
-            int randomIndex = (int) (Math.random() * (circlesPoints.size() - 1));
-            int randomIndex2 = (int) (Math.random() * (circlesPoints.size() - 1));
-            ArrayList<Integer> listOfConnectedNodes = connectedNodes.valueAt(randomIndex); //nahodny uzel
+            int randomIndex = (int) Math.round(Math.random() * (circlesPoints.size() - 1));
+            int randomIndex2 = (int) Math.round(Math.random() * (circlesPoints.size() - 1));
+            //pro velmi male grafy, kde jsou napr. pouze 2 nody jede algoritmus hrozne dlouho, optimalizace pro tyto pripady
+            if (randomIndex2 == 0 && randomIndex2 == randomIndex) randomIndex2++;
+
+            ArrayList<Integer> listOfConnectedNodes = connectedNodes.get(randomIndex); //nahodny uzel
 
             boolean isThisNumberInList = false;
 
-            if (listOfConnectedNodes == null) {
+            if (listOfConnectedNodes == null || listOfConnectedNodes.isEmpty()) {
                 listOfConnectedNodes = new ArrayList<>(); //pokud jeste nema seznam propojenych vrcholu, tak je vytvoren
             } else {
                 //koukneme, abychome nepridavali 2 stejne uzly
                 for (Integer integer : listOfConnectedNodes) {
                     if (integer.equals(randomIndex2)) {
                         isThisNumberInList = true;
+                    }
+                }
+            }
+            //je potřeba ještě mrknout, zdali už nejsou body propojeny přesně naopak
+            if (!isThisNumberInList) {
+
+                ArrayList<Integer> listOfConnectedNodes2 = connectedNodes.get(randomIndex2); //nahodny uzel
+                if (listOfConnectedNodes2 != null) {
+                    //koukneme, abychome nepridavali 2 stejne uzly
+                    for (Integer integer : listOfConnectedNodes2) {
+                        if (integer.equals(randomIndex)) {
+                            isThisNumberInList = true;
+                        }
                     }
                 }
             }
@@ -72,43 +89,67 @@ public class GraphGenerator {
                 createdEdges++;
             }
 
-        } while (createdEdges < amountOfEdges && run < 500);
+        } while (createdEdges < amountOfEdges && run < RUN_THRESHOLD);
 
         //kontrola, zdali neni nejaky uzel osamocen (graf pak vypada divne)
-        for (int i = 0; i < circlesPoints.size(); i++) { //vezmeme prvni node
+        for (int i = 0; i < circlesPoints.size() - 1; i++) { //vezmeme prvni node
             //sparse array může mít zaplenene jenom nektere indexy (např. když má size 2, tak může mít zaplneny jenom index 1 a 5 a mezitím nic -> velikost 2)
             boolean isNodeConnectedToAnotherNode = false;
             run = 0;
+            //kontrola, zdali v indexu daneho uzlu už nejsou nějaké hodnoty se kterými je uzel propojen (když je na indexu 0 napr. 1, tak nemusi byt na indexu 1 hodnota 0)
+            if (connectedNodes.get(i) == null || connectedNodes.get(i).isEmpty()) {
 
-            for (int j = 0; j < connectedNodes.size(); j++) { //prohledame vsechny seznamy, zdali je v nějakem -> tzn. je pripojen k jinemu
-                //hledani indexu s nenulovym seznamem
-                boolean isIndexNotEmpty = false;
-                ArrayList<Integer> arrayList;
-                int next = 0;
-                do {
-                    run++;
-                    arrayList = connectedNodes.get(j + next);
-                    if (arrayList != null && !arrayList.isEmpty()) {
-                        isIndexNotEmpty = true; //mame index, hura
-                    } else {
-                        next++;
-                    }
-                } while (!isIndexNotEmpty && next < circlesPoints.size() && run < 500);
 
-                if (Objects.requireNonNull(arrayList).contains(i)) { //mrkneme, zdali dany seznam obsahuje naš node
-                    isNodeConnectedToAnotherNode = true; //pokud ano, hura, tenhle node je propojen jdeme na dalsi
-                    break;
-                }
-            }
+                for (int j = 0; j < connectedNodes.size(); j++) { //prohledame vsechny seznamy, zdali je v nějakem -> tzn. je pripojen k jinemu
+                    //hledani indexu s nenulovym seznamem
+                    boolean isIndexNotEmpty = false;
 
-            if (!isNodeConnectedToAnotherNode) { //pokud jsme node nikde v seznamu nenasli, pridameho do nejakeho
-                //hledame dostupny index (nektere mohou byt null)
-                for (int v = 0; v < connectedNodes.size(); v++) {
-                    ArrayList<Integer> arrayList = connectedNodes.get(v);
-                    if (arrayList != null && i != v) {
-                        arrayList.add(i);
-                        connectedNodes.put(v, arrayList);
+                    ArrayList<Integer> arrayList;
+                    int next = 0;
+                    do {
+                        run++;
+                        arrayList = connectedNodes.get(j + next);
+                        if (arrayList != null && !arrayList.isEmpty()) {
+                            isIndexNotEmpty = true; //mame index, hura
+                        } else {
+                            next++;
+                        }
+                    } while (!isIndexNotEmpty && next < circlesPoints.size() && run < RUN_THRESHOLD);
+
+                    if (Objects.requireNonNull(arrayList).contains(i)) { //mrkneme, zdali dany seznam obsahuje naš node
+                        isNodeConnectedToAnotherNode = true; //pokud ano, hura, tenhle node je propojen jdeme na dalsi
                         break;
+                    }
+                }
+
+                if (!isNodeConnectedToAnotherNode) { //pokud jsme node nikde v seznamu nenasli, pridameho do nejakeho
+                    //pokud neni node s ničím spojen, vezmeme náhodný index, který není stejný
+                    //pokud tam jeste neni seznam, tak ho vytvorime
+                    //na daném indexu pridame node do seznamu
+                    int index = 0;
+                    boolean found = false;
+
+                    if (circlesPoints.size() < 2) {
+                        switch (i) {
+                            case 0:
+                                index = 1;
+                            case 1:
+                                index = 0;
+                        }
+                    } else {
+                        do {
+                            index = (int) (Math.random() * circlesPoints.size());
+                            if (i != index) found = true;
+                        } while (!found);
+                    }
+                    ArrayList<Integer> arrayList = connectedNodes.get(index);
+                    if (arrayList != null) {
+                        arrayList.add(i);
+                        connectedNodes.put(index, arrayList);
+                    } else {
+                        arrayList = new ArrayList<>();
+                        arrayList.add(i);
+                        connectedNodes.put(index, arrayList);
                     }
                 }
             }
@@ -119,14 +160,17 @@ public class GraphGenerator {
 
         //projdeme vsechny uzly a projdeme jejich seznamy, se kterymi uzly sousedi jsou spojeni a vytvorime Customeline pro vytvoreni Liny ve View
         for (int i = 0; i < connectedNodes.size(); i++) {
-            ArrayList<Integer> indexesOfNodes = connectedNodes.valueAt(i);
-            if (indexesOfNodes != null && !indexesOfNodes.isEmpty())
+            //dostat další hodnotu ve sparseArray (která může být na jiném indexu)
+            int key = connectedNodes.keyAt(i);
+            // get the object by the key.
+            ArrayList<Integer> indexesOfNodes = connectedNodes.get(key);
+            if (indexesOfNodes != null) {
                 for (Integer integer : indexesOfNodes) {
-                    CustomLine customLine = new CustomLine(circlesPoints.get(i), circlesPoints.get(integer));
+                    CustomLine customLine = new CustomLine(circlesPoints.get(key), circlesPoints.get(integer));
                     edges.add(customLine);
                 }
+            }
         }
-
         return edges;
     }
 

@@ -80,7 +80,6 @@ public abstract class AbstractActivity extends AppCompatActivity implements Navi
     }
 
 
-
     public boolean onCreateOptionsMenu(Menu menu) {
         //todo zjisit, zdali nechám dropdown menu vpravo nahoře
 //        MenuInflater menuInflater = getMenuInflater();
@@ -90,10 +89,10 @@ public abstract class AbstractActivity extends AppCompatActivity implements Navi
         navigationDrawerName = findViewById(R.id.navigation_header_name);
         navigationDrawerEmail = findViewById(R.id.navigation_header_email);
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null){
+        if (currentUser != null) {
             navigationDrawerEmail.setText(currentUser.getEmail());
             User user = databaseConnector.findUser(Objects.requireNonNull(currentUser.getEmail()));
-            if (user != null){
+            if (user != null) {
                 navigationDrawerName.setText(user.getNickName());
             }
         }
@@ -217,19 +216,30 @@ public abstract class AbstractActivity extends AppCompatActivity implements Navi
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         // Handle navigation view item clicks here.
         int id = menuItem.getItemId();
+        //zabrani znovu spusteni pustene aktivity
+        int sessionId = getIntent().getIntExtra("SESSION_ID", 0);
 
         if (id == R.id.paths) {
-            // Handle the camera action
-            //todo start activity and finish this one
-            Intent notificationIntent = new Intent(this, GraphGeneratorActivity.class);
-            startActivity(notificationIntent);
-
+            if (sessionId != 1) {
+                Intent newActivityIntent = new Intent(this, GraphGeneratorActivity.class);
+                newActivityIntent.putExtra("SESSION_ID", 1);
+                finish();
+                startActivity(newActivityIntent);
+            }
         } else if (id == R.id.dalsi) {
-            Intent notificationIntent = new Intent(this, SecondActivity.class);
-            startActivity(notificationIntent);
-        }else if (id == R.id.nav_third){
-            Intent notificationIntent = new Intent(this, ThirdActivity.class);
-            startActivity(notificationIntent);
+            if (sessionId != 2) {
+                Intent newActivityIntent = new Intent(this, SecondActivity.class);
+                newActivityIntent.putExtra("SESSION_ID", 2);
+                finish();
+                startActivity(newActivityIntent);
+            }
+        } else if (id == R.id.nav_third) {
+            if (sessionId != 3) {
+                Intent newActivityIntent = new Intent(this, ThirdActivity.class);
+                newActivityIntent.putExtra("SESSION_ID", 3);
+                finish();
+                startActivity(newActivityIntent);
+            }
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
