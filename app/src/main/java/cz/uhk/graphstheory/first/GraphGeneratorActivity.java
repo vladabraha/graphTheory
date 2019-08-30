@@ -60,8 +60,8 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
     private DrawingFragmentListener drawingFragmentListener;
 
     private DatabaseConnector databaseConnector;
-    TextView navigationDrawerName;
-    TextView navigationDrawerEmail;
+    TextView navigationDrawerName, navigationDrawerEmail;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

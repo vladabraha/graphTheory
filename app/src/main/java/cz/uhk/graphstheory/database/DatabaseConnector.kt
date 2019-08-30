@@ -7,9 +7,9 @@ import com.google.firebase.database.ValueEventListener
 import cz.uhk.graphstheory.model.User
 
 
-class DatabaseConnector {
+class DatabaseConnector() {
     private val database = FirebaseDatabase.getInstance()
-
+    private var updateData : ValuesUpdate? = null
     private var users = arrayListOf<User>()
 
     init {
@@ -24,6 +24,7 @@ class DatabaseConnector {
                         users.add(user)
                     }
                 }
+                updateData?.usersUpdated(users)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -31,6 +32,10 @@ class DatabaseConnector {
             }
         }
         ref.addValueEventListener(postListener)
+    }
+
+    constructor(valuesUpdate : ValuesUpdate) : this() {
+        updateData = valuesUpdate
     }
 
     fun recordUserPoints(userName: String, activity: String) {
@@ -93,6 +98,14 @@ class DatabaseConnector {
             if (user.nickName == nickName) return false
         }
         return true
+    }
+
+    fun getUsers(): ArrayList<User>{
+        return users
+    }
+
+    public interface ValuesUpdate{
+        public fun usersUpdated(users : ArrayList<User>)
     }
 
 }

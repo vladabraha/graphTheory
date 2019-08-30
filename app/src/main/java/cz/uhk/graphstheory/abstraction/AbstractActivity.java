@@ -45,8 +45,7 @@ public abstract class AbstractActivity extends AbstractAppCompactActivity implem
     private NavigationView navigationView;
     private FirebaseAuth mAuth;
     private DatabaseConnector databaseConnector;
-    TextView navigationDrawerName;
-    TextView navigationDrawerEmail;
+    TextView navigationDrawerName, navigationDrawerEmail;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

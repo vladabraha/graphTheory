@@ -21,14 +21,14 @@ public class StatisticsActivity extends AbstractAppCompactActivity implements St
     private StatisticFragment statisticFragment;
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private DatabaseConnector databaseConnector;
+//    private DatabaseConnector databaseConnector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics);
 
-        databaseConnector = new DatabaseConnector();
+//        databaseConnector = new DatabaseConnector();
 
         //for navigation drawer and top drawer
         Toolbar toolbar = findViewById(R.id.statistic_toolbar);

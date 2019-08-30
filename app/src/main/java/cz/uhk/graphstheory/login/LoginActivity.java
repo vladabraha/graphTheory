@@ -79,6 +79,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void registerUser(String email,String password, String selectedTeam) {
+        createUser(selectedTeam);
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
@@ -90,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
                         Log.w("TAG", "createUserWithEmail:failure", task.getException());
                         Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                     }
-                }).addOnSuccessListener(this, task -> createUser(selectedTeam));
+                });
     }
 
     private void createUser(String selectedTeam) {
