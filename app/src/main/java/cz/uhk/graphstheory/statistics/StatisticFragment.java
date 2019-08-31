@@ -1,8 +1,6 @@
 package cz.uhk.graphstheory.statistics;
 
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +12,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Objects;
 
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.database.DatabaseConnector;
+import cz.uhk.graphstheory.model.Team;
 import cz.uhk.graphstheory.model.User;
-
+import cz.uhk.graphstheory.util.FilterData;
 
 public class StatisticFragment extends Fragment implements DatabaseConnector.ValuesUpdate {
 
@@ -26,16 +27,14 @@ public class StatisticFragment extends Fragment implements DatabaseConnector.Val
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
 
-    private OnFragmentInteractionListener mListener;
-
     private DatabaseConnector databaseConnector;
 
     private UserAdapter userAdapter;
+    private ArrayList<User> users;
 
     public StatisticFragment() {
         // Required empty public constructor
     }
-
 
 
     @Override
@@ -68,48 +67,45 @@ public class StatisticFragment extends Fragment implements DatabaseConnector.Val
         return rootView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-//    }
-
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void usersUpdated(@NotNull ArrayList<User> users) {
+        this.users = users;
+        Collections.sort(users);
         userAdapter.updateData(users);
         mAdapter.notifyDataSetChanged();
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    public void tabLayoutChange(int idTab) {
+        if (idTab == 0) {
+            mAdapter = userAdapter;
+            recyclerView.setAdapter(mAdapter);
+            userAdapter.updateData(users);
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public void tabLayoutChange(int idTab, String currentUserEmail) {
+        User currentUser = FilterData.findUser(currentUserEmail, users);
+        if (idTab == 1) {
+            mAdapter = userAdapter;
+            recyclerView.setAdapter(mAdapter);
+            ArrayList<User> usersInSameTeam = FilterData.filterUsersInTeam(users, Objects.requireNonNull(currentUser).getTeam());
+            Collections.sort(usersInSameTeam);
+            userAdapter.updateData(usersInSameTeam);
+            mAdapter.notifyDataSetChanged();
+        }
+        if (idTab == 2){
+            ArrayList<Team> teams = FilterData.getTeams(databaseConnector.getUsers());
+            Collections.sort(teams);
+            mAdapter = new TeamAdapter(teams);
+            recyclerView.setAdapter(mAdapter);
+        }
     }
 }

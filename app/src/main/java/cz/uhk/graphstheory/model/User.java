@@ -2,7 +2,7 @@ package cz.uhk.graphstheory.model;
 
 import java.util.HashMap;
 
-public class User {
+public class User implements Comparable{
 
     private String email;
     private String team;
@@ -79,5 +79,12 @@ public class User {
     }
 
     public User() {
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        double comparedUserScore = ((User) o).getScore();
+        double difference = comparedUserScore - this.score;
+        return (int) difference;
     }
 }

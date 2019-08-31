@@ -11,9 +11,10 @@ import android.os.Bundle;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.Objects;
+
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.abstraction.AbstractAppCompactActivity;
-import cz.uhk.graphstheory.database.DatabaseConnector;
 
 public class StatisticsActivity extends AbstractAppCompactActivity implements StatisticsTab.TableLayoutCommunicationInterface, NavigationView.OnNavigationItemSelectedListener {
 
@@ -22,6 +23,7 @@ public class StatisticsActivity extends AbstractAppCompactActivity implements St
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 //    private DatabaseConnector databaseConnector;
+    private String loggedUserEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +31,8 @@ public class StatisticsActivity extends AbstractAppCompactActivity implements St
         setContentView(R.layout.activity_statistics);
 
 //        databaseConnector = new DatabaseConnector();
+
+        loggedUserEmail = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
 
         //for navigation drawer and top drawer
         Toolbar toolbar = findViewById(R.id.statistic_toolbar);
@@ -55,7 +59,9 @@ public class StatisticsActivity extends AbstractAppCompactActivity implements St
 
     @Override
     public void tableLayoutSelectedChange(int number) {
-
+        if (number == 0 ) statisticFragment.tabLayoutChange(number);
+        if (number == 1 ) statisticFragment.tabLayoutChange(number, loggedUserEmail);
+        if (number == 2 ) statisticFragment.tabLayoutChange(number, loggedUserEmail);
     }
 
 

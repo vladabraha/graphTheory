@@ -79,13 +79,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void registerUser(String email,String password, String selectedTeam) {
-        createUser(selectedTeam);
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
                         //this method is called asynchronously -> never called as classic method
                         Log.d("TAG", "createUserWithEmail:success");
+                        createUserAndStartActivity(selectedTeam);
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w("TAG", "createUserWithEmail:failure", task.getException());
@@ -94,11 +94,14 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    private void createUser(String selectedTeam) {
+    private void createUserAndStartActivity(String selectedTeam) {
         FirebaseUser user = mAuth.getCurrentUser();
         Log.d("test", Objects.requireNonNull(user).getUid());
 
         databaseConnector.createUserAccount(user.getUid(),nickNameEditText.getText().toString(), Objects.requireNonNull(user.getEmail()),  selectedTeam);
+
+        Intent mainIntent = new Intent(this, GraphGeneratorActivity.class);
+        startActivity(mainIntent);
     }
 
     @Override
@@ -121,9 +124,8 @@ public class LoginActivity extends AppCompatActivity {
                 String password = passwordEditText.getText().toString();
                 String selectedTeam = data.getStringExtra("team");
                 registerUser(email, password, selectedTeam);
-                Intent mainIntent = new Intent(this, GraphGeneratorActivity.class);
-                startActivity(mainIntent);
             }
+
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
                 Toast.makeText(LoginActivity.this, "Registraction canceled", Toast.LENGTH_SHORT).show();
@@ -132,6 +134,4 @@ public class LoginActivity extends AppCompatActivity {
             finish();
         }
     }
-
-
 }
