@@ -53,7 +53,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
         drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         floatingActionButton.setOnClickListener(v -> {
             //todo tady osetrit co dal
-            boolean isValid = GraphChecker.chechIfGraphIsBipartite(drawingFragment.getUserGraph());
+            boolean isValid = GraphChecker.checkIfGraphIsBipartite(drawingFragment.getUserGraph());
             Toast.makeText(SecondActivity.this, String.valueOf(isValid), Toast.LENGTH_LONG).show();
 //                DatabaseConnector databaseConnector = new DatabaseConnector();
 //                databaseConnector.writeFirstActivityValue("test");

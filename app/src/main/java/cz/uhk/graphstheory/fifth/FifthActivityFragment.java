@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import cz.uhk.graphstheory.abstraction.AbstractFragment;
 import cz.uhk.graphstheory.model.Coordinate;
@@ -50,10 +51,11 @@ public class FifthActivityFragment extends AbstractFragment {
                         int BRUSH_SIZE = getGraphGeneratedView().getBrushSize();
                         ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfEdges);
 
-                        //myšlenka - mam body, vezmu polovinu a nějak je spojim
-                        //vezmu druhou polovinu a nejak je spojim. Mezi prvni a druhou půlkou neni žádný propoj - bipartitni graf
+                        //myšlenka - mam body, rozdělím je na polovinu a každý bod z jedné poloviny spojím s každým bodem z druhé poloviny
                         ArrayList<Coordinate> firstPartOfNodes  = new ArrayList<>();
                         ArrayList<Coordinate> secondPartOfNodes = new ArrayList<>();
+                        ArrayList<CustomLine> bipartite = new ArrayList<>();
+
                         for (int i = 0; i < nodesToSet.size(); i++){
                             if (i < (nodesToSet.size() / 2)){
                                 firstPartOfNodes.add(nodesToSet.get(i));
@@ -62,11 +64,14 @@ public class FifthActivityFragment extends AbstractFragment {
                             }
                         }
 
-                        ArrayList<CustomLine> firstPartOfBipartite = GraphGenerator.generateRandomEdges(firstPartOfNodes);
-                        ArrayList<CustomLine> secondPartOfBipartite = GraphGenerator.generateRandomEdges(secondPartOfNodes);
+                        for (Coordinate coordinateFirstPart: firstPartOfNodes){
+                            for (Coordinate coordinateSecondPart: secondPartOfNodes){
+                                CustomLine customLine = new CustomLine(coordinateFirstPart, coordinateSecondPart);
+                                bipartite.add(customLine);
+                            }
+                        }
 
-                        firstPartOfBipartite.addAll(secondPartOfBipartite);
-                        Map mapToSet = new Map(firstPartOfBipartite, nodesToSet);
+                        Map mapToSet = new Map(bipartite, nodesToSet);
                         getGraphGeneratedView().setMap(mapToSet);
 //                        graphGeneratedView.setRedLineList(PathGenerator.generateCesta(graphGeneratedView.getMap()));
                     }

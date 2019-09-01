@@ -26,7 +26,6 @@ import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
-import cz.uhk.graphstheory.second.SecondActivityFragment;
 import cz.uhk.graphstheory.util.GraphChecker;
 
 public class FifthActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface {
@@ -59,7 +58,7 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
 
         drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         floatingActionButton.setOnClickListener(v -> {
-            boolean isValid = GraphChecker.chechIfGraphIsBipartite(drawingFragment.getUserGraph());
+            boolean isValid = GraphChecker.checkIfGraphIsBipartite(drawingFragment.getUserGraph());
             if (isValid) {
                 Toast.makeText(FifthActivity.this, "výborně, můžeš zkusit další, nebo jít dál", Toast.LENGTH_LONG).show();
                 String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
@@ -113,7 +112,7 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
 
     @Override
     protected Fragment getGraphFragment() {
-        return new SecondActivityFragment();
+        return new FifthActivityFragment();
     }
 
     @Override
