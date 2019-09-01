@@ -1,5 +1,7 @@
 package cz.uhk.graphstheory.second;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,12 +17,16 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.Objects;
 
 import cz.uhk.graphstheory.common.DrawingFragment;
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.abstraction.AbstractActivity;
 import cz.uhk.graphstheory.common.TextFragment;
+import cz.uhk.graphstheory.database.DatabaseConnector;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
 import cz.uhk.graphstheory.util.GraphChecker;
 
@@ -31,13 +37,21 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
     private BottomNavigationView bottomNavigationView;
     private Fragment educationGraphFragment;
     private FloatingActionButton floatingActionButton;
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private TabLayoutFragment tabLayoutFragment;
+    private SecondActivityFragment secondActivityFragment;
 
     private DrawingFragmentListener drawingFragmentListener;
+    String type;
+
+    DatabaseConnector databaseConnector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        databaseConnector = new DatabaseConnector();
+        type = getDisplayedActivity();
 
         //for navigation drawer
         Toolbar toolbar = findViewById(R.id.graph_generator_toolbar);
@@ -49,14 +63,63 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
         educationGraphFragment = getGenerateGraphFragment();
         bottomNavigationView = getBottomNavigationView();
         floatingActionButton = getFloatingActionButton();
+        tabLayoutFragment = getTabLayoutFragment();
 
         drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         floatingActionButton.setOnClickListener(v -> {
-            //todo tady osetrit co dal
-            boolean isValid = GraphChecker.checkIfGraphIsBipartite(drawingFragment.getUserGraph());
-            Toast.makeText(SecondActivity.this, String.valueOf(isValid), Toast.LENGTH_LONG).show();
-//                DatabaseConnector databaseConnector = new DatabaseConnector();
-//                databaseConnector.writeFirstActivityValue("test");
+            SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+            int displayedActivity = sharedPref.getInt("displayedActivity-second", 0);
+            String isValid;
+            switch (displayedActivity){
+                case 0:
+                    isValid = GraphChecker.checkIfGraphContainsArticulation(drawingFragment.getUserGraph());
+                    switch (isValid) {
+                        case "true":
+                            String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
+                            assert userName != null;
+                            Double receivedPoints;
+                            Toast.makeText(SecondActivity.this, "Správně!", Toast.LENGTH_LONG).show();
+                            receivedPoints = databaseConnector.recordUserPoints(userName, "fifth-first");
+                            Toast.makeText(SecondActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
+                            tabLayoutFragment.switchSelectedTab(1);
+                            drawingFragment.changeDrawingMethod("clear"); //toto vymaže, co uživatel nakreslil, aby nebouchal jenom check, check...
+
+                            changeActivity();
+                            break;
+                        case "false":
+                            Toast.makeText(SecondActivity.this, "Jejda, špatně, mkrni na to ještě jednou", Toast.LENGTH_LONG).show();
+                            break;
+                        case "chybi ohraniceni cervenou carou":
+                            Toast.makeText(SecondActivity.this, "Zapomněl jsi označit artiákulaci červenou čarou", Toast.LENGTH_LONG).show();
+                            break;
+                    }
+                    break;
+                case 1:
+                    //todo zmenit kontrolu grafu
+                    isValid = GraphChecker.checkIfGraphContainsArticulation(drawingFragment.getUserGraph());
+                    switch (isValid) {
+                        case "true":
+                            String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
+                            assert userName != null;
+                            Double receivedPoints;
+                            Toast.makeText(SecondActivity.this, "Správně!", Toast.LENGTH_LONG).show();
+                            receivedPoints = databaseConnector.recordUserPoints(userName, "fifth-second");
+                            Toast.makeText(SecondActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
+                            tabLayoutFragment.switchSelectedTab(1);
+                            drawingFragment.changeDrawingMethod("clear"); //toto vymaže, co uživatel nakreslil, aby nebouchal jenom check, check...
+
+                            changeActivity();
+                            break;
+                        case "false":
+                            Toast.makeText(SecondActivity.this, "Jejda, špatně, mkrni na to ještě jednou", Toast.LENGTH_LONG).show();
+                            break;
+                        case "chybi ohraniceni cervenou carou":
+                            Toast.makeText(SecondActivity.this, "Zapomněl jsi označit artiákulaci červenou čarou", Toast.LENGTH_LONG).show();
+                            break;
+                    }
+                    break;
+            }
+
         });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -99,13 +162,27 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
         });
     }
 
-    @Override
-    protected Fragment getGraphFragment() {
-        return new SecondActivityFragment();
+    private String getDisplayedActivity() {
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        int displayedActivity = sharedPref.getInt("displayedActivity-second", 0);
+
+        switch (displayedActivity) {
+            case 0:
+                return "most";
+            case 1:
+                return "most";
+        }
+        return "artikulace";
     }
 
     @Override
-     protected void changeToTextFragment(){
+    protected Fragment getGraphFragment() {
+        secondActivityFragment = new SecondActivityFragment();
+        return secondActivityFragment;
+    }
+
+    @Override
+    protected void changeToTextFragment() {
         super.changeToTextFragment();
         //todo dodelat predani spravneho stringu
         textFragment.setEducationText("tada");
@@ -121,6 +198,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
         bottomNavigationView.setVisibility(View.GONE);
     }
 
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -131,5 +209,32 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
         }
     }
 
+    private void changeActivity() {
 
+        //do shared preferences si ukladame posledni otevrenou aktivitu, abychom se mohli tocit do kolecka a neotevirali pripadne porad stejnou aktivitu
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        int displayedActivity = sharedPref.getInt("displayedActivity-second", 0);
+
+        if (displayedActivity < 1) {
+            displayedActivity++;
+        } else {
+            displayedActivity = 0;
+        }
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt("displayedActivity-second", displayedActivity);
+        editor.apply();
+
+
+        switch (displayedActivity) {
+            case 0:
+                Toast.makeText(this, "Teď si ukážeme artikulaci v grafu", Toast.LENGTH_LONG).show();
+                secondActivityFragment.changeGraph("most");
+                break;
+            case 1:
+                Toast.makeText(this, "Teď si ukážeme most v grafu", Toast.LENGTH_LONG).show();
+                secondActivityFragment.changeGraph("artikulace");
+                break;
+        }
+    }
 }

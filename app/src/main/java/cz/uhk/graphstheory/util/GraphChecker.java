@@ -2,6 +2,7 @@ package cz.uhk.graphstheory.util;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Objects;
 
 import cz.uhk.graphstheory.model.Coordinate;
 import cz.uhk.graphstheory.model.CustomLine;
@@ -165,13 +166,13 @@ public class GraphChecker {
         for (Coordinate circle : circles) {
             boolean istheSecondPart = false;
             for (Coordinate coordinateTogether : circlesConnectedTogether) {
-                if (coordinateTogether.equal(circle)){
+                if (coordinateTogether.equal(circle)) {
                     istheSecondPart = true;
                 }
             }
-            if (istheSecondPart){
+            if (istheSecondPart) {
                 circlesInSecondPartOfBipartite.add(circle);
-            }else {
+            } else {
                 circlesInFirstPartOfBipartite.add(circle);
             }
         }
@@ -179,8 +180,6 @@ public class GraphChecker {
         //a ted kontrola, zdali jsou uzly propojeny mezi sebou
         //projdeme vsechny cary a mrkneme, zdali ukazuji z jednoho bodu na vsechny uzly z druhe skupiny
         //pri kazdem nalezeni, odstranime bod ze seznamu druhe casti bipartitniho grafu a na konci by měl být prázdný
-
-
         for (Coordinate coordinateFirstPart : circlesInFirstPartOfBipartite) {
             ArrayList<Coordinate> circlesInSecondPartOfBipartiteCloned = (ArrayList<Coordinate>) circlesInSecondPartOfBipartite.clone();
             Iterator<Coordinate> iter = circlesInSecondPartOfBipartiteCloned.iterator();
@@ -196,18 +195,113 @@ public class GraphChecker {
                 }
             }
             if (!circlesInSecondPartOfBipartiteCloned.isEmpty()) return false;
-//            for (Coordinate coordinateSecondPart : circlesInSecondPartOfBipartiteCloned){
-//                for (CustomLine customLine: customLines){
-//                    if (customLine.getTo().equal(coordinateFirstPart) && customLine.getFrom().equal(coordinateSecondPart)){
-//                        circlesInSecondPartOfBipartiteCloned.remove(coordinateSecondPart);
-//                    }else if (customLine.getTo().equal(coordinateSecondPart) && customLine.getFrom().equal(coordinateFirstPart)){
-//                        circlesInSecondPartOfBipartiteCloned.remove(coordinateSecondPart);
-//                    }
-//                }
-//            }
         }
         return true;
+    }
 
+    /**
+     * bod aritkulace musí být ohraničen 2 přímkami z redline listu
+     *
+     * @param map uzivatelova mapa
+     * @return -
+     */
+    public static String checkIfGraphContainsArticulation(Map map) {
+        ArrayList<CustomLine> customLines = map.getCustomLines();
+        ArrayList<CustomLine> redLines = map.getRedLineList();
+        ArrayList<Coordinate> circles = map.getCircles();
+
+        if (customLines.size() < 2 || circles.size() < 2) return "false";
+
+        //aritkulace bude ohranicena 2 cervenymi carami
+        Coordinate articulation;
+        if (redLines.get(0).getFrom().equal(redLines.get(1).getFrom()) || redLines.get(0).getFrom().equal(redLines.get(1).getTo())) {
+            articulation = redLines.get(0).getFrom();
+        } else if (redLines.get(0).getTo().equal(redLines.get(1).getFrom()) || redLines.get(0).getTo().equal(redLines.get(1).getTo())) {
+            articulation = redLines.get(0).getTo();
+        } else {
+            return "chybi ohraniceni cervenou carou";
+        }
+
+        //hledani prvniho bodu mimo artikulaci
+        Coordinate firstCoordinate = null;
+        if (redLines.get(0).getFrom().equal(articulation)) {
+            firstCoordinate = redLines.get(0).getTo();
+        } else if (redLines.get(0).getTo().equal(articulation)) {
+            firstCoordinate = redLines.get(0).getFrom();
+        }
+
+        //myslenka - projdu vsechny sousedy od prvniho bodu a budu si pamatovat, ktery jsem prosel
+        //v dalsim kole budu prochazet sousedy sousedů, ktere jsem jeste nenavstivil, takhle postupne projdu vsechny z teho kategorie
+        //na konci by mi meli chybet v seznamu nejake uzly - ty z druhe strany, kterou artikulace spojovala
+        ArrayList<Coordinate> alreadyVisitedNodes = new ArrayList<>();
+        ArrayList<Coordinate> nodesToExplore = new ArrayList<>();
+
+        //pro prvni uzel najdeme vsechny nody se kterymi je spojen a jeste jsme v nich nebyly
+        for (CustomLine customLine : customLines) {
+            if (customLine.getFrom().equal(Objects.requireNonNull(firstCoordinate))) {
+                boolean isVisited = false;
+                for (Coordinate alreadyVisitedCoordinate : alreadyVisitedNodes) {
+                    if (alreadyVisitedCoordinate.equal(customLine.getTo())) {
+                        isVisited = true;
+                    }
+                }
+                if (!isVisited) {
+                    alreadyVisitedNodes.add(customLine.getTo());
+                    nodesToExplore.add(customLine.getTo());
+                }
+            } else if (customLine.getTo().equal(Objects.requireNonNull(firstCoordinate))) {
+                boolean isVisited = false;
+                for (Coordinate alreadyVisitedCoordinate : alreadyVisitedNodes) {
+                    if (alreadyVisitedCoordinate.equal(customLine.getFrom())) {
+                        isVisited = true;
+                    }
+                }
+                if (!isVisited) {
+                    alreadyVisitedNodes.add(customLine.getFrom());
+                    nodesToExplore.add(customLine.getFrom());
+                }
+            }
+        }
+
+        for (int i = 0; i < nodesToExplore.size(); i++) {
+            Coordinate coordinateToExplore = nodesToExplore.get(i);
+            for (CustomLine customLine : customLines) {
+                //nejdriv kontrola, ze se nepresuneme pres artikulaci do druhe půlky
+                if (!customLine.getFrom().equal(articulation) && !customLine.getTo().equal(articulation)) {
+                    if (customLine.getFrom().equal(coordinateToExplore)) {
+                        boolean isVisited = false;
+                        for (Coordinate alreadyVisitedCoordinate : alreadyVisitedNodes) {
+                            if (alreadyVisitedCoordinate.equal(customLine.getTo())) {
+                                isVisited = true;
+                            }
+                        }
+                        if (!isVisited) {
+                            alreadyVisitedNodes.add(customLine.getTo());
+                            nodesToExplore.add(customLine.getTo());
+                        }
+                    } else if (customLine.getTo().equal(coordinateToExplore)) {
+                        boolean isVisited = false;
+                        for (Coordinate alreadyVisitedCoordinate : alreadyVisitedNodes) {
+                            if (alreadyVisitedCoordinate.equal(customLine.getFrom())) {
+                                isVisited = true;
+                            }
+                        }
+                        if (!isVisited) {
+                            alreadyVisitedNodes.add(customLine.getFrom());
+                            nodesToExplore.add(customLine.getFrom());
+                        }
+                    }
+                }
+            }
+            nodesToExplore.remove(i);
+            i--;
+        }
+
+        if (alreadyVisitedNodes.size() == circles.size()) {
+            return "false";
+        } else {
+            return "true";
+        }
 
     }
 }

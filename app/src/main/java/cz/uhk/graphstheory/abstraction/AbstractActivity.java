@@ -45,6 +45,7 @@ public abstract class AbstractActivity extends AbstractAppCompactActivity implem
     private NavigationView navigationView;
     private FirebaseAuth mAuth;
     private DatabaseConnector databaseConnector;
+    private TabLayoutFragment tabLayoutFragment;
     TextView navigationDrawerName, navigationDrawerEmail;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +67,7 @@ public abstract class AbstractActivity extends AbstractAppCompactActivity implem
         textFragment = new TextFragment();
         educationFragment = getGraphFragment();
 
-        TabLayoutFragment tabLayoutFragment = new TabLayoutFragment();
+        tabLayoutFragment = new TabLayoutFragment();
         fragmentTransaction.add(R.id.generator_activity_group, tabLayoutFragment);
         fragmentTransaction.add(R.id.generator_activity_group, textFragment);
         fragmentTransaction.commit();
@@ -275,6 +276,8 @@ public abstract class AbstractActivity extends AbstractAppCompactActivity implem
     public FloatingActionButton getFloatingActionButton() {
         return floatingActionButton;
     }
+
+    public TabLayoutFragment getTabLayoutFragment(){return tabLayoutFragment;}
 
     protected abstract void hideBottomNavigationView();
 

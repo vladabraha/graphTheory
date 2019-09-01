@@ -9,7 +9,7 @@ import cz.uhk.graphstheory.model.User
 
 class DatabaseConnector() {
     private val database = FirebaseDatabase.getInstance()
-    private var updateData : ValuesUpdate? = null
+    private var updateData: ValuesUpdate? = null
     private var users = arrayListOf<User>()
 
     init {
@@ -34,20 +34,20 @@ class DatabaseConnector() {
         ref.addValueEventListener(postListener)
     }
 
-    constructor(valuesUpdate : ValuesUpdate) : this() {
+    constructor(valuesUpdate: ValuesUpdate) : this() {
         updateData = valuesUpdate
     }
 
-    fun recordUserPoints(userName: String, activity: String) {
+    fun recordUserPoints(userName: String, activity: String): Double? {
         val user = findUser(userName)
         if (user != null) {
 
             val map = user.remainingPointsFromActivity
 
-            val point : Double
-            if (checkIfKeyExist(map, activity)){
+            val point: Double
+            if (checkIfKeyExist(map, activity)) {
                 point = map.getValue(activity)
-            }else{
+            } else {
                 point = 3.0
                 map[activity] = 3.0
             }
@@ -62,11 +62,13 @@ class DatabaseConnector() {
                 map[activity] = (point - 1)
                 database.getReference("users").child(user.uuID).child("remainingPointsFromActivity").setValue(map)
             }
+            return point
         }
+        return null
     }
 
-    private fun checkIfKeyExist(map: HashMap<String,Double>, activity: String): Boolean {
-        for (key in map.keys){
+    private fun checkIfKeyExist(map: HashMap<String, Double>, activity: String): Boolean {
+        for (key in map.keys) {
             if (key == activity) return true
         }
         return false
@@ -100,12 +102,12 @@ class DatabaseConnector() {
         return true
     }
 
-    fun getUsers(): ArrayList<User>{
+    fun getUsers(): ArrayList<User> {
         return users
     }
 
-    public interface ValuesUpdate{
-        public fun usersUpdated(users : ArrayList<User>)
+    public interface ValuesUpdate {
+        public fun usersUpdated(users: ArrayList<User>)
     }
 
 }
