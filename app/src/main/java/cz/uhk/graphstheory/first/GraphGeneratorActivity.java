@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import java.util.Objects;
 
+import cz.uhk.graphstheory.abstraction.AbstractAppCompactActivity;
 import cz.uhk.graphstheory.common.DrawingFragment;
 import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
@@ -46,7 +47,7 @@ import cz.uhk.graphstheory.statistics.StatisticsActivity;
 import cz.uhk.graphstheory.third.ThirdActivity;
 import cz.uhk.graphstheory.util.GraphChecker;
 
-public class GraphGeneratorActivity extends AppCompatActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, NavigationView.OnNavigationItemSelectedListener {
+public class GraphGeneratorActivity extends AbstractAppCompactActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, NavigationView.OnNavigationItemSelectedListener {
 
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
@@ -303,51 +304,6 @@ public class GraphGeneratorActivity extends AppCompatActivity implements TabLayo
 
     }
 
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-        // Handle navigation view item clicks here.
-        int id = menuItem.getItemId();
-        NavigationView navigationView = findViewById(R.id.nav_view);
-
-        //zabrani znovu spusteni pustene aktivity
-        int sessionId = getIntent().getIntExtra("SESSION_ID", 0);
-
-        if (id == R.id.paths) {
-            if (sessionId != 1) {
-                Intent newActivityIntent = new Intent(this, GraphGeneratorActivity.class);
-                newActivityIntent.putExtra("SESSION_ID", 1);
-                finish();
-                startActivity(newActivityIntent);
-            }
-        } else if (id == R.id.dalsi) {
-            if (sessionId != 2) {
-                Intent newActivityIntent = new Intent(this, SecondActivity.class);
-                newActivityIntent.putExtra("SESSION_ID", 2);
-                finish();
-                startActivity(newActivityIntent);
-            }
-        } else if (id == R.id.nav_third) {
-            if (sessionId != 3) {
-                Intent newActivityIntent = new Intent(this, ThirdActivity.class);
-                newActivityIntent.putExtra("SESSION_ID", 3);
-                finish();
-                startActivity(newActivityIntent);
-            }
-        }
-        else if (id == R.id.nav_statistic) {
-            if (sessionId != 99) {
-                Intent newActivityIntent = new Intent(this, StatisticsActivity.class);
-                newActivityIntent.putExtra("SESSION_ID", 99);
-                finish();
-                startActivity(newActivityIntent);
-            }
-        }
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
 
     private void changeActivity() {
 

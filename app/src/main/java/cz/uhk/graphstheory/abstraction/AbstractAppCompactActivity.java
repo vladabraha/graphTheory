@@ -11,6 +11,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.navigation.NavigationView;
 
 import cz.uhk.graphstheory.R;
+import cz.uhk.graphstheory.fifth.FifthActivity;
 import cz.uhk.graphstheory.first.GraphGeneratorActivity;
 import cz.uhk.graphstheory.second.SecondActivity;
 import cz.uhk.graphstheory.statistics.StatisticsActivity;
@@ -47,6 +48,13 @@ public abstract class AbstractAppCompactActivity extends AppCompatActivity imple
             if (sessionId != 3) {
                 Intent newActivityIntent = new Intent(this, ThirdActivity.class);
                 newActivityIntent.putExtra("SESSION_ID", 3);
+                finish();
+                startActivity(newActivityIntent);
+            }
+        }else if (id == R.id.nav_fifth) {
+            if (sessionId != 5) {
+                Intent newActivityIntent = new Intent(this, FifthActivity.class);
+                newActivityIntent.putExtra("SESSION_ID", 5);
                 finish();
                 startActivity(newActivityIntent);
             }

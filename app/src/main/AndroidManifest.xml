@@ -36,6 +36,11 @@
             android:name=".second.SecondActivity"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".fifth.FifthActivity"
+            android:noHistory="true"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".first.GraphGeneratorActivity"
             android:theme="@style/AppTheme.NoActionBar" />

@@ -20,10 +20,12 @@
     <string name="menu_second">Most a artikulace</string>
     <string name="menu_third">Doplněk grafu</string>
     <string name="menu_fourth">Izomorfismus</string>
-    <string name="menu_fifth">Hamiltonovský a Eulerův graf</string>
-    <string name="menu_sixth">Barvení grafu</string>
-    <string name="menu_seveh">Minimální kostra grafu</string>
-    <string name="menu_eight">Procházení labyrintu</string>
+    <string name="menu_fifth">Bipartitní graf</string>
+    <string name="menu_sixth">Hamiltonovský graf a Eulerův graf</string>
+    <string name="menu_seventh">Barvení grafu</string>
+    <string name="menu_eight">Minimální kostra grafu</string>
+    <string name="menu_ninth">Procházení labyrintu</string>
+
 
 
     <string name="example_text">
@@ -55,6 +57,7 @@
     <string name="blackTeam">Černý tým</string>
     <string name="enter_team">Vstoupit do týmu</string>
     <string name="you_nickname">vaše jméno</string>
+
 
     <string-array name="team_chooser">
         <item>Modrý tým</item>
