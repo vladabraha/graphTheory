@@ -92,7 +92,7 @@ public class GraphGenerator {
         } while (createdEdges < amountOfEdges && run < RUN_THRESHOLD);
 
         //kontrola, zdali neni nejaky uzel osamocen (graf pak vypada divne)
-        for (int i = 0; i < circlesPoints.size() - 1; i++) { //vezmeme prvni node
+        for (int i = 0; i < circlesPoints.size(); i++) { //vezmeme prvni node
             //sparse array může mít zaplenene jenom nektere indexy (např. když má size 2, tak může mít zaplneny jenom index 1 a 5 a mezitím nic -> velikost 2)
             boolean isNodeConnectedToAnotherNode = false;
             run = 0;

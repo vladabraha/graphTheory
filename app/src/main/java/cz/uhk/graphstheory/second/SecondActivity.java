@@ -3,6 +3,7 @@ package cz.uhk.graphstheory.second;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -70,7 +71,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
             SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
             int displayedActivity = sharedPref.getInt("displayedActivity-second", 0);
             String isValid;
-            switch (displayedActivity){
+            switch (displayedActivity) {
                 case 0:
                     isValid = GraphChecker.checkIfGraphContainsArticulation(drawingFragment.getUserGraph());
                     switch (isValid) {
@@ -133,6 +134,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
         navigationView.setCheckedItem(R.id.dalsi); //tady treba hodit, co se ma zvyraznit
 
         bottomNavigationView = findViewById(R.id.graph_generator_navigation);
+
         bottomNavigationView.setSelectedItemId(R.id.circle);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -168,7 +170,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
 
         switch (displayedActivity) {
             case 0:
-                return "most";
+                return "artikulace";
             case 1:
                 return "most";
         }
@@ -196,6 +198,22 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
     @Override
     protected void hideBottomNavigationView() {
         bottomNavigationView.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void changeToDrawingFragment() {
+        super.changeToDrawingFragment();
+
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        int displayedActivity = sharedPref.getInt("displayedActivity-second", 0);
+        if (displayedActivity == 0) {
+            Toast.makeText(this, "Nakresli artikulaci", Toast.LENGTH_LONG).show();
+        }else {
+            Toast.makeText(this, "Nakresli most", Toast.LENGTH_LONG).show();
+        }
+        //zmeni text bottomNavigationView
+        Menu menu = bottomNavigationView.getMenu();
+        menu.getItem(2).setTitle("označ");
     }
 
 

@@ -149,8 +149,6 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.settings_options, menu);
 
         //set current user to navigation drawer
         navigationDrawerName = findViewById(R.id.navigation_header_name);

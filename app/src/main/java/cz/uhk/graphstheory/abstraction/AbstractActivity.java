@@ -82,10 +82,6 @@ public abstract class AbstractActivity extends AbstractAppCompactActivity implem
 
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        //todo zjisit, zdali nechám dropdown menu vpravo nahoře
-//        MenuInflater menuInflater = getMenuInflater();
-//        menuInflater.inflate(R.menu.settings_options, menu);
-
         //set current user to navigation drawer
         navigationDrawerName = findViewById(R.id.navigation_header_name);
         navigationDrawerEmail = findViewById(R.id.navigation_header_email);

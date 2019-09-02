@@ -1,26 +1,15 @@
 package cz.uhk.graphstheory.second;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewTreeObserver;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
-
-import android.util.DisplayMetrics;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
-import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.abstraction.AbstractFragment;
-import cz.uhk.graphstheory.common.GraphGeneratedView;
 import cz.uhk.graphstheory.model.Coordinate;
 import cz.uhk.graphstheory.model.CustomLine;
 import cz.uhk.graphstheory.model.GeneratedMapViewModel;
