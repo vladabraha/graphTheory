@@ -204,10 +204,10 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
         super.changeToEducationFragment();
         switch (getDisplayedActivity()) {
             case "artikulace":
-                Toast.makeText(this, "Teď si ukážeme artikulaci v grafu", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Teď si ukážeme most v grafu", Toast.LENGTH_LONG).show();
                 break;
             case "most":
-                Toast.makeText(this, "Teď si ukážeme most v grafu", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Teď si ukážeme artikulaci v grafu", Toast.LENGTH_LONG).show();
                 break;
         }
     }
