@@ -71,7 +71,6 @@ public class SecondActivityFragment extends AbstractFragment {
     }
 
     private void createArticulation() {
-        //set init bipartitní graf educational fragment
         int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
         if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES) amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
         int BRUSH_SIZE = getGraphGeneratedView().getBrushSize();
@@ -113,7 +112,6 @@ public class SecondActivityFragment extends AbstractFragment {
     }
 
     private void createBridge() {
-        //set init bipartitní graf educational fragment
         int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
         if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES) amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
         int BRUSH_SIZE = getGraphGeneratedView().getBrushSize();
@@ -153,7 +151,14 @@ public class SecondActivityFragment extends AbstractFragment {
 
     public void changeGraph(String type) {
         this.type = type;
-        createBridge();
+        switch (type){
+            case "artikulace":
+                createArticulation();
+                break;
+            case "most":
+                createBridge();
+                break;
+        }
     }
 }
 

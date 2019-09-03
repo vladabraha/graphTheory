@@ -210,7 +210,7 @@ public class GraphChecker {
         ArrayList<CustomLine> redLines = map.getRedLineList();
         ArrayList<Coordinate> circles = map.getCircles();
 
-        if (customLines.size() < 2 || circles.size() < 2) return "false";
+        if (customLines.size() < 2 || circles.size() < 2 || redLines.size() < 2) return "false";
 
         //aritkulace bude ohranicena 2 cervenymi carami
         Coordinate articulation;
@@ -303,5 +303,104 @@ public class GraphChecker {
             return "true";
         }
 
+    }
+
+    public static String checkIfGraphContainsBridge(Map userGraph) {
+        ArrayList<CustomLine> customLines = userGraph.getCustomLines();
+        ArrayList<CustomLine> redLines = userGraph.getRedLineList();
+        ArrayList<Coordinate> circles = userGraph.getCircles();
+        if (redLines.isEmpty() || circles.size() < 3 || redLines.size() > 1) return "false";
+
+        //most bude označen cervenou carou
+        //hledani prvniho bodu mimo most
+
+        Coordinate oneEndOfBridge = redLines.get(0).getFrom();
+        Coordinate secondEndOfBridge = redLines.get(0).getTo();
+        Coordinate firstCoordinate = null;
+        Coordinate borderWhereBridgeBeggins = null; //tohle je kvuli algoritmu, ktery je stejny jako u aritkulace a potřebuje hraniční bod, přes který by neměl přejít
+        for (CustomLine customLine : customLines){
+            if (customLine.getFrom().equal(oneEndOfBridge) && !customLine.getTo().equal(secondEndOfBridge) ){
+                firstCoordinate = customLine.getTo();
+                borderWhereBridgeBeggins = customLine.getFrom();
+            } else if (customLine.getTo().equal(oneEndOfBridge) && !customLine.getFrom().equal(secondEndOfBridge)){
+                firstCoordinate = customLine.getFrom();
+                borderWhereBridgeBeggins = customLine.getTo();
+            }
+        }
+        if (firstCoordinate == null) return "chybi ohraniceni cervenou carou";
+
+
+        //myslenka - projdu vsechny sousedy od prvniho bodu a budu si pamatovat, ktery jsem prosel
+        //v dalsim kole budu prochazet sousedy sousedů, ktere jsem jeste nenavstivil, takhle postupne projdu vsechny z teho kategorie
+        //na konci by mi meli chybet v seznamu nejake uzly - ty z druhe strany, kterou artikulace spojovala
+        ArrayList<Coordinate> alreadyVisitedNodes = new ArrayList<>();
+        ArrayList<Coordinate> nodesToExplore = new ArrayList<>();
+
+        //pro prvni uzel najdeme vsechny nody se kterymi je spojen a jeste jsme v nich nebyly
+        for (CustomLine customLine : customLines) {
+            if (customLine.getFrom().equal(Objects.requireNonNull(firstCoordinate))) {
+                boolean isVisited = false;
+                for (Coordinate alreadyVisitedCoordinate : alreadyVisitedNodes) {
+                    if (alreadyVisitedCoordinate.equal(customLine.getTo())) {
+                        isVisited = true;
+                    }
+                }
+                if (!isVisited) {
+                    alreadyVisitedNodes.add(customLine.getTo());
+                    nodesToExplore.add(customLine.getTo());
+                }
+            } else if (customLine.getTo().equal(Objects.requireNonNull(firstCoordinate))) {
+                boolean isVisited = false;
+                for (Coordinate alreadyVisitedCoordinate : alreadyVisitedNodes) {
+                    if (alreadyVisitedCoordinate.equal(customLine.getFrom())) {
+                        isVisited = true;
+                    }
+                }
+                if (!isVisited) {
+                    alreadyVisitedNodes.add(customLine.getFrom());
+                    nodesToExplore.add(customLine.getFrom());
+                }
+            }
+        }
+
+        for (int i = 0; i < nodesToExplore.size(); i++) {
+            Coordinate coordinateToExplore = nodesToExplore.get(i);
+            for (CustomLine customLine : customLines) {
+                //nejdriv kontrola, ze se nepresuneme pres artikulaci do druhe půlky
+                if (!customLine.getFrom().equal(borderWhereBridgeBeggins) && !customLine.getTo().equal(borderWhereBridgeBeggins)) {
+                    if (customLine.getFrom().equal(coordinateToExplore)) {
+                        boolean isVisited = false;
+                        for (Coordinate alreadyVisitedCoordinate : alreadyVisitedNodes) {
+                            if (alreadyVisitedCoordinate.equal(customLine.getTo())) {
+                                isVisited = true;
+                            }
+                        }
+                        if (!isVisited) {
+                            alreadyVisitedNodes.add(customLine.getTo());
+                            nodesToExplore.add(customLine.getTo());
+                        }
+                    } else if (customLine.getTo().equal(coordinateToExplore)) {
+                        boolean isVisited = false;
+                        for (Coordinate alreadyVisitedCoordinate : alreadyVisitedNodes) {
+                            if (alreadyVisitedCoordinate.equal(customLine.getFrom())) {
+                                isVisited = true;
+                            }
+                        }
+                        if (!isVisited) {
+                            alreadyVisitedNodes.add(customLine.getFrom());
+                            nodesToExplore.add(customLine.getFrom());
+                        }
+                    }
+                }
+            }
+            nodesToExplore.remove(i);
+            i--;
+        }
+
+        if (alreadyVisitedNodes.size() == circles.size()) {
+            return "false";
+        } else {
+            return "true";
+        }
     }
 }

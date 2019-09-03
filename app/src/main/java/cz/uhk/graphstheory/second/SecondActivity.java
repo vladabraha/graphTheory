@@ -73,7 +73,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
             String isValid;
             switch (displayedActivity) {
                 case 0:
-                    isValid = GraphChecker.checkIfGraphContainsArticulation(drawingFragment.getUserGraph());
+                    isValid = GraphChecker.checkIfGraphContainsBridge(drawingFragment.getUserGraph());
                     switch (isValid) {
                         case "true":
                             String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
@@ -96,7 +96,6 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
                     }
                     break;
                 case 1:
-                    //todo zmenit kontrolu grafu
                     isValid = GraphChecker.checkIfGraphContainsArticulation(drawingFragment.getUserGraph());
                     switch (isValid) {
                         case "true":
@@ -170,16 +169,16 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
 
         switch (displayedActivity) {
             case 0:
-                return "artikulace";
-            case 1:
                 return "most";
+            case 1:
+                return "artikulace";
         }
         return "artikulace";
     }
 
     @Override
     protected Fragment getGraphFragment() {
-        secondActivityFragment = new SecondActivityFragment();
+        secondActivityFragment = new SecondActivityFragment(getDisplayedActivity());
         return secondActivityFragment;
     }
 
@@ -201,15 +200,29 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
     }
 
     @Override
+    protected void changeToEducationFragment() {
+        super.changeToEducationFragment();
+        switch (getDisplayedActivity()) {
+            case "artikulace":
+                Toast.makeText(this, "Teď si ukážeme artikulaci v grafu", Toast.LENGTH_LONG).show();
+                break;
+            case "most":
+                Toast.makeText(this, "Teď si ukážeme most v grafu", Toast.LENGTH_LONG).show();
+                break;
+        }
+    }
+
+
+    @Override
     protected void changeToDrawingFragment() {
         super.changeToDrawingFragment();
 
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         int displayedActivity = sharedPref.getInt("displayedActivity-second", 0);
         if (displayedActivity == 0) {
-            Toast.makeText(this, "Nakresli artikulaci", Toast.LENGTH_LONG).show();
-        }else {
             Toast.makeText(this, "Nakresli most", Toast.LENGTH_LONG).show();
+        }else {
+            Toast.makeText(this, "Nakresli artikulaci", Toast.LENGTH_LONG).show();
         }
         //zmeni text bottomNavigationView
         Menu menu = bottomNavigationView.getMenu();
