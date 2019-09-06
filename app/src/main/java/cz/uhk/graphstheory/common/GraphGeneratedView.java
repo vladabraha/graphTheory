@@ -226,6 +226,9 @@ public class GraphGeneratedView extends View {
         ArrayList<CustomLine> lines = map.getCustomLines();
         ArrayList<CustomLine> path = map.getRedLineList();
 
+        allLineList.clear();
+        redLineList.clear();
+
         circleCoordinates = map.getCircles();
         if (!circleCoordinates.isEmpty() || !allLineList.isEmpty()) {
             invalidate();

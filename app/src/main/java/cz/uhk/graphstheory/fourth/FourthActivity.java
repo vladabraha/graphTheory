@@ -1,12 +1,15 @@
 package cz.uhk.graphstheory.fourth;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -52,8 +55,27 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
         drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         floatingActionButton.setOnClickListener(v -> {
             //todo tady osetrit co dal
-            boolean isValid = GraphValidator.checkIfGraphHasDoplnek(drawingFragment.getUserGraph());
-            Toast.makeText(FourthActivity.this, String.valueOf(isValid), Toast.LENGTH_LONG).show();
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            dialog.setCancelable(false);
+            dialog.setTitle("Rozhodněte");
+            dialog.setMessage("Jedná se v tomto případě o izomorfismus" );
+            dialog.setPositiveButton("Ano", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id) {
+                    //Action for "Delete".
+                    Log.d("action", "ano");
+                }
+            })
+                    .setNegativeButton("Ne ", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //Action for "Cancel".
+                            Log.d("action", "ne");
+                        }
+                    });
+
+            final AlertDialog alert = dialog.create();
+            alert.show();
 //                DatabaseConnector databaseConnector = new DatabaseConnector();
 //                databaseConnector.writeFirstActivityValue("test");
         });
@@ -113,7 +135,7 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
     @Override
     protected void changeToEducationFragment() {
         super.changeToEducationFragment();
-        Toast.makeText(this, "Červenou čarou je vidět ukázka doplňku grafu", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Ukázka izomorfních grafů", Toast.LENGTH_LONG).show();
     }
 
     @Override

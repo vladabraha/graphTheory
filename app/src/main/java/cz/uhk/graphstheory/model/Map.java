@@ -20,6 +20,13 @@ public class Map {
         this.redLineList = redLineList;
     }
 
+    @SuppressWarnings("unchecked")
+    public Map(Map map) {
+        this.customLines = (ArrayList<CustomLine>) map.customLines.clone();
+        this.circles = (ArrayList<Coordinate>) map.circles.clone();
+        this.redLineList =(ArrayList<CustomLine>) map.redLineList.clone();
+    }
+
     public ArrayList<CustomLine> getRedLineList() {
         return redLineList;
     }
