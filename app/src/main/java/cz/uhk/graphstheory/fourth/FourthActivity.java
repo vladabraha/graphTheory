@@ -1,7 +1,6 @@
-package cz.uhk.graphstheory.third;
+package cz.uhk.graphstheory.fourth;
 
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -16,20 +15,16 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.Objects;
 
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.abstraction.AbstractActivity;
 import cz.uhk.graphstheory.common.DrawingFragment;
 import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.common.TextFragment;
-import cz.uhk.graphstheory.database.DatabaseConnector;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
 import cz.uhk.graphstheory.util.GraphValidator;
 
-public class ThirdActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface {
+public class FourthActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface {
 
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
@@ -37,16 +32,11 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
     private Fragment educationGraphFragment;
     private FloatingActionButton floatingActionButton;
 
-    private TabLayoutFragment tabLayoutFragment;
     private DrawingFragmentListener drawingFragmentListener;
-    DatabaseConnector databaseConnector;
-    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        databaseConnector = new DatabaseConnector();
 
         //for navigation drawer
         Toolbar toolbar = findViewById(R.id.graph_generator_toolbar);
@@ -58,21 +48,14 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
         educationGraphFragment = getGenerateGraphFragment();
         bottomNavigationView = getBottomNavigationView();
         floatingActionButton = getFloatingActionButton();
-        tabLayoutFragment = getTabLayoutFragment();
 
         drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         floatingActionButton.setOnClickListener(v -> {
-            if (GraphValidator.checkIfGraphHasDoplnek(drawingFragment.getUserGraph())) {
-                Toast.makeText(ThirdActivity.this, "Správně!", Toast.LENGTH_LONG).show();
-                String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
-                assert userName != null;
-                Double receivedPoints = databaseConnector.recordUserPoints(userName, "third");
-                Toast.makeText(ThirdActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
-                drawingFragment.changeDrawingMethod("clear");
-//                tabLayoutFragment.switchSelectedTab(1);
-            }else {
-                Toast.makeText(ThirdActivity.this, "To není správně, změň graf a zkus to znovu", Toast.LENGTH_LONG).show();
-            }
+            //todo tady osetrit co dal
+            boolean isValid = GraphValidator.checkIfGraphHasDoplnek(drawingFragment.getUserGraph());
+            Toast.makeText(FourthActivity.this, String.valueOf(isValid), Toast.LENGTH_LONG).show();
+//                DatabaseConnector databaseConnector = new DatabaseConnector();
+//                databaseConnector.writeFirstActivityValue("test");
         });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -117,18 +100,7 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
 
     @Override
     protected Fragment getGraphFragment() {
-        return new ThirdActivityFragment();
-    }
-
-    @Override
-    protected void changeToDrawingFragment() {
-        super.changeToDrawingFragment();
-
-        Toast.makeText(this, "Nakresli doplněk grafu", Toast.LENGTH_LONG).show();
-
-        //zmeni text bottomNavigationView
-        Menu menu = bottomNavigationView.getMenu();
-        menu.getItem(2).setTitle("doplněk");
+        return new FourthActivityFragment();
     }
 
     @Override

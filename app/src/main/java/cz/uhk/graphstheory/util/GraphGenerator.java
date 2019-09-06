@@ -223,6 +223,4 @@ public class GraphGenerator {
         } while (shouldRun);
         return coordinateArrayList;
     }
-
-
 }

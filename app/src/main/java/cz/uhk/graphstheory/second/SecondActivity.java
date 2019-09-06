@@ -80,10 +80,10 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
                             assert userName != null;
                             Double receivedPoints;
                             Toast.makeText(SecondActivity.this, "Správně!", Toast.LENGTH_LONG).show();
-                            receivedPoints = databaseConnector.recordUserPoints(userName, "fifth-first");
+                            receivedPoints = databaseConnector.recordUserPoints(userName, "second-first");
                             Toast.makeText(SecondActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
-                            tabLayoutFragment.switchSelectedTab(1);
                             drawingFragment.changeDrawingMethod("clear"); //toto vymaže, co uživatel nakreslil, aby nebouchal jenom check, check...
+                            tabLayoutFragment.switchSelectedTab(1);
 
                             changeActivity();
                             break;
@@ -103,7 +103,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
                             assert userName != null;
                             Double receivedPoints;
                             Toast.makeText(SecondActivity.this, "Správně!", Toast.LENGTH_LONG).show();
-                            receivedPoints = databaseConnector.recordUserPoints(userName, "fifth-second");
+                            receivedPoints = databaseConnector.recordUserPoints(userName, "second-second");
                             Toast.makeText(SecondActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
                             tabLayoutFragment.switchSelectedTab(1);
                             drawingFragment.changeDrawingMethod("clear"); //toto vymaže, co uživatel nakreslil, aby nebouchal jenom check, check...
@@ -204,10 +204,10 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
         super.changeToEducationFragment();
         switch (getDisplayedActivity()) {
             case "artikulace":
-                Toast.makeText(this, "Teď si ukážeme most v grafu", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Teď si ukážeme artikulaci v grafu", Toast.LENGTH_LONG).show();
                 break;
             case "most":
-                Toast.makeText(this, "Teď si ukážeme artikulaci v grafu", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Teď si ukážeme most v grafu", Toast.LENGTH_LONG).show();
                 break;
         }
     }

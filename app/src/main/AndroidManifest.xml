@@ -18,10 +18,7 @@
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
-        <activity
-            android:name=".third.ThirdActivity"
-            android:noHistory="true"
-            android:theme="@style/AppTheme.NoActionBar" />
+
         <activity android:name=".login.FractionActivity" />
         <activity
             android:name=".login.LoginActivity"
@@ -34,6 +31,14 @@
         </activity>
         <activity
             android:name=".second.SecondActivity"
+            android:noHistory="true"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".third.ThirdActivity"
+            android:noHistory="true"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".fourth.FourthActivity"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
 

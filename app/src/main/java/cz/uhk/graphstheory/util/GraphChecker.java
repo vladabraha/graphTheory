@@ -70,6 +70,7 @@ public class GraphChecker {
         } else return startingLine.getFrom().equal(lastLine.getFrom());
     }
 
+    //todo rozpozna, jestli jsou 2 grafy od sebe rozdeleny, pripadne smazat
 //    public static boolean checkIfGraphIsBipartite(Map map){
 //        ArrayList<CustomLine> customLines = map.getCustomLines();
 //        ArrayList<CustomLine> customLinesCloned = (ArrayList<CustomLine>) map.getCustomLines().clone();
