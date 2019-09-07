@@ -16,7 +16,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
-import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.common.DrawingFragment;
 import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.common.TextFragment;
@@ -171,7 +170,7 @@ public class TabActivity extends AppCompatActivity implements TabLayoutFragment.
 
         if (id == R.id.paths) {
             // Handle the camera action
-        } else if (id == R.id.dalsi) {
+        } else if (id == R.id.nav_second) {
 
         }
 

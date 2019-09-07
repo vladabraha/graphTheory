@@ -4,8 +4,8 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_title">Jméno uživatele</string>
+    <string name="nav_header_subtitle">email uživatele</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_statistic">Statistiky</string>
 
@@ -25,7 +25,6 @@
     <string name="menu_seventh">Barvení grafu</string>
     <string name="menu_eight">Minimální kostra grafu</string>
     <string name="menu_ninth">Procházení labyrintu</string>
-
 
 
     <string name="example_text">

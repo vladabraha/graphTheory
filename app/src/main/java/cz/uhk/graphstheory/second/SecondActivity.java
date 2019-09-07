@@ -66,6 +66,9 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
         floatingActionButton = getFloatingActionButton();
         tabLayoutFragment = getTabLayoutFragment();
 
+        //todo dodelat predani spravneho stringu
+        textFragment.setEducationText("todo");
+
         drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         floatingActionButton.setOnClickListener(v -> {
             SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
@@ -130,7 +133,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.dalsi); //tady treba hodit, co se ma zvyraznit
+        navigationView.setCheckedItem(R.id.nav_second); //tady treba hodit, co se ma zvyraznit
 
         bottomNavigationView = findViewById(R.id.graph_generator_navigation);
 

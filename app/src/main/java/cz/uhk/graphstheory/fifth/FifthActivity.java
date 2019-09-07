@@ -56,6 +56,9 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
         bottomNavigationView = getBottomNavigationView();
         floatingActionButton = getFloatingActionButton();
 
+        //todo dodelat predani spravneho stringu
+        textFragment.setEducationText("todo");
+
         drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         floatingActionButton.setOnClickListener(v -> {
             boolean isValid = GraphChecker.checkIfGraphIsBipartite(drawingFragment.getUserGraph());
@@ -78,7 +81,7 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.dalsi); //tady treba hodit, co se ma zvyraznit
+        navigationView.setCheckedItem(R.id.nav_fifth); //tady treba hodit, co se ma zvyraznit
 
         bottomNavigationView = findViewById(R.id.graph_generator_navigation);
         bottomNavigationView.setSelectedItemId(R.id.circle);

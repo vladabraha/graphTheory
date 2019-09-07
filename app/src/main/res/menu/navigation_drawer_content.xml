@@ -6,23 +6,23 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/paths"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_menu_road"
             android:title="@string/menu_first" />
         <item
-            android:id="@+id/dalsi"
-            android:icon="@drawable/ic_menu_manage"
+            android:id="@+id/nav_second"
+            android:icon="@drawable/ic_menu_bridge"
             android:title="@string/menu_second" />
         <item
             android:id="@+id/nav_third"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_menu_doplnek"
             android:title="@string/menu_third" />
         <item
             android:id="@+id/nav_fourth"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_menu_izomorfism"
             android:title="@string/menu_fourth" />
         <item
             android:id="@+id/nav_fifth"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_menu_bipartite"
             android:title="@string/menu_fifth" />
         <item
             android:id="@+id/nav_sixth"

@@ -2,12 +2,12 @@ package cz.uhk.graphstheory.fourth;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
-import android.view.MenuItem;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
@@ -18,16 +18,27 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.abstraction.AbstractActivity;
 import cz.uhk.graphstheory.common.DrawingFragment;
 import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.common.TextFragment;
+import cz.uhk.graphstheory.database.DatabaseConnector;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
-import cz.uhk.graphstheory.util.GraphValidator;
+import cz.uhk.graphstheory.model.Coordinate;
+import cz.uhk.graphstheory.model.CustomLine;
+import cz.uhk.graphstheory.model.Map;
+import cz.uhk.graphstheory.util.GraphGenerator;
 
-public class FourthActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface {
+import android.util.DisplayMetrics;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Objects;
+
+public class FourthActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, DrawingFragment.CommunicationInterface {
 
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
@@ -35,11 +46,21 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
     private Fragment educationGraphFragment;
     private FloatingActionButton floatingActionButton;
 
+    private FourthActivityFragment fourthActivityFragment;
+
     private DrawingFragmentListener drawingFragmentListener;
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+    int height;
+    int width;
+    boolean isGraphSame, firstGraph;
+    Map firstMap, secondMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        DatabaseConnector databaseConnector = new DatabaseConnector();
 
         //for navigation drawer
         Toolbar toolbar = findViewById(R.id.graph_generator_toolbar);
@@ -58,12 +79,20 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
             dialog.setCancelable(false);
             dialog.setTitle("Rozhodněte");
-            dialog.setMessage("Jedná se v tomto případě o izomorfismus" );
+            dialog.setMessage("Jedná se v tomto případě o izomorfismus?");
             dialog.setPositiveButton("Ano", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int id) {
                     //Action for "Delete".
                     Log.d("action", "ano");
+                    if (isGraphSame) {
+                        showMessage("ano, máš pravdu!");
+                        String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
+                        assert userName != null;
+                        databaseConnector.recordUserPoints(userName, "fourth");
+                    } else {
+                        showMessage("bohužel, právě naopak");
+                    }
                 }
             })
                     .setNegativeButton("Ne ", new DialogInterface.OnClickListener() {
@@ -71,6 +100,14 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
                         public void onClick(DialogInterface dialog, int which) {
                             //Action for "Cancel".
                             Log.d("action", "ne");
+                            if (!isGraphSame) {
+                                showMessage("ano, máš pravdu!");
+                                String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
+                                assert userName != null;
+                                databaseConnector.recordUserPoints(userName, "fourth");
+                            } else {
+                                showMessage("bohužel, právě naopak");
+                            }
                         }
                     });
 
@@ -88,41 +125,19 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_third); //tady treba hodit, co se ma zvyraznit
+        navigationView.setCheckedItem(R.id.nav_fourth); //tady treba hodit, co se ma zvyraznit
 
         bottomNavigationView = findViewById(R.id.graph_generator_navigation);
-        bottomNavigationView.setSelectedItemId(R.id.circle);
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.circle:
-                        drawingFragment.changeDrawingMethod("circle");
-                        return true;
-                    case R.id.line:
-                        drawingFragment.changeDrawingMethod("line");
-                        return true;
-                    case R.id.path:
-                        drawingFragment.changeDrawingMethod("path");
-                        return true;
-                    case R.id.delete:
-                        drawingFragment.changeDrawingMethod("remove");
-                        return true;
-                    case R.id.clear:
-                        drawingFragment.changeDrawingMethod("clear");
-                        bottomNavigationView.setSelectedItemId(R.id.circle);
-                        drawingFragment.changeDrawingMethod("circle");
-                        return false; // return true if you want the item to be displayed as the selected item
-                    default:
-                        return false;
-                }
-            }
-        });
+        bottomNavigationView.setVisibility(View.INVISIBLE);
+
+
     }
+
 
     @Override
     protected Fragment getGraphFragment() {
-        return new FourthActivityFragment();
+        fourthActivityFragment = new FourthActivityFragment();
+        return fourthActivityFragment;
     }
 
     @Override
@@ -139,8 +154,14 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
     }
 
     @Override
+    protected void changeToDrawingFragment() {
+        super.changeToDrawingFragment();
+        Toast.makeText(this, "Rozhodni, zdali se jedna o izomorfni grafy", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
     protected void showBottomNavigationView() {
-        bottomNavigationView.setVisibility(View.VISIBLE);
+        bottomNavigationView.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -158,4 +179,136 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
         }
     }
 
+    private Map createMap() {
+        DisplayMetrics displayMetrics = drawingFragment.getMetrics();
+        height = displayMetrics.heightPixels;
+        width = displayMetrics.widthPixels;
+        //budeme chtit vygenerovat mapu, ktera ma alespon 3 uzly
+        Map generatedMap;
+        do {
+            generatedMap = GraphGenerator.generateMap(height,
+                    width, fourthActivityFragment.BRUSH_SIZE, (int) (Math.round(Math.random() * FourthActivityFragment.MAXIMUM_AMOUNT_OF_NODES)));
+        } while (generatedMap.getCircles().size() < 3);
+        return generatedMap;
+    }
+
+    private Map createSameGraph(Map firstMap) {
+        Map secondMap = new Map(firstMap);
+        int randomNumber = (int) Math.round(Math.random() * secondMap.getCircles().size());
+
+        for (int i = 0; i < randomNumber; i++) {
+
+            //vytvořím si náhodnou souřadnici
+            float newXCoordinate = (float) (Math.random() * width);
+            float newYCoordinate = (float) (Math.random() * height);
+
+            //vezmu náhodný uzel a tomu změním souřadnice + všem elementům se stejnou souřadnicí
+
+            int randomIndex = (int) Math.round(Math.random() * (secondMap.getCircles().size() - 1));
+            Coordinate oldCoordinate = secondMap.getCircles().get(randomIndex);
+            Coordinate newCoordinate = new Coordinate(newXCoordinate, newYCoordinate);
+
+            secondMap.getCircles().set(randomIndex, newCoordinate);
+            ArrayList<CustomLine> customLines = secondMap.getCustomLines();
+            for (int j = 0; j < customLines.size(); j++) {
+                CustomLine customLine = customLines.get(j);
+                if (customLine.getTo().equal(oldCoordinate)) {
+                    CustomLine newCustomLine = new CustomLine(customLine.getFrom(), newCoordinate);
+                    customLines.set(j, newCustomLine);
+                } else if (customLine.getFrom().equal(oldCoordinate)) {
+                    CustomLine newCustomLine = new CustomLine(newCoordinate, customLine.getTo());
+                    customLines.set(j, newCustomLine);
+                }
+            }
+        }
+        return secondMap;
+    }
+
+    private Map createDifferentGraph(Map firstMap) {
+
+        //jina mapa by mela mit take alespon 3 uzly, aby bylo co poznat
+        do {
+            Map secondMap = new Map(firstMap);
+            ArrayList<CustomLine> customLines = secondMap.getCustomLines();
+            ArrayList<Coordinate> circles = secondMap.getCircles();
+
+            //myšlenka, projdu nekolikrat graf, smazu z neho bod a vsechny cary, ktere jsou k nemu propojene
+            // nahradim ho novym uzlem a nahodnym poctem novych car (nemusim ani hledat jestli uz nejsou s nim propojeny, protoze jsou novy)
+            int randomNumber = (int) Math.round(Math.random() * secondMap.getCustomLines().size());
+            for (int i = 0; i < randomNumber; i++) {
+
+                //vezmu nahodny bod a ten smazu
+                int randomIndex = (int) Math.round(Math.random() * (secondMap.getCircles().size() - 1));
+                Coordinate oldCoordinate = secondMap.getCircles().get(randomIndex);
+                secondMap.getCircles().remove(randomIndex);
+
+                //projdu vsechny primky a mrknu jestli neprochazely tim bodem
+                Iterator<CustomLine> iterator = customLines.iterator();
+                while (iterator.hasNext()) {
+                    CustomLine customLine = iterator.next();
+                    if (customLine.getTo().equal(oldCoordinate)) {
+                        iterator.remove();
+                    } else if (customLine.getFrom().equal(oldCoordinate)) {
+                        iterator.remove();
+                    }
+                }
+
+                //vytvořím si náhodnou souřadnici a tu propojim s nahodnymi uzly
+                float newXCoordinate = (float) (Math.random() * width);
+                float newYCoordinate = (float) (Math.random() * height);
+
+                Coordinate newCoordinate = new Coordinate(newXCoordinate, newYCoordinate);
+                circles.add(newCoordinate);
+
+                int randomNumber2 = (int) Math.round(Math.random() * (secondMap.getCircles().size() - 1));
+                for (int k = 0; k < randomNumber2; k++) {
+                    //nalezeni nahodneho bodu se kterym novy bod propojime
+                    boolean found = false;
+                    int randomIndex2;
+                    do {
+                        randomIndex2 = (int) Math.round(Math.random() * secondMap.getCircles().size());
+                        if (randomIndex2 != secondMap.getCircles().size() - 1) found = true;
+                    } while (!found);
+                    CustomLine newCustomLine = new CustomLine(circles.get(randomIndex2), newCoordinate);
+                    customLines.add(newCustomLine);
+                }
+            }
+        } while (secondMap.getCircles().size() < 3);
+        return secondMap;
+    }
+
+    private void changeGraphs() {
+        if (firstGraph) {
+            new Handler().postDelayed(() -> {
+                firstGraph = false;
+                drawingFragment.setUserGraph(secondMap);
+                changeGraphs();
+            }, 8500);
+
+        } else {
+            new Handler().postDelayed(() -> {
+                firstGraph = true;
+                drawingFragment.setUserGraph(firstMap);
+                changeGraphs();
+            }, 8500);
+        }
+    }
+
+    @Override
+    public void sentMetrics(DisplayMetrics metrics) {
+        firstMap = createMap();
+        drawingFragment.setUserGraph(firstMap);
+        if (Math.random() > 0.5) {
+            secondMap = createSameGraph(firstMap);
+            isGraphSame = true;
+        } else {
+            secondMap = createDifferentGraph(firstMap);
+            isGraphSame = false;
+        }
+        changeGraphs();
+    }
+
+    private void showMessage(String text) {
+        Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+    }
 }

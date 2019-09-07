@@ -41,9 +41,12 @@
             android:name=".fourth.FourthActivity"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".fifth.FifthActivity"
+            android:noHistory="true"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".sixth.SixthActivity"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

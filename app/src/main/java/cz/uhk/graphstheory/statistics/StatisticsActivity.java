@@ -48,7 +48,7 @@ public class StatisticsActivity extends AbstractAppCompactActivity implements St
         fragmentTransaction.commit();
 
         //drawer menu
-        DrawerLayout drawer = findViewById(R.id.drawer_layout_statistic);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view_statistic);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);

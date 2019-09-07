@@ -25,14 +25,15 @@ public class FourthActivityFragment extends AbstractFragment {
     private int height;
 
 
-    private static final int MAXIMUM_AMOUNT_OF_NODES = 12;
-    private static final int MINIMUM_AMOUNT_OF_NODES = 5;
+    public static final int MAXIMUM_AMOUNT_OF_NODES = 12;
+    public static final int MINIMUM_AMOUNT_OF_NODES = 5;
 
     private Map mapToSet;
     private boolean setFirst;
     private Map secondMapToSet;
     private boolean shouldStop = false;
     private GraphGeneratedView graphGeneratedView;
+    public int BRUSH_SIZE;
 
     public FourthActivityFragment() {
         // Required empty public constructor
@@ -57,7 +58,7 @@ public class FourthActivityFragment extends AbstractFragment {
                         int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
                         if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES)
                             amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
-                        int BRUSH_SIZE = getGraphGeneratedView().getBrushSize();
+                        BRUSH_SIZE = getGraphGeneratedView().getBrushSize();
                         mapToSet = GraphGenerator.generateMap(height, width, BRUSH_SIZE, amountOfEdges);
 
                         secondMapToSet = new Map(mapToSet);

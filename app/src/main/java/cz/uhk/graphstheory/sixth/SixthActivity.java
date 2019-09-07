@@ -1,7 +1,6 @@
-package cz.uhk.graphstheory.third;
+package cz.uhk.graphstheory.sixth;
 
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -26,10 +25,11 @@ import cz.uhk.graphstheory.common.DrawingFragment;
 import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
+import cz.uhk.graphstheory.fifth.FifthActivityFragment;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
-import cz.uhk.graphstheory.util.GraphValidator;
+import cz.uhk.graphstheory.util.GraphChecker;
 
-public class ThirdActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface {
+public class SixthActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface {
 
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
@@ -37,17 +37,15 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
     private Fragment educationGraphFragment;
     private FloatingActionButton floatingActionButton;
 
-    private TabLayoutFragment tabLayoutFragment;
     private DrawingFragmentListener drawingFragmentListener;
-    DatabaseConnector databaseConnector;
+
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        databaseConnector = new DatabaseConnector();
-
+        DatabaseConnector databaseConnector = new DatabaseConnector();
         //for navigation drawer
         Toolbar toolbar = findViewById(R.id.graph_generator_toolbar);
         setSupportActionBar(toolbar);
@@ -58,22 +56,21 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
         educationGraphFragment = getGenerateGraphFragment();
         bottomNavigationView = getBottomNavigationView();
         floatingActionButton = getFloatingActionButton();
-        tabLayoutFragment = getTabLayoutFragment();
 
         //todo dodelat predani spravneho stringu
         textFragment.setEducationText("todo");
 
         drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         floatingActionButton.setOnClickListener(v -> {
-            if (GraphValidator.checkIfGraphHasDoplnek(drawingFragment.getUserGraph())) {
-                Toast.makeText(ThirdActivity.this, "Správně!", Toast.LENGTH_LONG).show();
+            boolean isValid = GraphChecker.checkIfGraphIsBipartite(drawingFragment.getUserGraph());
+            if (isValid) {
+                Toast.makeText(SixthActivity.this, "výborně, můžeš zkusit další, nebo jít dál", Toast.LENGTH_LONG).show();
                 String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
                 assert userName != null;
-                Double receivedPoints = databaseConnector.recordUserPoints(userName, "third");
-                Toast.makeText(ThirdActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
-                drawingFragment.changeDrawingMethod("clear");
+                databaseConnector.recordUserPoints(userName, "fifth");
+                drawingFragment.changeDrawingMethod("clear"); //toto vymaže, co uživatel nakreslil, aby nebouchal jenom check, check...
             }else {
-                Toast.makeText(ThirdActivity.this, "To není správně, změň graf a zkus to znovu", Toast.LENGTH_LONG).show();
+                Toast.makeText(SixthActivity.this, "bohužel, to není správně", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -85,7 +82,7 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_third); //tady treba hodit, co se ma zvyraznit
+        navigationView.setCheckedItem(R.id.nav_fifth); //tady treba hodit, co se ma zvyraznit
 
         bottomNavigationView = findViewById(R.id.graph_generator_navigation);
         bottomNavigationView.setSelectedItemId(R.id.circle);
@@ -119,18 +116,7 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
 
     @Override
     protected Fragment getGraphFragment() {
-        return new ThirdActivityFragment();
-    }
-
-    @Override
-    protected void changeToDrawingFragment() {
-        super.changeToDrawingFragment();
-
-        Toast.makeText(this, "Nakresli doplněk grafu", Toast.LENGTH_LONG).show();
-
-        //zmeni text bottomNavigationView
-        Menu menu = bottomNavigationView.getMenu();
-        menu.getItem(2).setTitle("doplněk");
+        return new FifthActivityFragment();
     }
 
     @Override
@@ -138,12 +124,6 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
         super.changeToTextFragment();
         //todo dodelat predani spravneho stringu
         textFragment.setEducationText("tada");
-    }
-
-    @Override
-    protected void changeToEducationFragment() {
-        super.changeToEducationFragment();
-        Toast.makeText(this, "Červenou čarou je vidět ukázka doplňku grafu", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -165,5 +145,6 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
             super.onBackPressed();
         }
     }
+
 
 }

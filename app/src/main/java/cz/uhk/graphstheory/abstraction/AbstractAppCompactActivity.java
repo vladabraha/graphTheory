@@ -15,6 +15,7 @@ import cz.uhk.graphstheory.fifth.FifthActivity;
 import cz.uhk.graphstheory.first.GraphGeneratorActivity;
 import cz.uhk.graphstheory.fourth.FourthActivity;
 import cz.uhk.graphstheory.second.SecondActivity;
+import cz.uhk.graphstheory.sixth.SixthActivity;
 import cz.uhk.graphstheory.statistics.StatisticsActivity;
 import cz.uhk.graphstheory.third.ThirdActivity;
 
@@ -38,7 +39,7 @@ public abstract class AbstractAppCompactActivity extends AppCompatActivity imple
                 finish();
                 startActivity(newActivityIntent);
             }
-        } else if (id == R.id.dalsi) {
+        } else if (id == R.id.nav_second) {
             if (sessionId != 2) {
                 Intent newActivityIntent = new Intent(this, SecondActivity.class);
                 newActivityIntent.putExtra("SESSION_ID", 2);
@@ -59,15 +60,21 @@ public abstract class AbstractAppCompactActivity extends AppCompatActivity imple
                 finish();
                 startActivity(newActivityIntent);
             }
-        }else if (id == R.id.nav_fifth) {
+        } else if (id == R.id.nav_fifth) {
             if (sessionId != 5) {
                 Intent newActivityIntent = new Intent(this, FifthActivity.class);
                 newActivityIntent.putExtra("SESSION_ID", 5);
                 finish();
                 startActivity(newActivityIntent);
             }
-        }
-        else if (id == R.id.nav_statistic) {
+        } else if (id == R.id.nav_sixth) {
+            if (sessionId != 6) {
+                Intent newActivityIntent = new Intent(this, SixthActivity.class);
+                newActivityIntent.putExtra("SESSION_ID", 6);
+                finish();
+                startActivity(newActivityIntent);
+            }
+        } else if (id == R.id.nav_statistic) {
             if (sessionId != 99) {
                 Intent newActivityIntent = new Intent(this, StatisticsActivity.class);
                 newActivityIntent.putExtra("SESSION_ID", 99);

@@ -1,11 +1,14 @@
 package cz.uhk.graphstheory.common;
 
 import androidx.lifecycle.ViewModelProviders;
+
 import android.content.Context;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +40,8 @@ public class DrawingFragment extends Fragment implements TabActivity.OnFragmentI
 
     private PaintView paintView;
     private DrawMapViewModel drawMapViewModel;
+    private DisplayMetrics metrics;
+    CommunicationInterface mListener;
 
 //    private GraphListener mListener;
 
@@ -75,24 +80,25 @@ public class DrawingFragment extends Fragment implements TabActivity.OnFragmentI
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        paintView =  Objects.requireNonNull(getView()).findViewById(R.id.paintView);
-        DisplayMetrics metrics = new DisplayMetrics();
+        paintView = Objects.requireNonNull(getView()).findViewById(R.id.paintView);
+        metrics = new DisplayMetrics();
         Objects.requireNonNull(getActivity()).getWindowManager().getDefaultDisplay().getMetrics(metrics);
         paintView.init(metrics);
-        if (drawMapViewModel.getMap() != null){
+        if (drawMapViewModel.getMap() != null) {
             paintView.setMap(drawMapViewModel.getMap());
         }
+        if (mListener != null) mListener.sentMetrics(metrics);
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        if (context instanceof GraphListener) {
-//            mListener = (GraphListener) context;
+        if (context instanceof CommunicationInterface) {
+            mListener = (CommunicationInterface) context;
 //        } else {
 //            throw new RuntimeException(context.toString()
 //                    + " must implement GraphListener");
-//        }
+        }
     }
 
     @Override
@@ -104,7 +110,7 @@ public class DrawingFragment extends Fragment implements TabActivity.OnFragmentI
 
     @Override
     public void changeDrawingMethod(String method) {
-        switch (method){
+        switch (method) {
             case "line":
                 paintView.line();
                 break;
@@ -127,5 +133,17 @@ public class DrawingFragment extends Fragment implements TabActivity.OnFragmentI
     @Override
     public Map getUserGraph() {
         return paintView.getMap();
+    }
+
+    public void setUserGraph(Map map) {
+        paintView.setMap(map);
+    }
+
+    public DisplayMetrics getMetrics() {
+        return metrics;
+    }
+
+    public interface CommunicationInterface{
+        public void sentMetrics(DisplayMetrics metrics);
     }
 }
