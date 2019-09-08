@@ -138,7 +138,7 @@ public class GraphGenerator {
                         }
                     } else {
                         do {
-                            index = (int) (Math.random() * circlesPoints.size());
+                            index = (int) Math.round(Math.random() * (circlesPoints.size() - 1));
                             if (i != index) found = true;
                         } while (!found);
                     }
@@ -154,7 +154,6 @@ public class GraphGenerator {
                 }
             }
         }
-
 
         ArrayList<CustomLine> edges = new ArrayList<>();
 

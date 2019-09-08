@@ -180,14 +180,15 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
     }
 
     private Map createMap() {
-        DisplayMetrics displayMetrics = drawingFragment.getMetrics();
-        height = displayMetrics.heightPixels;
-        width = displayMetrics.widthPixels;
         //budeme chtit vygenerovat mapu, ktera ma alespon 3 uzly
         Map generatedMap;
         do {
-            generatedMap = GraphGenerator.generateMap(height,
-                    width, fourthActivityFragment.BRUSH_SIZE, (int) (Math.round(Math.random() * FourthActivityFragment.MAXIMUM_AMOUNT_OF_NODES)));
+            int amountOfEdges = (int) (Math.random() * FourthActivityFragment.MAXIMUM_AMOUNT_OF_NODES);
+            if (amountOfEdges < FourthActivityFragment.MINIMUM_AMOUNT_OF_NODES) {
+                amountOfEdges = FourthActivityFragment.MINIMUM_AMOUNT_OF_NODES;
+            }
+
+            generatedMap = GraphGenerator.generateMap(height, width, fourthActivityFragment.BRUSH_SIZE, amountOfEdges);
         } while (generatedMap.getCircles().size() < 3);
         return generatedMap;
     }
@@ -227,8 +228,9 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
     private Map createDifferentGraph(Map firstMap) {
 
         //jina mapa by mela mit take alespon 3 uzly, aby bylo co poznat
+        Map secondMap;
         do {
-            Map secondMap = new Map(firstMap);
+            secondMap = new Map(firstMap);
             ArrayList<CustomLine> customLines = secondMap.getCustomLines();
             ArrayList<Coordinate> circles = secondMap.getCircles();
 
@@ -266,7 +268,7 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
                     boolean found = false;
                     int randomIndex2;
                     do {
-                        randomIndex2 = (int) Math.round(Math.random() * secondMap.getCircles().size());
+                        randomIndex2 = (int) Math.round(Math.random() * (secondMap.getCircles().size() - 1));
                         if (randomIndex2 != secondMap.getCircles().size() - 1) found = true;
                     } while (!found);
                     CustomLine newCustomLine = new CustomLine(circles.get(randomIndex2), newCoordinate);
@@ -295,7 +297,10 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
     }
 
     @Override
-    public void sentMetrics(DisplayMetrics metrics) {
+    public void sentMetrics(int width, int height) {
+        this.height = height;
+        this.width = width;
+
         firstMap = createMap();
         drawingFragment.setUserGraph(firstMap);
         if (Math.random() > 0.5) {

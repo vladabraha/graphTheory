@@ -13,6 +13,7 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 
 
 import java.util.Objects;
@@ -42,6 +43,7 @@ public class DrawingFragment extends Fragment implements TabActivity.OnFragmentI
     private DrawMapViewModel drawMapViewModel;
     private DisplayMetrics metrics;
     CommunicationInterface mListener;
+    private int width, height;
 
 //    private GraphListener mListener;
 
@@ -87,63 +89,72 @@ public class DrawingFragment extends Fragment implements TabActivity.OnFragmentI
         if (drawMapViewModel.getMap() != null) {
             paintView.setMap(drawMapViewModel.getMap());
         }
-        if (mListener != null) mListener.sentMetrics(metrics);
+        view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (mListener != null){
+                width = view.getMeasuredWidth();
+                    height = view.getMeasuredHeight();
+                    mListener.sentMetrics(width, height);
+                }
+            }
+        });
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof CommunicationInterface) {
-            mListener = (CommunicationInterface) context;
+        @Override
+        public void onAttach (Context context){
+            super.onAttach(context);
+            if (context instanceof CommunicationInterface) {
+                mListener = (CommunicationInterface) context;
 //        } else {
 //            throw new RuntimeException(context.toString()
 //                    + " must implement GraphListener");
+            }
+        }
+
+        @Override
+        public void onDetach () {
+            super.onDetach();
+            Map map = paintView.getMap();
+            drawMapViewModel.setMap(map);
+        }
+
+        @Override
+        public void changeDrawingMethod (String method){
+            switch (method) {
+                case "line":
+                    paintView.line();
+                    break;
+                case "path":
+                    paintView.path();
+                    break;
+                case "circle":
+                    paintView.circle();
+                    break;
+                case "remove":
+                    paintView.remove();
+                    break;
+                case "clear":
+                    paintView.clear();
+                    break;
+
+            }
+        }
+
+        @Override
+        public Map getUserGraph () {
+            return paintView.getMap();
+        }
+
+        public void setUserGraph (Map map){
+            paintView.setMap(map);
+        }
+
+        public DisplayMetrics getMetrics () {
+            return metrics;
+        }
+
+        public interface CommunicationInterface {
+            public void sentMetrics(int width, int height);
         }
     }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        Map map = paintView.getMap();
-        drawMapViewModel.setMap(map);
-    }
-
-    @Override
-    public void changeDrawingMethod(String method) {
-        switch (method) {
-            case "line":
-                paintView.line();
-                break;
-            case "path":
-                paintView.path();
-                break;
-            case "circle":
-                paintView.circle();
-                break;
-            case "remove":
-                paintView.remove();
-                break;
-            case "clear":
-                paintView.clear();
-                break;
-
-        }
-    }
-
-    @Override
-    public Map getUserGraph() {
-        return paintView.getMap();
-    }
-
-    public void setUserGraph(Map map) {
-        paintView.setMap(map);
-    }
-
-    public DisplayMetrics getMetrics() {
-        return metrics;
-    }
-
-    public interface CommunicationInterface{
-        public void sentMetrics(DisplayMetrics metrics);
-    }
-}
