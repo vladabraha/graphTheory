@@ -7,14 +7,19 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.widget.TextView;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Objects;
 
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.abstraction.AbstractAppCompactActivity;
+import cz.uhk.graphstheory.database.DatabaseConnector;
+import cz.uhk.graphstheory.model.User;
 
 public class StatisticsActivity extends AbstractAppCompactActivity implements StatisticsTab.TableLayoutCommunicationInterface, NavigationView.OnNavigationItemSelectedListener {
 
@@ -22,15 +27,16 @@ public class StatisticsActivity extends AbstractAppCompactActivity implements St
     private StatisticFragment statisticFragment;
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-//    private DatabaseConnector databaseConnector;
+    private DatabaseConnector databaseConnector;
     private String loggedUserEmail;
+    TextView navigationDrawerName, navigationDrawerEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics);
 
-//        databaseConnector = new DatabaseConnector();
+        databaseConnector = new DatabaseConnector();
 
         loggedUserEmail = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
 
@@ -64,5 +70,19 @@ public class StatisticsActivity extends AbstractAppCompactActivity implements St
         if (number == 2 ) statisticFragment.tabLayoutChange(number, loggedUserEmail);
     }
 
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //set current user to navigation drawer
+        navigationDrawerName = findViewById(R.id.navigation_header_name);
+        navigationDrawerEmail = findViewById(R.id.navigation_header_email);
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            navigationDrawerEmail.setText(currentUser.getEmail());
+            User user = databaseConnector.findUser(Objects.requireNonNull(currentUser.getEmail()));
+            if (user != null) {
+                navigationDrawerName.setText(user.getNickName());
+            }
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
 
 }

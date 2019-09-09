@@ -22,16 +22,18 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Objects;
 
-import cz.uhk.graphstheory.common.DrawingFragment;
 import cz.uhk.graphstheory.R;
-import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.abstraction.AbstractActivity;
+import cz.uhk.graphstheory.common.DrawingFragment;
+import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
+import cz.uhk.graphstheory.model.Map;
 import cz.uhk.graphstheory.util.GraphChecker;
+import cz.uhk.graphstheory.util.GraphGenerator;
 
-public class SecondActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface {
+public class SecondActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, DrawingFragment.CommunicationInterface {
 
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
@@ -44,6 +46,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
 
     private DrawingFragmentListener drawingFragmentListener;
     String type;
+    int height, width;
 
     DatabaseConnector databaseConnector;
 
@@ -66,8 +69,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
         floatingActionButton = getFloatingActionButton();
         tabLayoutFragment = getTabLayoutFragment();
 
-        //todo dodelat predani spravneho stringu
-        textFragment.setEducationText("todo");
+        textFragment.setEducationText(getString(R.string.second_activity_text));
 
         drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         floatingActionButton.setOnClickListener(v -> {
@@ -81,14 +83,9 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
                         case "true":
                             String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
                             assert userName != null;
-                            Double receivedPoints;
-                            Toast.makeText(SecondActivity.this, "Správně!", Toast.LENGTH_LONG).show();
-                            receivedPoints = databaseConnector.recordUserPoints(userName, "second-first");
+                            Double receivedPoints = databaseConnector.recordUserPoints(userName, "second-first");
                             Toast.makeText(SecondActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
-                            drawingFragment.changeDrawingMethod("clear"); //toto vymaže, co uživatel nakreslil, aby nebouchal jenom check, check...
-                            tabLayoutFragment.switchSelectedTab(1);
-
-                            changeActivity();
+                            createDialog();
                             break;
                         case "false":
                             Toast.makeText(SecondActivity.this, "Jejda, špatně, mkrni na to ještě jednou", Toast.LENGTH_LONG).show();
@@ -108,10 +105,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
                             Toast.makeText(SecondActivity.this, "Správně!", Toast.LENGTH_LONG).show();
                             receivedPoints = databaseConnector.recordUserPoints(userName, "second-second");
                             Toast.makeText(SecondActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
-                            tabLayoutFragment.switchSelectedTab(1);
-                            drawingFragment.changeDrawingMethod("clear"); //toto vymaže, co uživatel nakreslil, aby nebouchal jenom check, check...
-
-                            changeActivity();
+                            createDialog();
                             break;
                         case "false":
                             Toast.makeText(SecondActivity.this, "Jejda, špatně, mkrni na to ještě jednou", Toast.LENGTH_LONG).show();
@@ -188,8 +182,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
     @Override
     protected void changeToTextFragment() {
         super.changeToTextFragment();
-        //todo dodelat predani spravneho stringu
-        textFragment.setEducationText("tada");
+        textFragment.setEducationText(getString(R.string.second_activity_text));
     }
 
     @Override
@@ -223,9 +216,9 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         int displayedActivity = sharedPref.getInt("displayedActivity-second", 0);
         if (displayedActivity == 0) {
-            Toast.makeText(this, "Nakresli most", Toast.LENGTH_LONG).show();
-        }else {
-            Toast.makeText(this, "Nakresli artikulaci", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Vyznač v grafu most", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "Vyznač v grafu artikulaci", Toast.LENGTH_LONG).show();
         }
         //zmeni text bottomNavigationView
         Menu menu = bottomNavigationView.getMenu();
@@ -244,7 +237,6 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
     }
 
     private void changeActivity() {
-
         //do shared preferences si ukladame posledni otevrenou aktivitu, abychom se mohli tocit do kolecka a neotevirali pripadne porad stejnou aktivitu
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         int displayedActivity = sharedPref.getInt("displayedActivity-second", 0);
@@ -259,7 +251,6 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
         editor.putInt("displayedActivity-second", displayedActivity);
         editor.apply();
 
-
         switch (displayedActivity) {
             case 0:
                 Toast.makeText(this, "Teď si ukážeme artikulaci v grafu", Toast.LENGTH_LONG).show();
@@ -270,5 +261,28 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
                 secondActivityFragment.changeGraph("artikulace");
                 break;
         }
+    }
+
+    @Override
+    public void sentMetrics(int width, int height) {
+        this.width = width;
+        this.height = height;
+        int amountOfNodes = (int) Math.round(Math.random() * 9) + 4;
+        Map map = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
+        drawingFragment.setUserGraph(map);
+    }
+
+    @Override
+    public void onPositiveButtonClick() {
+        drawingFragment.changeDrawingMethod("clear"); //toto vymaže, co uživatel nakreslil, aby nebouchal jenom check, check...
+        tabLayoutFragment.switchSelectedTab(1);
+        changeActivity();
+    }
+
+    @Override
+    public void onNegativeButtonClick() {
+        int amountOfNodes = (int) Math.round(Math.random() * 9) + 3;
+        Map map = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
+        drawingFragment.setUserGraph(map);
     }
 }

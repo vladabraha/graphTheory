@@ -19,11 +19,8 @@ import cz.uhk.graphstheory.util.GraphGenerator;
 
 public class FourthActivityFragment extends AbstractFragment {
 
-    private boolean disableListener = false;
-
     private int width;
     private int height;
-
 
     public static final int MAXIMUM_AMOUNT_OF_NODES = 12;
     public static final int MINIMUM_AMOUNT_OF_NODES = 5;
@@ -31,7 +28,7 @@ public class FourthActivityFragment extends AbstractFragment {
     private Map mapToSet;
     private boolean setFirst;
     private Map secondMapToSet;
-    private boolean shouldStop = false;
+    private boolean shouldStop, disableListener = false;
     private GraphGeneratedView graphGeneratedView;
     public int BRUSH_SIZE;
 

@@ -13,36 +13,33 @@ public class GraphChecker {
     public static boolean checkIfGraphContainsCesta(Map map) {
         if (map != null) {
 
-            //Jedu od zacatku a kazdy druhy bod zkontroluju, zdali posledni dva body nejsou nekde uz v seznamu predtim (krome poslednich dvou bodu samozrejme)
+            //mrknu, že každý bod je v seznamu maximálně 2x
             ArrayList<CustomLine> path = map.getRedLineList();
-            if (path.size() == 0) return false;
+            ArrayList<CustomLine> customLines = map.getCustomLines();
+            if (path.size() < 1) return false;
             ArrayList<Coordinate> coordinateArrayList = new ArrayList<>();
 
             for (int i = 0; i < path.size(); i++) {
+                //nejdřív kontrola, že červená čára je i ve hranách
+                int finalI = i;
+                if (customLines.stream().noneMatch(n -> n.isLineSame(path.get(finalI)))) {
+                    return false;
+                }
                 coordinateArrayList.add(path.get(i).getFrom());
                 coordinateArrayList.add(path.get(i).getTo());
-                if (i > 2 && i % 2 != 1) {
-                    for (int k = 0; k < coordinateArrayList.size() - 2; k++) {
-                        if (coordinateArrayList.get(k) == path.get(i).getFrom()) {
-                            return false;
-                        } else if (coordinateArrayList.get(k) == path.get(i).getTo()) {
-                            return false;
-                        }
-                    }
-                } else if (i == (path.size()) - 1 && i > 1) {
-                    for (int k = 0; k < coordinateArrayList.size(); k++) {
-                        if (coordinateArrayList.get(k).equal(path.get(i).getFrom()) && k != coordinateArrayList.size()) {
-                            return false;
-                        } else if (coordinateArrayList.get(k).equal(path.get(i).getTo()) && k != coordinateArrayList.size()) {
-                            return false;
-                        }
-                    }
-                }
             }
-            if (path.size() > 0) return true;
+            for (Coordinate coordinate : coordinateArrayList){
+                int numberOfOccurance = 0;
+                for (Coordinate coordinate2 : coordinateArrayList){
+                    if (coordinate.equal(coordinate2)) numberOfOccurance++;
+                }
+                if (numberOfOccurance > 2) return false;
+            }
+        }else {
+            return Boolean.parseBoolean(null);
         }
-        return Boolean.parseBoolean(null);
-    }
+        return true;
+}
 
     public static boolean checkIfGraphContainsTah(Map map) {
         ArrayList<CustomLine> redLineList = map.getRedLineList();
@@ -182,6 +179,7 @@ public class GraphChecker {
         //projdeme vsechny cary a mrkneme, zdali ukazuji z jednoho bodu na vsechny uzly z druhe skupiny
         //pri kazdem nalezeni, odstranime bod ze seznamu druhe casti bipartitniho grafu a na konci by měl být prázdný
         for (Coordinate coordinateFirstPart : circlesInFirstPartOfBipartite) {
+            //todo vytvorit novej objekt
             ArrayList<Coordinate> circlesInSecondPartOfBipartiteCloned = (ArrayList<Coordinate>) circlesInSecondPartOfBipartite.clone();
             Iterator<Coordinate> iter = circlesInSecondPartOfBipartiteCloned.iterator();
 
@@ -319,11 +317,11 @@ public class GraphChecker {
         Coordinate secondEndOfBridge = redLines.get(0).getTo();
         Coordinate firstCoordinate = null;
         Coordinate borderWhereBridgeBeggins = null; //tohle je kvuli algoritmu, ktery je stejny jako u aritkulace a potřebuje hraniční bod, přes který by neměl přejít
-        for (CustomLine customLine : customLines){
-            if (customLine.getFrom().equal(oneEndOfBridge) && !customLine.getTo().equal(secondEndOfBridge) ){
+        for (CustomLine customLine : customLines) {
+            if (customLine.getFrom().equal(oneEndOfBridge) && !customLine.getTo().equal(secondEndOfBridge)) {
                 firstCoordinate = customLine.getTo();
                 borderWhereBridgeBeggins = customLine.getFrom();
-            } else if (customLine.getTo().equal(oneEndOfBridge) && !customLine.getFrom().equal(secondEndOfBridge)){
+            } else if (customLine.getTo().equal(oneEndOfBridge) && !customLine.getFrom().equal(secondEndOfBridge)) {
                 firstCoordinate = customLine.getFrom();
                 borderWhereBridgeBeggins = customLine.getTo();
             }

@@ -45,6 +45,8 @@ public class DrawingFragment extends Fragment implements TabActivity.OnFragmentI
     CommunicationInterface mListener;
     private int width, height;
 
+    boolean disableListener = false;
+
 //    private GraphListener mListener;
 
     public DrawingFragment() {
@@ -92,8 +94,9 @@ public class DrawingFragment extends Fragment implements TabActivity.OnFragmentI
         view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                if (mListener != null){
-                width = view.getMeasuredWidth();
+                if (mListener != null && !disableListener) {
+                    disableListener = true;
+                    width = view.getMeasuredWidth();
                     height = view.getMeasuredHeight();
                     mListener.sentMetrics(width, height);
                 }
@@ -101,60 +104,60 @@ public class DrawingFragment extends Fragment implements TabActivity.OnFragmentI
         });
     }
 
-        @Override
-        public void onAttach (Context context){
-            super.onAttach(context);
-            if (context instanceof CommunicationInterface) {
-                mListener = (CommunicationInterface) context;
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof CommunicationInterface) {
+            mListener = (CommunicationInterface) context;
 //        } else {
 //            throw new RuntimeException(context.toString()
 //                    + " must implement GraphListener");
-            }
-        }
-
-        @Override
-        public void onDetach () {
-            super.onDetach();
-            Map map = paintView.getMap();
-            drawMapViewModel.setMap(map);
-        }
-
-        @Override
-        public void changeDrawingMethod (String method){
-            switch (method) {
-                case "line":
-                    paintView.line();
-                    break;
-                case "path":
-                    paintView.path();
-                    break;
-                case "circle":
-                    paintView.circle();
-                    break;
-                case "remove":
-                    paintView.remove();
-                    break;
-                case "clear":
-                    paintView.clear();
-                    break;
-
-            }
-        }
-
-        @Override
-        public Map getUserGraph () {
-            return paintView.getMap();
-        }
-
-        public void setUserGraph (Map map){
-            paintView.setMap(map);
-        }
-
-        public DisplayMetrics getMetrics () {
-            return metrics;
-        }
-
-        public interface CommunicationInterface {
-            public void sentMetrics(int width, int height);
         }
     }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Map map = paintView.getMap();
+        drawMapViewModel.setMap(map);
+    }
+
+    @Override
+    public void changeDrawingMethod(String method) {
+        switch (method) {
+            case "line":
+                paintView.line();
+                break;
+            case "path":
+                paintView.path();
+                break;
+            case "circle":
+                paintView.circle();
+                break;
+            case "remove":
+                paintView.remove();
+                break;
+            case "clear":
+                paintView.clear();
+                break;
+
+        }
+    }
+
+    @Override
+    public Map getUserGraph() {
+        return paintView.getMap();
+    }
+
+    public void setUserGraph(Map map) {
+        paintView.setMap(map);
+    }
+
+    public DisplayMetrics getMetrics() {
+        return metrics;
+    }
+
+    public interface CommunicationInterface {
+        public void sentMetrics(int width, int height);
+    }
+}

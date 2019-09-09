@@ -38,6 +38,7 @@ public class GraphGenerator {
     public static ArrayList<CustomLine> generateRandomEdges(ArrayList<Coordinate> circlesPoints) {
         int amountOfNodes = circlesPoints.size();
         int maximumOfEdges = (amountOfNodes * (amountOfNodes - 1)) / 2; //viz. definice uplneho grafu
+        if (amountOfNodes > 3) maximumOfEdges = maximumOfEdges - 1; //maximum je třeba zmenšit o jedna, aby byly vidět alg., které se na graf aplikují
         int amountOfEdges = (int) Math.round(Math.random() * maximumOfEdges); //nahodny pocet hran
         if (amountOfEdges < maximumOfEdges) amountOfEdges++;
 
@@ -183,8 +184,12 @@ public class GraphGenerator {
         boolean shouldRun = true;
         do {
             run++;
-            float xCoordinate = (float) (Math.random() * width);
-            float yCoordinate = (float) (Math.random() * height);
+            //ohraniceni, kvuli vyjizdecimu menu a spodku
+            float border = 20;
+            float xCoordinate = (float) (Math.random() * (width - border));
+            xCoordinate+= 10;
+            float yCoordinate = (float) (Math.random() * (height - border));
+            yCoordinate+= 10;
 
             //pokud vyjde male cislo, pripocitame souradnice, aby nelezely na okraji obrazovky
             if (xCoordinate < BRUSH_SIZE) xCoordinate += BRUSH_SIZE;

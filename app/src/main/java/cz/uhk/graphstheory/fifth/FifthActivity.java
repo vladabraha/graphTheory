@@ -56,8 +56,7 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
         bottomNavigationView = getBottomNavigationView();
         floatingActionButton = getFloatingActionButton();
 
-        //todo dodelat predani spravneho stringu
-        textFragment.setEducationText("todo");
+        textFragment.setEducationText(getString(R.string.fifth_activity_text));
 
         drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         floatingActionButton.setOnClickListener(v -> {
@@ -121,8 +120,7 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
     @Override
     protected void changeToTextFragment() {
         super.changeToTextFragment();
-        //todo dodelat predani spravneho stringu
-        textFragment.setEducationText("tada");
+        textFragment.setEducationText(getString(R.string.fifth_activity_text));
     }
 
     @Override
@@ -133,6 +131,18 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
     @Override
     protected void hideBottomNavigationView() {
         bottomNavigationView.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void changeToEducationFragment() {
+        super.changeToEducationFragment();
+        Toast.makeText(this, "Právě se zobrazuje bipartitní graf", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void changeToDrawingFragment() {
+        super.changeToDrawingFragment();
+        Toast.makeText(this, "Nakresli bipartitní graf", Toast.LENGTH_LONG).show();
     }
 
     @Override
