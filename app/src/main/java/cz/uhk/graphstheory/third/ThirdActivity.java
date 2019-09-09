@@ -1,5 +1,6 @@
 package cz.uhk.graphstheory.third;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +19,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 import cz.uhk.graphstheory.R;
@@ -26,10 +28,16 @@ import cz.uhk.graphstheory.common.DrawingFragment;
 import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
+import cz.uhk.graphstheory.fourth.FourthActivity;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
+import cz.uhk.graphstheory.model.CustomLine;
+import cz.uhk.graphstheory.model.Map;
+import cz.uhk.graphstheory.util.GraphConverter;
+import cz.uhk.graphstheory.util.GraphGenerator;
 import cz.uhk.graphstheory.util.GraphValidator;
+import cz.uhk.graphstheory.util.PathGenerator;
 
-public class ThirdActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface {
+public class ThirdActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, DrawingFragment.CommunicationInterface {
 
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
@@ -41,6 +49,11 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
     private DrawingFragmentListener drawingFragmentListener;
     DatabaseConnector databaseConnector;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    ThirdActivityFragment thirdActivityFragment;
+    Map mapToCheck;
+    boolean isAttached;
+
+    int height, width;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,19 +73,18 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
         floatingActionButton = getFloatingActionButton();
         tabLayoutFragment = getTabLayoutFragment();
 
-        //todo dodelat predani spravneho stringu
-        textFragment.setEducationText("todo");
+        textFragment.setEducationText(getString(R.string.third_activity_text));
 
         drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         floatingActionButton.setOnClickListener(v -> {
-            if (GraphValidator.checkIfGraphHasDoplnek(drawingFragment.getUserGraph())) {
-                Toast.makeText(ThirdActivity.this, "Správně!", Toast.LENGTH_LONG).show();
+            if (checkIfGraphHasDoplnek(drawingFragment.getUserGraph())) {
                 String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
                 assert userName != null;
                 Double receivedPoints = databaseConnector.recordUserPoints(userName, "third");
                 Toast.makeText(ThirdActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
                 drawingFragment.changeDrawingMethod("clear");
-            }else {
+                createDialog();
+            } else {
                 Toast.makeText(ThirdActivity.this, "To není správně, změň graf a zkus to znovu", Toast.LENGTH_LONG).show();
             }
         });
@@ -89,43 +101,20 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
 
         bottomNavigationView = findViewById(R.id.graph_generator_navigation);
         bottomNavigationView.setSelectedItemId(R.id.circle);
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.circle:
-                        drawingFragment.changeDrawingMethod("circle");
-                        return true;
-                    case R.id.line:
-                        drawingFragment.changeDrawingMethod("line");
-                        return true;
-                    case R.id.path:
-                        drawingFragment.changeDrawingMethod("path");
-                        return true;
-                    case R.id.delete:
-                        drawingFragment.changeDrawingMethod("remove");
-                        return true;
-                    case R.id.clear:
-                        drawingFragment.changeDrawingMethod("clear");
-                        bottomNavigationView.setSelectedItemId(R.id.circle);
-                        drawingFragment.changeDrawingMethod("circle");
-                        return false; // return true if you want the item to be displayed as the selected item
-                    default:
-                        return false;
-                }
-            }
-        });
+        bottomNavigationView.setSelectedItemId(R.id.path);
     }
+
 
     @Override
     protected Fragment getGraphFragment() {
-        return new ThirdActivityFragment();
+        thirdActivityFragment = new ThirdActivityFragment();
+        return thirdActivityFragment;
     }
 
     @Override
     protected void changeToDrawingFragment() {
         super.changeToDrawingFragment();
-
+        if (isAttached) drawingFragment.changeDrawingMethod("path");
         Toast.makeText(this, "Nakresli doplněk grafu", Toast.LENGTH_LONG).show();
 
         //zmeni text bottomNavigationView
@@ -136,8 +125,7 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
     @Override
     protected void changeToTextFragment() {
         super.changeToTextFragment();
-        //todo dodelat predani spravneho stringu
-        textFragment.setEducationText("tada");
+        textFragment.setEducationText(getString(R.string.third_activity_text));
     }
 
     @Override
@@ -166,4 +154,64 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
         }
     }
 
+    @Override
+    public void sentMetrics(int width, int height) {
+        drawingFragment.changeDrawingMethod("path");
+        isAttached = true;
+        this.width = width;
+        this.height = height;
+        int amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
+        Map firstMap = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
+
+        ArrayList<Map> maps = GraphConverter.convertMapsToSplitScreenArray(firstMap, height);
+        Map splittedMap = maps.get(0);
+        Map splittedMap2 = maps.get(1);
+
+        //tohle je pro ulozeni si celýho grafu bez vymazanejch čar, abych na tom mohl zavolat jenom dogenerovani do uplnyho grafu a pak to mohl porovnat
+        Map secondMap = new Map(splittedMap2);
+        mapToCheck = PathGenerator.createDoplnekToGraph(secondMap); //v tomhle bude mapa, vuci ktere budeme kreslit to, co vyvtvoril uzivatel
+
+        splittedMap2.setCustomLines(new ArrayList<>());
+
+        splittedMap.getCircles().addAll(splittedMap2.getCircles());
+        splittedMap.getCustomLines().addAll(splittedMap2.getCustomLines());
+        splittedMap.getRedLineList().addAll(splittedMap2.getRedLineList());
+
+        drawingFragment.setUserGraph(splittedMap);
+    }
+
+    //myšlenka - pokud vezmu ten prvni graf a připočítám k němu stejnej rozdíl, dostanu stejnej graf
+    //na něm porovnám, zdali má červené čáry (doplněk) stejný souřadnice jako když by to generoval algoritmus
+    //podmínkou je lock na posunování uzlů
+    private boolean checkIfGraphHasDoplnek(Map userGraph) {
+        ArrayList<CustomLine> redLines = userGraph.getRedLineList();
+        ArrayList<CustomLine> redLinesToCheck = mapToCheck.getRedLineList();
+
+        if (redLinesToCheck.size() == 0 && redLines.size() > 0) return false;
+
+        //todo opravit checker
+        for (CustomLine customLine : redLinesToCheck) {
+            boolean found = false;
+            for (CustomLine redLine : redLines) {
+                if (redLine.isLineSame(customLine)){
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void onPositiveButtonClick() {
+        Intent newActivityIntent = new Intent(this, FourthActivity.class);
+        newActivityIntent.putExtra("SESSION_ID", 4);
+        finish();
+        startActivity(newActivityIntent);
+    }
+
+    @Override
+    public void onNegativeButtonClick() {
+    }
 }

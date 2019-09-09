@@ -3,6 +3,7 @@ package cz.uhk.graphstheory.model;
 
 import java.util.ArrayList;
 
+
 public class Map {
     private ArrayList<CustomLine> customLines;
     private ArrayList<Coordinate> circles;
@@ -20,11 +21,31 @@ public class Map {
         this.redLineList = redLineList;
     }
 
-    @SuppressWarnings("unchecked")
+
     public Map(Map map) {
-        this.customLines = (ArrayList<CustomLine>) map.customLines.clone();
-        this.circles = (ArrayList<Coordinate>) map.circles.clone();
-        this.redLineList =(ArrayList<CustomLine>) map.redLineList.clone();
+        ArrayList<CustomLine> customLinesCopied = new ArrayList<>();
+        ArrayList<Coordinate> circlesCopied = new ArrayList<>();
+        ArrayList<CustomLine> redLineListCopied = new ArrayList<>();
+
+        for (CustomLine customLine : map.customLines) {
+            Coordinate from = new Coordinate(customLine.getFrom().x, customLine.getFrom().y);
+            Coordinate to = new Coordinate(customLine.getTo().x, customLine.getTo().y);
+            customLinesCopied.add(new CustomLine(from, to));
+        }
+
+        for (Coordinate coordinate : map.circles) {
+            circlesCopied.add(new Coordinate(coordinate.x, coordinate.y));
+        }
+
+        for (CustomLine customLine : map.redLineList) {
+            Coordinate from = new Coordinate(customLine.getFrom().x, customLine.getFrom().y);
+            Coordinate to = new Coordinate(customLine.getTo().x, customLine.getTo().y);
+            redLineListCopied.add(new CustomLine(from, to));
+        }
+
+        this.customLines = customLinesCopied;
+        this.circles = circlesCopied;
+        this.redLineList = redLineListCopied;
     }
 
     public ArrayList<CustomLine> getRedLineList() {

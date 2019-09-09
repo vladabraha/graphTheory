@@ -38,4 +38,9 @@ public class CustomLine {
         return false;
     }
 
+    // Overriding clone() method of Object class
+    public Object clone()throws CloneNotSupportedException{
+        return super.clone();
+    }
+
 }

@@ -22,12 +22,36 @@
     <string name="menu_fourth">Izomorfismus</string>
     <string name="menu_fifth">Bipartitní graf</string>
     <string name="menu_sixth">Hamiltonovský graf a Eulerův graf</string>
-    <string name="menu_seventh">Barvení grafu</string>
-    <string name="menu_eight">Minimální kostra grafu</string>
-    <string name="menu_ninth">Procházení labyrintu</string>
+    <string name="menu_seventh">Kostra grafu</string>
+    <string name="menu_eight">Skóre grafu</string>
+    <string name="menu_ninth">Stromy</string>
 
+    <string name="first_activity_text">
+        <b>Tah</b> je taký sled, v kterém se žádná hrana nevyskytuje dvakrát.(uzavřený, otevřený) \n
+        <b>Otevřený tah</b>, v kterém jsou všechny vrcholy navzájem různé, se nazývá cesta. \n
+        <b> Uzavřená cesta</b> se nazývá kružnice. \n
+        <font fgcolor='green'>Délka sledu, tahu, cesty a kružnice = počet hran!!!</font>
+    </string>
+
+    <string name="second_activity_text">
+            Vrchol v nazveme artikulací, jestliže graf <b> G - v  má více komponent než graf G.</b> \n
+            Hranu e nazveme mostem, jestliže graf G - e má více komponent než graf G.
+    </string>
+
+    <string name="third_activity_text">
+    </string>
+
+    <string name="fourth_activity_text">
+    </string>
+
+    <string name="fifth_activity_text">
+    </string>
+
+    <string name="sixth_activity_text">
+    </string>
 
     <string name="example_text">
+
         <b>What</b>
         <big>neco duleziteho</big>
         <font fgcolor='red'>Running</font> <font fgcolor='green'>Running</font> \n

@@ -13,8 +13,8 @@ import cz.uhk.graphstheory.abstraction.AbstractFragment;
 import cz.uhk.graphstheory.model.Coordinate;
 import cz.uhk.graphstheory.model.CustomLine;
 import cz.uhk.graphstheory.model.Map;
+import cz.uhk.graphstheory.util.GraphConverter;
 import cz.uhk.graphstheory.util.GraphGenerator;
-import cz.uhk.graphstheory.util.PathGenerator;
 
 public class ThirdActivityFragment extends AbstractFragment {
 
@@ -24,7 +24,7 @@ public class ThirdActivityFragment extends AbstractFragment {
     private int height;
 
 
-    private static final int MAXIMUM_AMOUNT_OF_NODES = 12;
+    private static final int MAXIMUM_AMOUNT_OF_NODES = 7;
     private static final int MINIMUM_AMOUNT_OF_NODES = 5;
 
     public ThirdActivityFragment() {
@@ -50,12 +50,13 @@ public class ThirdActivityFragment extends AbstractFragment {
                         if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES)
                             amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
                         int BRUSH_SIZE = getGraphGeneratedView().getBrushSize();
-                        Map mapToSet = GraphGenerator.generateMap(height, width, BRUSH_SIZE, amountOfEdges);
+                        Map firstMap = GraphGenerator.generateMap(height, width, BRUSH_SIZE, amountOfEdges);
+                        Map secondMap = new Map(firstMap);
 
                         //myšlenka - mam graf - projdu všechny body a podívám se jestli jsou propojený se všema bodama
                         //pokud s nějakým nejsou přidám je do druhého seznamu (red line listu)
-                        ArrayList<Coordinate> nodes = mapToSet.getCircles();
-                        ArrayList<CustomLine> lines = mapToSet.getCustomLines();
+                        ArrayList<Coordinate> nodes = firstMap.getCircles();
+                        ArrayList<CustomLine> lines = firstMap.getCustomLines();
                         ArrayList<CustomLine> redLines = new ArrayList<>();
 
                         for (Coordinate coordinate : nodes) {
@@ -75,15 +76,26 @@ public class ThirdActivityFragment extends AbstractFragment {
                             //pocet nalezenych uzlu může být max. o jedna menší než všechny uzly (sám sebe tam nepřidá)
                             if (alreadyFoundConnection.size() != (nodes.size() - 1)) {
                                 for (Coordinate allNodes : nodes) {
-                                    if (alreadyFoundConnection.stream().noneMatch(n -> n.equal(allNodes))) {
+                                    if (alreadyFoundConnection.stream().noneMatch(n -> n.equal(allNodes)) && !allNodes.equal(coordinate)) {
                                         redLines.add(new CustomLine(allNodes, coordinate));
                                     }
                                 }
                             }
                         }
+                        firstMap.setRedLineList(redLines);
 
-                        mapToSet.setRedLineList(redLines);
-                        getGraphGeneratedView().setMap(mapToSet);
+                        ArrayList<Map> maps = GraphConverter.convertMapsToSplitScreenArray(firstMap, height);
+                        Map splittedMap = maps.get(0);
+                        Map splittedMap2 = maps.get(1);
+
+                        splittedMap2.setCustomLines(new ArrayList<>());
+                        splittedMap.setRedLineList(new ArrayList<>());
+
+                        splittedMap.getCircles().addAll(splittedMap2.getCircles());
+                        splittedMap.getCustomLines().addAll(splittedMap2.getCustomLines());
+                        splittedMap.getRedLineList().addAll(splittedMap2.getRedLineList());
+
+                        getGraphGeneratedView().setMap(splittedMap);
                     }
                     disableListener = true;
                 }

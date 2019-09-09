@@ -57,8 +57,7 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
         bottomNavigationView = getBottomNavigationView();
         floatingActionButton = getFloatingActionButton();
 
-        //todo dodelat predani spravneho stringu
-        textFragment.setEducationText("todo");
+        textFragment.setEducationText(getString(R.string.sixth_activity_text));
 
         drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         floatingActionButton.setOnClickListener(v -> {
@@ -122,8 +121,7 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
     @Override
     protected void changeToTextFragment() {
         super.changeToTextFragment();
-        //todo dodelat predani spravneho stringu
-        textFragment.setEducationText("tada");
+        textFragment.setEducationText(getString(R.string.sixth_activity_text));
     }
 
     @Override

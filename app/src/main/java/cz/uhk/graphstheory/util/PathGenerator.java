@@ -91,4 +91,41 @@ public class PathGenerator {
         path.add(path.get(0));
        return path;
     }
+
+    public static Map createDoplnekToGraph(Map firstMap) {
+        ArrayList<Coordinate> nodes = firstMap.getCircles();
+        ArrayList<CustomLine> lines = firstMap.getCustomLines();
+        ArrayList<CustomLine> redLines = new ArrayList<>();
+
+        for (Coordinate coordinate : nodes) {
+            ArrayList<Coordinate> alreadyFoundConnection = new ArrayList<>();
+            for (CustomLine customLine : lines) {
+                if (customLine.getFrom().equal(coordinate)) {
+                    CustomLine testLine = new CustomLine(customLine.getTo(), coordinate);
+                    //projde vsechny body v alreadyFoundConnection a mrkne, jestli nejakej bod n se rovna custom line.getto
+                    if (alreadyFoundConnection.stream().noneMatch(n -> n.equal(customLine.getTo())) && redLines.stream().noneMatch(m -> m.isLineSame(testLine))
+                            && !coordinate.equal(customLine.getTo())) {
+                        alreadyFoundConnection.add(customLine.getTo());
+                    }
+                } else if (customLine.getTo().equal(coordinate)) {
+                    CustomLine testLine = new CustomLine(customLine.getFrom(), coordinate);
+                    if (alreadyFoundConnection.stream().noneMatch(n -> n.equal(customLine.getFrom())) && redLines.stream().noneMatch(m -> m.isLineSame(testLine))
+                            && !coordinate.equal(customLine.getFrom())) {
+                        alreadyFoundConnection.add(customLine.getFrom());
+                    }
+                }
+            }
+            //pocet nalezenych uzlu může být max. o jedna menší než všechny uzly (sám sebe tam nepřidá)
+            if (alreadyFoundConnection.size() != (nodes.size() - 1)) {
+                for (Coordinate allNodes : nodes) {
+                    if (alreadyFoundConnection.stream().noneMatch(n -> n.equal(allNodes))) {
+                        redLines.add(new CustomLine(allNodes, coordinate));
+                    }
+                }
+            }
+        }
+        firstMap.setRedLineList(redLines);
+        firstMap.setCustomLines(new ArrayList<CustomLine>());
+        return firstMap;
+    }
 }

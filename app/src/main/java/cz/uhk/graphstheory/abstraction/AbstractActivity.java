@@ -1,17 +1,12 @@
 package cz.uhk.graphstheory.abstraction;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -24,16 +19,12 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Objects;
 
-import cz.uhk.graphstheory.common.DrawingFragment;
 import cz.uhk.graphstheory.R;
+import cz.uhk.graphstheory.common.DrawingFragment;
 import cz.uhk.graphstheory.common.TabLayoutFragment;
-import cz.uhk.graphstheory.database.DatabaseConnector;
-import cz.uhk.graphstheory.first.GraphGeneratorActivity;
 import cz.uhk.graphstheory.common.TextFragment;
+import cz.uhk.graphstheory.database.DatabaseConnector;
 import cz.uhk.graphstheory.model.User;
-import cz.uhk.graphstheory.second.SecondActivity;
-import cz.uhk.graphstheory.statistics.StatisticsActivity;
-import cz.uhk.graphstheory.third.ThirdActivity;
 
 public abstract class AbstractActivity extends AbstractAppCompactActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -251,6 +242,26 @@ public abstract class AbstractActivity extends AbstractAppCompactActivity implem
 //        drawer.closeDrawer(GravityCompat.START);
 //        return true;
 //    }
+
+    public void createDialog() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setCancelable(false);
+        dialog.setTitle("");
+        dialog.setMessage("Máš to správně! Chceš si to zkusit ještě jednou, nebo jít na další?");
+        dialog.setPositiveButton("Další", (dialog1, id) -> onPositiveButtonClick())
+                .setNegativeButton("Znovu ", (dialog12, which) -> onNegativeButtonClick());
+
+        final AlertDialog alert = dialog.create();
+        alert.show();
+    }
+
+    public void onPositiveButtonClick(){
+
+    }
+
+    public void onNegativeButtonClick(){
+
+    }
 
 
     public DrawingFragment getDrawingFragment() {
