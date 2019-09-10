@@ -15,6 +15,7 @@ import cz.uhk.graphstheory.common.GraphGeneratedView;
 import cz.uhk.graphstheory.model.Coordinate;
 import cz.uhk.graphstheory.model.CustomLine;
 import cz.uhk.graphstheory.model.Map;
+import cz.uhk.graphstheory.util.GraphConverter;
 import cz.uhk.graphstheory.util.GraphGenerator;
 
 public class FourthActivityFragment extends AbstractFragment {
@@ -25,7 +26,7 @@ public class FourthActivityFragment extends AbstractFragment {
     public static final int MAXIMUM_AMOUNT_OF_NODES = 12;
     public static final int MINIMUM_AMOUNT_OF_NODES = 5;
 
-    private Map mapToSet;
+    private Map firstMapToSet;
     private boolean setFirst;
     private Map secondMapToSet;
     private boolean shouldStop, disableListener = false;
@@ -56,12 +57,12 @@ public class FourthActivityFragment extends AbstractFragment {
                         if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES)
                             amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
                         BRUSH_SIZE = getGraphGeneratedView().getBrushSize();
-                        mapToSet = GraphGenerator.generateMap(height, width, BRUSH_SIZE, amountOfEdges);
+                        firstMapToSet = GraphGenerator.generateMap(height, width, BRUSH_SIZE, amountOfEdges);
 
-                        secondMapToSet = new Map(mapToSet);
+                        secondMapToSet = new Map(firstMapToSet);
 
                         //myšlenka - mám graf, změním tam jenom souřadnice a znovu vykreslím
-                        int randomNumber = (int) Math.round(Math.random() * mapToSet.getCircles().size());
+                        int randomNumber = (int) Math.round(Math.random() * firstMapToSet.getCircles().size());
                         for (int i = 0; i < randomNumber; i++) {
                             //vytvořím si náhodnou souřadnici
                             float newXCoordinate = (float) (Math.random() * width);
@@ -87,33 +88,31 @@ public class FourthActivityFragment extends AbstractFragment {
                             }
                         }
                         graphGeneratedView = getGraphGeneratedView();
-                        graphGeneratedView.setMap(mapToSet);
+
+                        //rozdelim si mapu na 2 poloviny (metoda bohužel vrací ten samej graf rozdelenej na polovinu, takze si to musi zavolat 2x a pak si to z toho vytahnu
+                        //nez to poslu do view, tak to musim ještě slepit do jednoho grafu
+                        ArrayList<Map> firstMapTwice = GraphConverter.convertMapsToSplitScreenArray(firstMapToSet, height);
+                        firstMapToSet = firstMapTwice.get(0);
+                        ArrayList<Map> secondMapTwice = GraphConverter.convertMapsToSplitScreenArray(secondMapToSet, height);
+                        secondMapToSet = secondMapTwice.get(1);
+
+                        firstMapToSet.getCustomLines().addAll(secondMapToSet.getCustomLines());
+                        firstMapToSet.getCircles().addAll(secondMapToSet.getCircles());
+                        firstMapToSet.getRedLineList().addAll(secondMapToSet.getRedLineList());
+
+                        graphGeneratedView.setMap(firstMapToSet);
+
                     }
                     disableListener = true;
-
-                    new Handler().postDelayed(() -> changeGraph(), 5000);
                 }
             }
         });
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
         shouldStop = true;
     }
 
-    private void changeGraph() {
-        if (!shouldStop){
-            if (setFirst) {
-                setFirst = false;
-                graphGeneratedView.setMap(mapToSet);
-                new Handler().postDelayed(this::changeGraph, 5000);
-            } else {
-                setFirst = true;
-                graphGeneratedView.setMap(secondMapToSet);
-                new Handler().postDelayed(this::changeGraph, 5000);
-            }
-        }
-    }
 }
