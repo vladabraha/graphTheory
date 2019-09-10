@@ -160,6 +160,10 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
         isAttached = true;
         this.width = width;
         this.height = height;
+        createGraphWithDoplnek();
+    }
+
+    private void createGraphWithDoplnek() {
         int amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
         Map firstMap = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
 
@@ -189,7 +193,6 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
 
         if (redLinesToCheck.size() == 0 && redLines.size() > 0) return false;
 
-        //todo opravit checker
         for (CustomLine customLine : redLinesToCheck) {
             boolean found = false;
             for (CustomLine redLine : redLines) {
@@ -205,7 +208,7 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
 
     @Override
     public void onPositiveButtonClick() {
-        Intent newActivityIntent = new Intent(this, FourthActivity.class);
+        Intent newActivityIntent = new Intent(ThirdActivity.this, FourthActivity.class);
         newActivityIntent.putExtra("SESSION_ID", 4);
         finish();
         startActivity(newActivityIntent);
@@ -213,5 +216,6 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
 
     @Override
     public void onNegativeButtonClick() {
+        createGraphWithDoplnek();
     }
 }

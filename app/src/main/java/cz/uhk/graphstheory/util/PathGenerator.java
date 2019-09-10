@@ -118,14 +118,14 @@ public class PathGenerator {
             //pocet nalezenych uzlu může být max. o jedna menší než všechny uzly (sám sebe tam nepřidá)
             if (alreadyFoundConnection.size() != (nodes.size() - 1)) {
                 for (Coordinate allNodes : nodes) {
-                    if (alreadyFoundConnection.stream().noneMatch(n -> n.equal(allNodes))) {
+                    if (alreadyFoundConnection.stream().noneMatch(n -> n.equal(allNodes)) && !allNodes.equal(coordinate)) {
                         redLines.add(new CustomLine(allNodes, coordinate));
                     }
                 }
             }
         }
         firstMap.setRedLineList(redLines);
-        firstMap.setCustomLines(new ArrayList<CustomLine>());
+        firstMap.setCustomLines(new ArrayList<>());
         return firstMap;
     }
 }
