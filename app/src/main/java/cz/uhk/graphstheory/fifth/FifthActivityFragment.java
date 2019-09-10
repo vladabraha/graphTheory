@@ -73,7 +73,6 @@ public class FifthActivityFragment extends AbstractFragment {
 
                         Map mapToSet = new Map(bipartite, nodesToSet);
                         getGraphGeneratedView().setMap(mapToSet);
-//                        graphGeneratedView.setRedLineList(PathGenerator.generateCesta(graphGeneratedView.getMap()));
                     }
                     disableListener = true;
                 }

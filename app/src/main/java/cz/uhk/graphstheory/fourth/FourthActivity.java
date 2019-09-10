@@ -2,9 +2,7 @@ package cz.uhk.graphstheory.fourth;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Toast;
 
@@ -20,6 +18,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Objects;
+
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.abstraction.AbstractActivity;
 import cz.uhk.graphstheory.common.DrawingFragment;
@@ -30,13 +32,8 @@ import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
 import cz.uhk.graphstheory.model.Coordinate;
 import cz.uhk.graphstheory.model.CustomLine;
 import cz.uhk.graphstheory.model.Map;
+import cz.uhk.graphstheory.util.GraphConverter;
 import cz.uhk.graphstheory.util.GraphGenerator;
-
-import android.util.DisplayMetrics;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Objects;
 
 public class FourthActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, DrawingFragment.CommunicationInterface {
 
@@ -278,30 +275,12 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
         return secondMap;
     }
 
-    private void changeGraphs() {
-        if (firstGraph) {
-            new Handler().postDelayed(() -> {
-                firstGraph = false;
-                drawingFragment.setUserGraph(secondMap);
-                changeGraphs();
-            }, 8500);
-
-        } else {
-            new Handler().postDelayed(() -> {
-                firstGraph = true;
-                drawingFragment.setUserGraph(firstMap);
-                changeGraphs();
-            }, 8500);
-        }
-    }
-
     @Override
     public void sentMetrics(int width, int height) {
         this.height = height;
         this.width = width;
 
         firstMap = createMap();
-        drawingFragment.setUserGraph(firstMap);
         if (Math.random() > 0.5) {
             secondMap = createSameGraph(firstMap);
             isGraphSame = true;
@@ -309,7 +288,20 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
             secondMap = createDifferentGraph(firstMap);
             isGraphSame = false;
         }
-        changeGraphs();
+
+        //rozdelim si mapu na 2 poloviny (metoda bohužel vrací ten samej graf rozdelenej na polovinu, takze si to musi zavolat 2x a pak si to z toho vytahnu
+        //nez to poslu do view, tak to musim ještě slepit do jednoho grafu
+        ArrayList<Map> firstMapTwice = GraphConverter.convertMapsToSplitScreenArray(firstMap, height);
+        firstMap = firstMapTwice.get(0);
+
+        ArrayList<Map> secondMapTwice = GraphConverter.convertMapsToSplitScreenArray(secondMap, height);
+        secondMap = secondMapTwice.get(1);
+
+
+        firstMap.getCustomLines().addAll(secondMap.getCustomLines());
+        firstMap.getCircles().addAll(secondMap.getCircles());
+        firstMap.getRedLineList().addAll(secondMap.getRedLineList());
+        drawingFragment.setUserGraph(firstMap);
     }
 
     private void showMessage(String text) {

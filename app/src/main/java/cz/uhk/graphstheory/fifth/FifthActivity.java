@@ -17,6 +17,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 import cz.uhk.graphstheory.R;
@@ -26,9 +27,14 @@ import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
+import cz.uhk.graphstheory.model.Coordinate;
+import cz.uhk.graphstheory.model.CustomLine;
+import cz.uhk.graphstheory.model.Map;
 import cz.uhk.graphstheory.util.GraphChecker;
+import cz.uhk.graphstheory.util.GraphConverter;
+import cz.uhk.graphstheory.util.GraphGenerator;
 
-public class FifthActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface {
+public class FifthActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, DrawingFragment.CommunicationInterface {
 
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
@@ -155,5 +161,15 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
         }
     }
 
+    @Override
+    public void sentMetrics(int width, int height) {
+//        this.height = height;
+//        this.width = width;
+
+        int amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
+        ArrayList<Coordinate> nodes = GraphGenerator.generateNodes(height, width, 15, amountOfNodes );
+        Map mapToSet = new Map(new ArrayList<>(), nodes);
+        drawingFragment.setUserGraph(mapToSet);
+    }
 
 }
