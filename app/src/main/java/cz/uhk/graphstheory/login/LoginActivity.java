@@ -53,12 +53,12 @@ public class LoginActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("TAG", "signInWithEmail:success");
 
-                            Intent mainIntent = new Intent(this, GraphGeneratorActivity.class);
+                            Intent mainIntent = new Intent(LoginActivity.this, GraphGeneratorActivity.class);
                             startActivity(mainIntent);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("TAG", "signInWithEmail:failure", task.getException());
-                            Toast.makeText(this, "Nesprávné uživatelské jméno nebo heslo", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, "Nesprávné uživatelské jméno nebo heslo", Toast.LENGTH_SHORT).show();
                         }
                     });
         });
