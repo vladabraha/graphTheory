@@ -73,7 +73,7 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
         floatingActionButton = getFloatingActionButton();
         tabLayoutFragment = getTabLayoutFragment();
 
-        textFragment.setEducationText(getString(R.string.third_activity_text));
+        textFragment.setEducationText(R.string.third_activity_text);
 
         drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         floatingActionButton.setOnClickListener(v -> {
@@ -125,7 +125,7 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
     @Override
     protected void changeToTextFragment() {
         super.changeToTextFragment();
-        textFragment.setEducationText(getString(R.string.third_activity_text));
+        textFragment.setEducationText(R.string.third_activity_text);
     }
 
     @Override

@@ -127,7 +127,7 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
         bottomNavigationView = findViewById(R.id.graph_generator_navigation);
         bottomNavigationView.setVisibility(View.INVISIBLE);
 
-        textFragment.setEducationText(getString(R.string.fifth_activity_text));
+        textFragment.setEducationText(R.string.fifth_activity_text);
     }
 
 
@@ -140,7 +140,7 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
     @Override
     protected void changeToTextFragment() {
         super.changeToTextFragment();
-        textFragment.setEducationText(getString(R.string.fifth_activity_text));
+        textFragment.setEducationText(R.string.fifth_activity_text);
     }
 
     @Override

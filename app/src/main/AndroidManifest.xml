@@ -30,6 +30,9 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".first.GraphGeneratorActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".second.SecondActivity"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -50,7 +53,8 @@
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".first.GraphGeneratorActivity"
+            android:name=".seventh.SeventhActivity"
+            android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".TabActivity"

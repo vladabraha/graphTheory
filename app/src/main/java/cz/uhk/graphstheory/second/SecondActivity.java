@@ -69,7 +69,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
         floatingActionButton = getFloatingActionButton();
         tabLayoutFragment = getTabLayoutFragment();
 
-        textFragment.setEducationText(getString(R.string.second_activity_text));
+        textFragment.setEducationText(R.string.second_activity_text);
 
         drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         floatingActionButton.setOnClickListener(v -> {
@@ -91,7 +91,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
                             Toast.makeText(SecondActivity.this, "Jejda, špatně, mkrni na to ještě jednou", Toast.LENGTH_LONG).show();
                             break;
                         case "chybi ohraniceni cervenou carou":
-                            Toast.makeText(SecondActivity.this, "Zapomněl jsi označit artiákulaci červenou čarou", Toast.LENGTH_LONG).show();
+                            Toast.makeText(SecondActivity.this, "Zapomněl jsi označit most červenou čarou", Toast.LENGTH_LONG).show();
                             break;
                     }
                     break;
@@ -111,7 +111,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
                             Toast.makeText(SecondActivity.this, "Jejda, špatně, mkrni na to ještě jednou", Toast.LENGTH_LONG).show();
                             break;
                         case "chybi ohraniceni cervenou carou":
-                            Toast.makeText(SecondActivity.this, "Zapomněl jsi označit artiákulaci červenou čarou", Toast.LENGTH_LONG).show();
+                            Toast.makeText(SecondActivity.this, "Zapomněl jsi označit artikulaci červenou čarou", Toast.LENGTH_LONG).show();
                             break;
                     }
                     break;
@@ -182,7 +182,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
     @Override
     protected void changeToTextFragment() {
         super.changeToTextFragment();
-        textFragment.setEducationText(getString(R.string.second_activity_text));
+        textFragment.setEducationText(R.string.second_activity_text);
     }
 
     @Override

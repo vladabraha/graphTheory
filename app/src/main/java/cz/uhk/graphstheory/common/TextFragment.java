@@ -23,7 +23,7 @@ public class TextFragment extends Fragment {
 //    private String mParam1;
 //    private String mParam2;
 
-    private String textToDisplay = "";
+    private int textToDisplay = R.string.example_text;
 
 
     public TextFragment() {
@@ -67,13 +67,13 @@ public class TextFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        if (!textToDisplay.isEmpty()){
+        if (textToDisplay != R.string.example_text){
             TextView educationDescription = Objects.requireNonNull(getView()).findViewById(R.id.textView_education_description);
             educationDescription.setText(textToDisplay);
         }
     }
 
-    public void setEducationText(String text){
+    public void setEducationText(int text){
         textToDisplay = text;
     }
 

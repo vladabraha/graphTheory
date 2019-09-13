@@ -12,8 +12,10 @@ import java.util.ArrayList;
 import cz.uhk.graphstheory.abstraction.AbstractFragment;
 import cz.uhk.graphstheory.model.Coordinate;
 import cz.uhk.graphstheory.model.CustomLine;
+import cz.uhk.graphstheory.model.GeneratedMapViewModel;
 import cz.uhk.graphstheory.model.Map;
 import cz.uhk.graphstheory.util.GraphGenerator;
+
 
 public class SixthActivityFragment extends AbstractFragment {
 
@@ -22,12 +24,17 @@ public class SixthActivityFragment extends AbstractFragment {
     private int width;
     private int height;
 
-
+    private String type = "";
     private static final int MAXIMUM_AMOUNT_OF_NODES = 12;
     private static final int MINIMUM_AMOUNT_OF_NODES = 5;
+    private GeneratedMapViewModel generatedMapViewModel;
 
     public SixthActivityFragment() {
         // Required empty public constructor
+    }
+
+    public SixthActivityFragment(String type) {
+        this.type = type;
     }
 
 
@@ -35,6 +42,7 @@ public class SixthActivityFragment extends AbstractFragment {
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         super.onViewCreated(view, savedInstanceState);
+        generatedMapViewModel = getGeneratedMapViewModel();
 
         view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -43,40 +51,114 @@ public class SixthActivityFragment extends AbstractFragment {
                     width = view.getMeasuredWidth();
                     height = view.getMeasuredHeight();
                     if (width != 0) {
+                        switch (type) {
+                            case "euleruv":
+                                createEuler();
+                                break;
 
-                        //set init bipartitní graf educational fragment
-                        int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
-                        if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES) amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
-                        int BRUSH_SIZE = getGraphGeneratedView().getBrushSize();
-                        ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfEdges);
-
-                        //myšlenka - mam body, rozdělím je na polovinu a každý bod z jedné poloviny spojím s každým bodem z druhé poloviny
-                        ArrayList<Coordinate> firstPartOfNodes  = new ArrayList<>();
-                        ArrayList<Coordinate> secondPartOfNodes = new ArrayList<>();
-                        ArrayList<CustomLine> bipartite = new ArrayList<>();
-
-                        for (int i = 0; i < nodesToSet.size(); i++){
-                            if (i < (nodesToSet.size() / 2)){
-                                firstPartOfNodes.add(nodesToSet.get(i));
-                            }else {
-                                secondPartOfNodes.add(nodesToSet.get(i));
-                            }
+                            case "hamiltonovsky":
+                                createHamilton();
+                                break;
+                            default:
+                                createEuler();
+                                break;
                         }
-
-                        for (Coordinate coordinateFirstPart: firstPartOfNodes){
-                            for (Coordinate coordinateSecondPart: secondPartOfNodes){
-                                CustomLine customLine = new CustomLine(coordinateFirstPart, coordinateSecondPart);
-                                bipartite.add(customLine);
-                            }
-                        }
-
-                        Map mapToSet = new Map(bipartite, nodesToSet);
-                        getGraphGeneratedView().setMap(mapToSet);
-//                        graphGeneratedView.setRedLineList(PathGenerator.generateCesta(graphGeneratedView.getMap()));
                     }
                     disableListener = true;
                 }
             }
         });
     }
+
+    private void createEuler() {
+        int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
+        if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES) amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
+        int BRUSH_SIZE = getGraphGeneratedView().getBrushSize();
+        ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfEdges);
+
+        //myšlenka - mam body, vezmu polovinu a nějak je spojim
+        //vezmu druhou polovinu a nejak je spojim. Mezi prvni a druhou půlkou neni žádný propoj - bipartitni graf
+        ArrayList<Coordinate> firstPartOfNodes = new ArrayList<>();
+        ArrayList<Coordinate> secondPartOfNodes = new ArrayList<>();
+        for (int i = 0; i < nodesToSet.size(); i++) {
+            if (i < (nodesToSet.size() / 2)) {
+                firstPartOfNodes.add(nodesToSet.get(i));
+            } else {
+                secondPartOfNodes.add(nodesToSet.get(i));
+            }
+        }
+
+        ArrayList<CustomLine> firstPartOfBipartite = GraphGenerator.generateRandomEdges(firstPartOfNodes);
+        ArrayList<CustomLine> secondPartOfBipartite = GraphGenerator.generateRandomEdges(secondPartOfNodes);
+
+        //myšlenka - mám novej bod, mám 2 samostný grafy, pridám mezi ne bod a ten propojím s kažodou polovinou - tadá artikulace
+        Coordinate newNode = new Coordinate((float) Math.random() * width, (float) Math.random() * height);
+        Coordinate oneNode = firstPartOfNodes.get(0);
+        Coordinate secondNode = secondPartOfNodes.get(0);
+        CustomLine newCustomLine = new CustomLine(newNode, oneNode);
+        CustomLine newCustomLine2 = new CustomLine(newNode, secondNode);
+
+        //tohle jenom proto aby to bylo videt
+        ArrayList<CustomLine> redLines = new ArrayList<>();
+        redLines.add(newCustomLine);
+        redLines.add(newCustomLine2);
+        nodesToSet.add(newNode);
+
+
+        firstPartOfBipartite.addAll(secondPartOfBipartite);
+        Map mapToSet = new Map(firstPartOfBipartite, nodesToSet, redLines);
+        getGraphGeneratedView().setMap(mapToSet);
+        generatedMapViewModel.setMap(mapToSet);
+    }
+
+    private void createHamilton() {
+        int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
+        if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES) amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
+        int BRUSH_SIZE = getGraphGeneratedView().getBrushSize();
+        ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfEdges);
+
+        //myšlenka - mam body, vezmu polovinu a nějak je spojim
+        //vezmu druhou polovinu a nejak je spojim. Mezi prvni a druhou půlkou neni žádný propoj - bipartitni graf
+        ArrayList<Coordinate> firstPartOfNodes = new ArrayList<>();
+        ArrayList<Coordinate> secondPartOfNodes = new ArrayList<>();
+        for (int i = 0; i < nodesToSet.size(); i++) {
+            if (i < (nodesToSet.size() / 2)) {
+                firstPartOfNodes.add(nodesToSet.get(i));
+            } else {
+                secondPartOfNodes.add(nodesToSet.get(i));
+            }
+        }
+
+        ArrayList<CustomLine> firstPartOfBipartite = GraphGenerator.generateRandomEdges(firstPartOfNodes);
+        ArrayList<CustomLine> secondPartOfBipartite = GraphGenerator.generateRandomEdges(secondPartOfNodes);
+
+        //myšlenka - mám 2 samostatný grafy, spojím je jednou čarou - tadá artikulace
+        Coordinate oneNode = firstPartOfNodes.get(0);
+        Coordinate secondNode = secondPartOfNodes.get(0);
+        CustomLine newCustomLine = new CustomLine(oneNode, secondNode);
+
+
+        //tohle jenom proto aby to bylo videt
+        ArrayList<CustomLine> redLines = new ArrayList<>();
+        redLines.add(newCustomLine);
+
+
+        firstPartOfBipartite.addAll(secondPartOfBipartite);
+        Map mapToSet = new Map(firstPartOfBipartite, nodesToSet, redLines);
+        getGraphGeneratedView().setMap(mapToSet);
+        generatedMapViewModel.setMap(mapToSet);
+    }
+
+    public void changeGraph(String type) {
+        this.type = type;
+        switch (type){
+            case "euleruv":
+                createEuler();
+                break;
+            case "hamiltonovsky":
+                createHamilton();
+                break;
+        }
+    }
 }
+

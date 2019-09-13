@@ -27,10 +27,12 @@
     <string name="menu_ninth">Stromy</string>
 
     <string name="first_activity_text">
+        <b>Sled</b> - konečná posloupnost S = (v0, e1, v1, e2,…, vk-1, ek, vk), přičemž pro všechny i = 1,…,k je e(vi-1,v1 ). (uzavřený,otevřený)
+        Ve sledu se hrany a vrcholy můžou opakovat.
         <b>Tah</b> je taký sled, v kterém se žádná hrana nevyskytuje dvakrát.(uzavřený, otevřený) \n
         <b>Otevřený tah</b>, v kterém jsou všechny vrcholy navzájem různé, se nazývá cesta. \n
-        <b> Uzavřená cesta</b> se nazývá kružnice. \n
-        <font fgcolor='green'>Délka sledu, tahu, cesty a kružnice = počet hran!!!</font>
+        <b>Uzavřená cesta</b> se nazývá kružnice. \n
+        <font fgcolor='red'>Délka sledu, tahu, cesty a kružnice = počet hran!!!</font>
     </string>
 
     <string name="second_activity_text">
@@ -39,15 +41,36 @@
     </string>
 
     <string name="third_activity_text">
+        Graf G^- = (V,E^-) je <b>doplněk grafu</b> G = (V,E) , když hrana {v_i, v_j } \in  E^- tehdy a jenom tehdy, když {v_i, v_j } \in E. Jinými slovy, dva vrcholy v_i , v_j jsou sousední v G^- právě tehdy, když nejsou sousední v G. \n
+        <font fgcolor='blue'>Poznámka: můžeme se setkat i s označením -G=(V,-E)</font>
     </string>
 
     <string name="fourth_activity_text">
+        Dva grafy G = (V,E) a G\' (V\',E\') nazveme <font fgcolor='red'>izomorfní</font>, když existuje jednoznačné zobrazení f : V -> V\' takové, že platí {x, y} \in E právě tehdy, když {f (x), f ( y) \in E\'. \n
+        Zobrazení f hovoříme <font fgcolor='red'>izomorfizmus</font> grafů G a G´. \n
+        Fakt, že G a G´ jsou izomorfní, zapisujeme G \cong G\' .
     </string>
 
     <string name="fifth_activity_text">
+        Úplným <b>bipartitním grafem</b> Kr,s nazýváme bipartitní graf, kde |V1| = r, |V2| = s, a ve kterém je hranou spojen každý z r vrcholů množiny V1 s každým z s vrcholů množiny V2.
     </string>
 
     <string name="sixth_activity_text">
+        <b>Eulerovský tah </b> v grafu G je otevřený nebo uzavřený tah, který obsahuje všechny hrany grafu G. \n
+        <b>Eulerovský graf </b> je souvislý graf, ve kterém existuje eulerovský tah.
+        \n
+        \n
+        <b>Hamiltonovská kružnice</b> v grafu G je kružnice obsahující všechny vrcholy grafu G. \n
+        <b>Hamiltonovský graf</b> je graf, ve kterém existuje hamiltonovská kružnice.
+    </string>
+
+    <string name="seventh_activity_text">
+    </string>
+
+    <string name="eighth_activity_text">
+    </string>
+
+    <string name="ninth_activity_text">
     </string>
 
     <string name="example_text">
@@ -80,6 +103,7 @@
     <string name="blackTeam">Černý tým</string>
     <string name="enter_team">Vstoupit do týmu</string>
     <string name="you_nickname">vaše jméno</string>
+    <string name="insert_team_name">vlož název týmu</string>
 
 
     <string-array name="team_chooser">

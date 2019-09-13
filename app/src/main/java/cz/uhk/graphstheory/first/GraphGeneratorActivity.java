@@ -82,7 +82,7 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
         fragmentTransaction.add(R.id.generator_activity_group, textFragment);
         fragmentTransaction.commit();
 
-        textFragment.setEducationText(getString(R.string.first_activity_text));
+        textFragment.setEducationText(R.string.first_activity_text);
 
         floatingActionButton.setOnClickListener(v -> {
             SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
@@ -299,7 +299,7 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
             bottomNavigationView.setVisibility(View.GONE);
             floatingActionButton.hide();
         }
-        textFragment.setEducationText(getString(R.string.first_activity_text));
+        textFragment.setEducationText(R.string.first_activity_text);
     }
 
     private void changeToEducationFragment() {
