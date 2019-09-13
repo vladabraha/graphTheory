@@ -20,6 +20,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 import cz.uhk.graphstheory.R;
@@ -29,8 +30,9 @@ import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
+import cz.uhk.graphstheory.model.Coordinate;
+import cz.uhk.graphstheory.model.CustomLine;
 import cz.uhk.graphstheory.model.Map;
-import cz.uhk.graphstheory.second.SecondActivityFragment;
 import cz.uhk.graphstheory.util.GraphChecker;
 import cz.uhk.graphstheory.util.GraphGenerator;
 
@@ -48,6 +50,7 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
     private DrawingFragmentListener drawingFragmentListener;
     String type;
     int height, width;
+    Map hamiltonMap, eulerMap;
 
     DatabaseConnector databaseConnector;
 
@@ -79,7 +82,7 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
             String isValid;
             switch (displayedActivity) {
                 case 0:
-                    isValid = GraphChecker.checkIfGraphContainsBridge(drawingFragment.getUserGraph());
+                    isValid = GraphChecker.checkIfGraphContainsHamiltonCircle(drawingFragment.getUserGraph());
                     switch (isValid) {
                         case "true":
                             String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
@@ -97,6 +100,7 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
                     }
                     break;
                 case 1:
+                    //todo dodelat validaci na eulera
                     isValid = GraphChecker.checkIfGraphContainsArticulation(drawingFragment.getUserGraph());
                     switch (isValid) {
                         case "true":
@@ -170,8 +174,9 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
                 return "hamiltonovsky";
             case 1:
                 return "euleruv";
+            default:
+                return "hamiltonovsky";
         }
-        return "euleruv";
     }
 
     @Override
@@ -183,7 +188,7 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
     @Override
     protected void changeToTextFragment() {
         super.changeToTextFragment();
-        textFragment.setEducationText(R.string.second_activity_text);
+        textFragment.setEducationText(R.string.sixth_activity_text);
     }
 
     @Override
@@ -268,9 +273,16 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
     public void sentMetrics(int width, int height) {
         this.width = width;
         this.height = height;
-        int amountOfNodes = (int) Math.round(Math.random() * 9) + 4;
-        Map map = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
-        drawingFragment.setUserGraph(map);
+        switch (getDisplayedActivity()) {
+            case "euleruv":
+                //todo dodelat graf na eulera
+                bottomNavigationView.setSelectedItemId(R.id.path);
+                break;
+            case "hamiltonovsky":
+                drawingFragment.setUserGraph(createHamiltonMapWithoutRedLines());
+                bottomNavigationView.setSelectedItemId(R.id.path);
+                break;
+        }
     }
 
     @Override
@@ -282,8 +294,44 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
 
     @Override
     public void onNegativeButtonClick() {
-        int amountOfNodes = (int) Math.round(Math.random() * 9) + 3;
-        Map map = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
-        drawingFragment.setUserGraph(map);
+        drawingFragment.setUserGraph(createHamiltonMapWithoutRedLines());
+    }
+
+    //myšlenka, projedu postupne vrcholy a propojim je jak jdou za sebou a kdyz tam ještě nemaj normální caru z generatoru, tak ho tam taky pridam
+    private Map createHamiltonMapWithoutRedLines() {
+        final int MAXIMUM_AMOUNT_OF_NODES = 9;
+        final int MINIMUM_AMOUNT_OF_NODES = 4;
+        int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
+        if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES)
+            amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
+        ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, 15, amountOfEdges);
+        ArrayList<CustomLine> lines = new ArrayList<>();
+        ArrayList<CustomLine> redLines = new ArrayList<>();
+        ArrayList<CustomLine> preGeneratedLines = GraphGenerator.generateRandomEdges(nodesToSet);
+        ArrayList<CustomLine> hamiltonRedLines = new ArrayList<>();
+
+        for (int i = 0; i < nodesToSet.size(); i++) {
+            CustomLine line;
+            CustomLine redline;
+            if (i < nodesToSet.size() - 1) {
+                line = new CustomLine(nodesToSet.get(i), nodesToSet.get(i + 1));
+                redline = new CustomLine(nodesToSet.get(i), nodesToSet.get(i + 1));
+            } else {
+                line = new CustomLine(nodesToSet.get(i), nodesToSet.get(0));
+                redline = new CustomLine(nodesToSet.get(i), nodesToSet.get(0));
+            }
+            lines.add(line);
+            hamiltonRedLines.add(redline);
+        }
+
+        for (int j = 0; j < hamiltonRedLines.size(); j++) {
+            int finalJ = j;
+            if (preGeneratedLines.stream().noneMatch(line -> line.isLineSame(hamiltonRedLines.get(finalJ)))) {
+                preGeneratedLines.add(lines.get(j));
+            }
+        }
+
+        hamiltonMap = new Map(preGeneratedLines, nodesToSet, redLines);
+        return hamiltonMap;
     }
 }

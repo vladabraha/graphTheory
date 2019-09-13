@@ -3,6 +3,7 @@ package cz.uhk.graphstheory.util;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import cz.uhk.graphstheory.model.Coordinate;
 import cz.uhk.graphstheory.model.CustomLine;
@@ -401,5 +402,55 @@ public class GraphChecker {
         } else {
             return "true";
         }
+    }
+
+    //myšlenka - projdu postupně všechny redlines a budu si paamatovat kde jsem byl
+    //na konci by měl bejt seznam 2x tak velkej než circles (každej bod by tam měl bejt max.2 a zároveň by tam neměl chybět
+    //a taky se musi jeste vratit kruznice do prvniho bodu kde zacala
+    public static String checkIfGraphContainsHamiltonCircle(Map userGraph) {
+        ArrayList<CustomLine> redLines = userGraph.getRedLineList();
+        ArrayList<CustomLine> lines = userGraph.getCustomLines();
+        ArrayList<Coordinate> circles = userGraph.getCircles();
+
+        if (redLines.size() < 3) return "chybi ohraniceni cervenou carou";
+
+        ArrayList<Coordinate> alreadyVisitedNodes = new ArrayList<>();
+
+        for (CustomLine redLine : redLines){
+            alreadyVisitedNodes.add(redLine.getFrom());
+            alreadyVisitedNodes.add(redLine.getTo());
+        }
+        for (Coordinate circle : circles){
+            if (alreadyVisitedNodes.stream().noneMatch(node -> node.equal(circle))){
+                return "false";
+            }
+        }
+        if (alreadyVisitedNodes.size() != (circles.size() * 2)) return "false";
+
+
+        //kontrola, zdali cara neprochazi mistem, kde nebyla puvodne hrana
+        for (CustomLine redLine: redLines){
+            if (lines.stream().noneMatch(line -> line.isLineSame(redLine))){
+                return "false";
+            }
+        }
+
+        //každy bod max. 2x
+        for(Coordinate coordinate : alreadyVisitedNodes){
+            AtomicInteger numberOfOccurrence = new AtomicInteger();
+            alreadyVisitedNodes.forEach(node -> {
+                if (node.equal(coordinate)){
+                    numberOfOccurrence.getAndIncrement();
+                }
+            });
+            if (numberOfOccurrence.get() > 2) return "false";
+        }
+
+        CustomLine firstRedLine = redLines.get(0);
+        CustomLine lastRedLine = redLines.get(redLines.size() - 1);
+        if (!firstRedLine.isPointInStartOrEndOfLine(lastRedLine.getFrom()) && !firstRedLine.isPointInStartOrEndOfLine(lastRedLine.getTo()) ){
+            return "false";
+        }
+        return "true";
     }
 }

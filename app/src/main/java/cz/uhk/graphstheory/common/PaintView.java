@@ -59,6 +59,7 @@ public class PaintView extends View {
     private boolean remove = false;
     private boolean path = false;
     private boolean isCircleDragged = false;
+    PaintView.CommunicationInterface mListener;
 
     private Coordinate firstCoordinate; //označuje souřadnici, kam uživatel klepnul poprvé během posledního klepnutí
 
@@ -81,6 +82,10 @@ public class PaintView extends View {
 
 //        mEmboss = new EmbossMaskFilter(new float[] {1, 1, 1}, 0.4f, 6, 3.5f);
 //        mBlur = new BlurMaskFilter(5, BlurMaskFilter.Blur.NORMAL);
+    }
+
+    public void setListener (PaintView.CommunicationInterface mListener){
+        this.mListener = mListener;
     }
 
     public void init(DisplayMetrics metrics) {
@@ -372,6 +377,7 @@ public class PaintView extends View {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                if (mListener != null )mListener.sentPreviousMap(getMap());
                 lineCoordinates.clear();
 
                 if (line || path) touchStart(x, y);
@@ -391,6 +397,7 @@ public class PaintView extends View {
                 if (isCircleDragged)
                     isCircleDragged = false; //aby to neposouvalo v dalším tahu kruhy
                 if (remove) removeObject(x, y);
+                if (mListener != null )mListener.sentUpdatedMap(getMap());
                 invalidate();
                 break;
         }
@@ -443,5 +450,10 @@ public class PaintView extends View {
             redLineList.add(new Coordinate(path.get(i).getTo().x, path.get(i).getTo().y));
             invalidate();
         }
+    }
+
+    public interface CommunicationInterface {
+        public void sentPreviousMap(Map map);
+        public void sentUpdatedMap(Map map);
     }
 }

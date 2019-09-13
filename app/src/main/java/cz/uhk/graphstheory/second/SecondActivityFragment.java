@@ -108,7 +108,7 @@ public class SecondActivityFragment extends AbstractFragment {
         firstPartOfBipartite.addAll(secondPartOfBipartite);
         Map mapToSet = new Map(firstPartOfBipartite, nodesToSet, redLines);
         getGraphGeneratedView().setMap(mapToSet);
-        generatedMapViewModel.setMap(mapToSet);
+        generatedMapViewModel.setMap(mapToSet); //pro viemodel
     }
 
     private void createBridge() {

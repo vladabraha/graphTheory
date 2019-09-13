@@ -43,6 +43,7 @@ public class GraphGeneratedView extends View {
     float downXCoordinate;
     float downYCoordinate;
     boolean isCircleDragged = false;
+    GraphGeneratedView.CommunicationInterface mListener;
 
     public GraphGeneratedView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -55,6 +56,10 @@ public class GraphGeneratedView extends View {
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setAlpha(0xff);
+    }
+
+    public void setListener (GraphGeneratedView.CommunicationInterface mListener){
+        this.mListener = mListener;
     }
 
     public GraphGeneratedView(Context context) {
@@ -133,6 +138,7 @@ public class GraphGeneratedView extends View {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                if (mListener != null ) mListener.sentPreviousMap(getMap());
                 Coordinate circleCoordinate;
                 circleCoordinate = isInAnyCircle(x, y);
                 if (circleCoordinate != null){
@@ -151,6 +157,7 @@ public class GraphGeneratedView extends View {
                     downYCoordinate = y;
                 }
                 invalidate();
+                if (mListener != null ) mListener.sentUpdatedMap(getMap());
                 break;
 
         }
@@ -257,5 +264,13 @@ public class GraphGeneratedView extends View {
 
     public void invalidateView(){
         invalidate();
+    }
+
+    /**
+     * interface pro komunikaci s aktivitou, ktera chce vedět jak vypadal graf pred posunutim a po posuniti nějakého prvku
+     */
+    public interface CommunicationInterface {
+        public void sentPreviousMap(Map map);
+        public void sentUpdatedMap(Map map);
     }
 }
