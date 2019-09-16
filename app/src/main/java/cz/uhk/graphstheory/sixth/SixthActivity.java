@@ -222,9 +222,9 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         int displayedActivity = sharedPref.getInt("displayedActivity-sixth", 0);
         if (displayedActivity == 0) {
-            Toast.makeText(this, "Vyznač v grafu hamiltonovsky", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Vyznač v grafu hamiltonovskou kružnici", Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(this, "Vyznač v grafu artikulaci", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Vyznač v grafu eulerův tah", Toast.LENGTH_LONG).show();
         }
         //zmeni text bottomNavigationView
         Menu menu = bottomNavigationView.getMenu();

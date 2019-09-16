@@ -148,52 +148,25 @@ public class SixthActivityFragment extends AbstractFragment implements GraphGene
         getGraphGeneratedView().setMap(mapAnimated);
         generatedMapViewModel.setMap(mapAnimated);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                createMapAnimation();
-            }
-        }, 3000);
+        new Handler().postDelayed(this::createMapAnimation, 3000);
     }
 
     private void createEulerMap(ArrayList<Coordinate> nodesToSet) {
-//
-//        //myšlenka - mam body, vezmu polovinu a nějak je spojim
-//        //vezmu druhou polovinu a nejak je spojim. Mezi prvni a druhou půlkou neni žádný propoj - bipartitni graf
-//        ArrayList<Coordinate> firstPartOfNodes = new ArrayList<>();
-//        ArrayList<Coordinate> secondPartOfNodes = new ArrayList<>();
-//        for (int i = 0; i < nodesToSet.size(); i++) {
-//            if (i < (nodesToSet.size() / 2)) {
-//                firstPartOfNodes.add(nodesToSet.get(i));
-//            } else {
-//                secondPartOfNodes.add(nodesToSet.get(i));
-//            }
-//        }
-//
-//        ArrayList<CustomLine> firstPartOfBipartite = GraphGenerator.generateRandomEdges(firstPartOfNodes);
-//        ArrayList<CustomLine> secondPartOfBipartite = GraphGenerator.generateRandomEdges(secondPartOfNodes);
-//
-//        //myšlenka - mám novej bod, mám 2 samostný grafy, pridám mezi ne bod a ten propojím s kažodou polovinou - tadá artikulace
-//        Coordinate newNode = new Coordinate((float) Math.random() * width, (float) Math.random() * height);
-//        Coordinate oneNode = firstPartOfNodes.get(0);
-//        Coordinate secondNode = secondPartOfNodes.get(0);
-//        CustomLine newCustomLine = new CustomLine(newNode, oneNode);
-//        CustomLine newCustomLine2 = new CustomLine(newNode, secondNode);
-//
-//        //tohle jenom proto aby to bylo videt
-//        ArrayList<CustomLine> redLines = new ArrayList<>();
-//        redLines.add(newCustomLine);
-//        redLines.add(newCustomLine2);
-//        nodesToSet.add(newNode);
-//
-//
-//        firstPartOfBipartite.addAll(secondPartOfBipartite);
-//        Map mapToSet = new Map(firstPartOfBipartite, nodesToSet, redLines);
-//        getGraphGeneratedView().setMap(mapToSet);
-//        generatedMapViewModel.setMap(mapToSet);
+        ArrayList<CustomLine> lines = new ArrayList<>();
+        ArrayList<CustomLine> redLines = new ArrayList<>();
+
+        for (int i = 0; i < nodesToSet.size(); i++){
+            if (i < nodesToSet.size() - 1){
+                lines.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(i+1)));
+                redLines.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(i+1)));
+            }else {
+                lines.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(2)));
+                redLines.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(2)));
+            }
+        }
+        eulerMap = new Map(lines, nodesToSet, redLines);
     }
 
-    //todo pridat timer na postupny pridavani do grafu
     //myšlenka, projedu postupne vrcholy a propojim je jak jdou za sebou a kdyz tam ještě nemaj normální caru z generatoru, tak ho tam taky pridam
     private void createHamiltonMap(ArrayList<Coordinate> nodesToSet) {
         ArrayList<CustomLine> lines = new ArrayList<>();

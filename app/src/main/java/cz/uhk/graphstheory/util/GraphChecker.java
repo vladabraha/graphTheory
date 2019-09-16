@@ -453,4 +453,18 @@ public class GraphChecker {
         }
         return "true";
     }
+
+    //vezmu bod se sudym počtem sousedů (těch může být max. 2ks)
+    //Přidám bod do zásobníku a jdu na jeho souseda
+    //Odstraním hranu ze zásobníku hran (tu mezi prvním bodem a sousedem)
+    //pokračuju dál, pokud už nemám souseda, přádám ho do eulerovy cesty a odstraním vrchol ze zásobníku
+    public static String checkIfGraphHasEulerPath(Map map){
+        ArrayList<CustomLine> redLines = map.getRedLineList();
+        ArrayList<CustomLine> lines = map.getCustomLines();
+        ArrayList<Coordinate> circles = map.getCircles();
+
+
+        //todo doimplementovat algoritmus
+        return "";
+    }
 }
