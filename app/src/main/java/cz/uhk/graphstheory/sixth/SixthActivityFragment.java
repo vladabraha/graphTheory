@@ -1,6 +1,7 @@
 package cz.uhk.graphstheory.sixth;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
@@ -30,7 +31,7 @@ public class SixthActivityFragment extends AbstractFragment implements GraphGene
     private static final int MINIMUM_AMOUNT_OF_NODES = 5;
     private GeneratedMapViewModel generatedMapViewModel;
 
-    private Map hamiltonMap, eulerMap, previousMapToUpdate;
+    private Map hamiltonMap, eulerMap, previousMapToUpdate, mapAnimated;
 
     boolean hamilton, euler;
 
@@ -71,17 +72,22 @@ public class SixthActivityFragment extends AbstractFragment implements GraphGene
                                 hamilton = false;
                                 getGraphGeneratedView().setMap(eulerMap);
                                 generatedMapViewModel.setMap(eulerMap);
+                                mapAnimated = new Map(eulerMap);
+                                createMapAnimation();
                                 break;
-
                             case "hamiltonovsky":
                                 euler = false;
                                 hamilton = true;
                                 getGraphGeneratedView().setMap(hamiltonMap);
                                 generatedMapViewModel.setMap(hamiltonMap);
+                                mapAnimated = new Map(hamiltonMap);
+                                createMapAnimation();
                                 break;
 
                             default:
                                 generatedMapViewModel.setMap(eulerMap);
+                                mapAnimated = new Map(eulerMap);
+                                createMapAnimation();
                                 break;
                         }
                     }
@@ -89,6 +95,65 @@ public class SixthActivityFragment extends AbstractFragment implements GraphGene
                 }
             }
         });
+    }
+
+    //vezmu vždycky aktualizovaný graf o uživatelovi pohyby
+    //z minulého grafu spočítám počet červených čar a z nového grafu nakopíruju stejný počet o jeden zvětšený (pokud předtím neměli stejný počet, to pak vezmu jenom první)
+    private void createMapAnimation() {
+        int amountOfRedLines;
+        int amountOfShowedLines;
+        switch (type) {
+            case "euleruv":
+                amountOfRedLines = eulerMap.getRedLineList().size();
+                amountOfShowedLines = mapAnimated.getRedLineList().size();
+                if (amountOfRedLines == amountOfShowedLines){
+                    mapAnimated = new Map(eulerMap);
+                    mapAnimated.setRedLineList(new ArrayList<>());
+                    ArrayList<CustomLine> redLines = mapAnimated.getRedLineList();
+                    redLines.add(eulerMap.getRedLineList().get(0));
+                } else {
+                    mapAnimated = new Map(eulerMap);
+                    mapAnimated.setRedLineList(new ArrayList<>());
+                    ArrayList<CustomLine> redLines = mapAnimated.getRedLineList();
+                    for (int i = 0; i < amountOfShowedLines + 1; i++){
+                        redLines.add(eulerMap.getRedLineList().get(i));
+                    }
+                }
+                break;
+
+            case "hamiltonovsky":
+
+                amountOfRedLines = hamiltonMap.getRedLineList().size();
+                amountOfShowedLines = mapAnimated.getRedLineList().size();
+                if (amountOfRedLines == amountOfShowedLines){
+                    mapAnimated = new Map(hamiltonMap);
+                    mapAnimated.setRedLineList(new ArrayList<>());
+                    ArrayList<CustomLine> redLines = mapAnimated.getRedLineList();
+                    redLines.add(hamiltonMap.getRedLineList().get(0));
+                } else {
+                    mapAnimated = new Map(hamiltonMap);
+                    mapAnimated.setRedLineList(new ArrayList<>());
+                    ArrayList<CustomLine> redLines = mapAnimated.getRedLineList();
+                    for (int i = 0; i < amountOfShowedLines + 1; i++){
+                        redLines.add(hamiltonMap.getRedLineList().get(i));
+                    }
+                }
+                break;
+
+            default:
+
+                break;
+        }
+
+        getGraphGeneratedView().setMap(mapAnimated);
+        generatedMapViewModel.setMap(mapAnimated);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                createMapAnimation();
+            }
+        }, 3000);
     }
 
     private void createEulerMap(ArrayList<Coordinate> nodesToSet) {
@@ -180,7 +245,7 @@ public class SixthActivityFragment extends AbstractFragment implements GraphGene
     //sem se posle mapa pred stistknutim
     @Override
     public void sentPreviousMap(Map map) {
-        previousMapToUpdate = map;
+        previousMapToUpdate = new Map(map);
     }
 
     //sem prijde mapa po dokončení tahu uživatele
@@ -214,6 +279,16 @@ public class SixthActivityFragment extends AbstractFragment implements GraphGene
                     customLineToUpdate.setFrom(lines.get(i).getFrom());
                     customLineToUpdate.setTo(lines.get(i).getTo());
 
+                    //ještě aktualizuje nody
+                    for (int k = 0; k < previousCircles.size(); k++){
+                        int finalK = k;
+                        if (circles.stream().noneMatch(circle -> circle.equal(previousCircles.get(finalK)))){
+                            Coordinate coordinate = hamiltonMap.getCircles().get(k);
+                            coordinate.x = circles.get(k).x;
+                            coordinate.y = circles.get(k).y;
+                        }
+                    }
+
                 } else if (euler) {
                     CustomLine customLineToUpdate = eulerMap.getCustomLines().get(i);
                     ArrayList<CustomLine> eulerRedLines = eulerMap.getRedLineList();
@@ -225,18 +300,21 @@ public class SixthActivityFragment extends AbstractFragment implements GraphGene
                     }
                     customLineToUpdate.setFrom(lines.get(i).getFrom());
                     customLineToUpdate.setTo(lines.get(i).getTo());
+
+                    //ještě aktualizuje nody
+                    for (int k = 0; k < previousCircles.size(); k++){
+                        int finalK = k;
+                        if (circles.stream().noneMatch(circle -> circle.equal(previousCircles.get(finalK)))){
+                            Coordinate coordinate = eulerMap.getCircles().get(k);
+                            coordinate.x = circles.get(k).x;
+                            coordinate.y = circles.get(k).y;
+                        }
+                    }
                 }
             }
         }
 
-        for (int k = 0; k < previousCircles.size(); k++){
-            int finalK = k;
-            if (circles.stream().noneMatch(circle -> circle.equal(previousCircles.get(finalK)))){
-                Coordinate coordinate = previousCircles.get(k);
-                coordinate.x = circles.get(k).x;
-                coordinate.y = circles.get(k).y;
-            }
-        }
+
 
 
     }

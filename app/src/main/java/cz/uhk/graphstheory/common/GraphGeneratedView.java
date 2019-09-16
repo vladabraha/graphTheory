@@ -157,6 +157,9 @@ public class GraphGeneratedView extends View {
                     downYCoordinate = y;
                 }
                 invalidate();
+                break;
+
+            case MotionEvent.ACTION_UP:
                 if (mListener != null ) mListener.sentUpdatedMap(getMap());
                 break;
 
