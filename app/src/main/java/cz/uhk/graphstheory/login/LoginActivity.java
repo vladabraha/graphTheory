@@ -96,9 +96,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private void createUserAndStartActivity(String selectedTeam) {
         FirebaseUser user = mAuth.getCurrentUser();
-        Log.d("test", Objects.requireNonNull(user).getUid());
 
-        databaseConnector.createUserAccount(user.getUid(),nickNameEditText.getText().toString(), Objects.requireNonNull(user.getEmail()),  selectedTeam);
+        databaseConnector.createUserAccount(Objects.requireNonNull(user).getUid(),nickNameEditText.getText().toString(), Objects.requireNonNull(user.getEmail()),  selectedTeam);
 
         Intent mainIntent = new Intent(this, GraphGeneratorActivity.class);
         startActivity(mainIntent);

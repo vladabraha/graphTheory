@@ -104,6 +104,7 @@
     <string name="enter_team">Vstoupit do týmu</string>
     <string name="you_nickname">vaše jméno</string>
     <string name="insert_team_name">vlož název týmu</string>
+    <string name="text_description_fraction_chooser">Pro vstup do konkrétního týmu je třeba zadat jeho přesný název</string>
 
 
     <string-array name="team_chooser">
