@@ -1,7 +1,5 @@
 package cz.uhk.graphstheory.util;
 
-import android.os.CpuUsageInfo;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -127,5 +125,68 @@ public class PathGenerator {
         firstMap.setRedLineList(redLines);
         firstMap.setCustomLines(new ArrayList<>());
         return firstMap;
+    }
+
+    //myšlenka, projedu postupne vrcholy a propojim je jak jdou za sebou a kdyz tam ještě nemaj normální caru z generatoru, tak ho tam taky pridam
+    public static Map createHamiltonMapWithoutRedLines(int height, int width) {
+        final int MAXIMUM_AMOUNT_OF_NODES = 9;
+        final int MINIMUM_AMOUNT_OF_NODES = 4;
+        int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
+        if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES)
+            amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
+        ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, 15, amountOfEdges);
+        ArrayList<CustomLine> lines = new ArrayList<>();
+        ArrayList<CustomLine> redLines = new ArrayList<>();
+        ArrayList<CustomLine> preGeneratedLines = GraphGenerator.generateRandomEdges(nodesToSet);
+        ArrayList<CustomLine> hamiltonRedLines = new ArrayList<>();
+
+        for (int i = 0; i < nodesToSet.size(); i++) {
+            CustomLine line;
+            CustomLine redline;
+            if (i < nodesToSet.size() - 1) {
+                line = new CustomLine(nodesToSet.get(i), nodesToSet.get(i + 1));
+                redline = new CustomLine(nodesToSet.get(i), nodesToSet.get(i + 1));
+            } else {
+                line = new CustomLine(nodesToSet.get(i), nodesToSet.get(0));
+                redline = new CustomLine(nodesToSet.get(i), nodesToSet.get(0));
+            }
+            lines.add(line);
+            hamiltonRedLines.add(redline);
+        }
+
+        for (int j = 0; j < hamiltonRedLines.size(); j++) {
+            int finalJ = j;
+            if (preGeneratedLines.stream().noneMatch(line -> line.isLineSame(hamiltonRedLines.get(finalJ)))) {
+                preGeneratedLines.add(lines.get(j));
+            }
+        }
+
+        return new Map(preGeneratedLines, nodesToSet, redLines);
+    }
+
+    public static Map createEulerMapWithoutRedLines(int height, int width) {
+        final int MAXIMUM_AMOUNT_OF_NODES = 9;
+        final int MINIMUM_AMOUNT_OF_NODES = 4;
+        int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
+        if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES)
+            amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
+        ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, 15, amountOfEdges);
+        ArrayList<CustomLine> lines = new ArrayList<>();
+        ArrayList<CustomLine> redLines = new ArrayList<>();
+
+        for (int i = 0; i < nodesToSet.size(); i++){
+            if (i < nodesToSet.size() - 1){
+                lines.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(i+1)));
+            }else {
+                lines.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(2)));
+            }
+        }
+        if ( nodesToSet.size() > 4){
+            lines.add(new CustomLine(nodesToSet.get(0), nodesToSet.get(2)));
+            lines.add(new CustomLine(nodesToSet.get(2), nodesToSet.get(4)));
+            lines.add(new CustomLine(nodesToSet.get(4), nodesToSet.get(1)));
+        }
+
+        return new Map(lines, nodesToSet, redLines);
     }
 }

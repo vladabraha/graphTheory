@@ -1,20 +1,17 @@
 package cz.uhk.graphstheory.common;
 
-import androidx.lifecycle.ViewModelProviders;
-
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 
 import java.util.Objects;
 
@@ -46,6 +43,8 @@ public class DrawingFragment extends Fragment implements TabActivity.OnFragmentI
     private int width, height;
 
     boolean disableListener = false;
+    private Map sentMap;
+    boolean shouldBeSentMapSet;
 
 //    private GraphListener mListener;
 
@@ -88,7 +87,12 @@ public class DrawingFragment extends Fragment implements TabActivity.OnFragmentI
         metrics = new DisplayMetrics();
         Objects.requireNonNull(getActivity()).getWindowManager().getDefaultDisplay().getMetrics(metrics);
         paintView.init(metrics);
-        if (drawMapViewModel.getMap() != null) {
+        if (shouldBeSentMapSet){
+            shouldBeSentMapSet = false;
+            paintView.setMap(sentMap);
+            drawMapViewModel.setMap(sentMap);
+
+        }else if (drawMapViewModel.getMap() != null) {
             paintView.setMap(drawMapViewModel.getMap());
         }
         view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -151,6 +155,11 @@ public class DrawingFragment extends Fragment implements TabActivity.OnFragmentI
 
     public void setUserGraph(Map map) {
         paintView.setMap(map);
+    }
+
+    public void setMapAfterViewIsCreated(Map map){
+        shouldBeSentMapSet = true;
+        sentMap = map;
     }
 
     public DisplayMetrics getMetrics() {

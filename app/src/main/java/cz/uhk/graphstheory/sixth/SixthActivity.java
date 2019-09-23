@@ -20,7 +20,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 import cz.uhk.graphstheory.R;
@@ -30,11 +29,9 @@ import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
-import cz.uhk.graphstheory.model.Coordinate;
-import cz.uhk.graphstheory.model.CustomLine;
 import cz.uhk.graphstheory.model.Map;
 import cz.uhk.graphstheory.util.GraphChecker;
-import cz.uhk.graphstheory.util.GraphGenerator;
+import cz.uhk.graphstheory.util.PathGenerator;
 
 public class SixthActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, DrawingFragment.CommunicationInterface {
 
@@ -100,8 +97,7 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
                     }
                     break;
                 case 1:
-                    //todo dodelat validaci na eulera
-                    isValid = GraphChecker.checkIfGraphContainsArticulation(drawingFragment.getUserGraph());
+                    isValid = GraphChecker.checkIfGraphHasEulerPath(drawingFragment.getUserGraph());
                     switch (isValid) {
                         case "true":
                             String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
@@ -214,7 +210,6 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
         }
     }
 
-
     @Override
     protected void changeToDrawingFragment() {
         super.changeToDrawingFragment();
@@ -224,11 +219,8 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
         if (displayedActivity == 0) {
             Toast.makeText(this, "Vyznač v grafu hamiltonovskou kružnici", Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(this, "Vyznač v grafu eulerův tah", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Vyznač v grafu eulerův tah, postupně jak jde za sebou", Toast.LENGTH_LONG).show();
         }
-        //zmeni text bottomNavigationView
-        Menu menu = bottomNavigationView.getMenu();
-        menu.getItem(2).setTitle("označ");
     }
 
 
@@ -275,14 +267,18 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
         this.height = height;
         switch (getDisplayedActivity()) {
             case "euleruv":
-                //todo dodelat graf na eulera
+                drawingFragment.setUserGraph(PathGenerator.createEulerMapWithoutRedLines(height, width));
                 bottomNavigationView.setSelectedItemId(R.id.path);
                 break;
             case "hamiltonovsky":
-                drawingFragment.setUserGraph(createHamiltonMapWithoutRedLines());
+                drawingFragment.setUserGraph(PathGenerator.createHamiltonMapWithoutRedLines(height, width));
                 bottomNavigationView.setSelectedItemId(R.id.path);
                 break;
         }
+        //zmeni text bottomNavigationView
+        Menu menu = bottomNavigationView.getMenu();
+        menu.getItem(2).setTitle("označ");
+        drawingFragment.changeDrawingMethod("path");
     }
 
     @Override
@@ -294,44 +290,17 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
 
     @Override
     public void onNegativeButtonClick() {
-        drawingFragment.setUserGraph(createHamiltonMapWithoutRedLines());
-    }
-
-    //myšlenka, projedu postupne vrcholy a propojim je jak jdou za sebou a kdyz tam ještě nemaj normální caru z generatoru, tak ho tam taky pridam
-    private Map createHamiltonMapWithoutRedLines() {
-        final int MAXIMUM_AMOUNT_OF_NODES = 9;
-        final int MINIMUM_AMOUNT_OF_NODES = 4;
-        int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
-        if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES)
-            amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
-        ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, 15, amountOfEdges);
-        ArrayList<CustomLine> lines = new ArrayList<>();
-        ArrayList<CustomLine> redLines = new ArrayList<>();
-        ArrayList<CustomLine> preGeneratedLines = GraphGenerator.generateRandomEdges(nodesToSet);
-        ArrayList<CustomLine> hamiltonRedLines = new ArrayList<>();
-
-        for (int i = 0; i < nodesToSet.size(); i++) {
-            CustomLine line;
-            CustomLine redline;
-            if (i < nodesToSet.size() - 1) {
-                line = new CustomLine(nodesToSet.get(i), nodesToSet.get(i + 1));
-                redline = new CustomLine(nodesToSet.get(i), nodesToSet.get(i + 1));
-            } else {
-                line = new CustomLine(nodesToSet.get(i), nodesToSet.get(0));
-                redline = new CustomLine(nodesToSet.get(i), nodesToSet.get(0));
-            }
-            lines.add(line);
-            hamiltonRedLines.add(redline);
+        switch (getDisplayedActivity()) {
+            case "euleruv":
+                drawingFragment.setUserGraph(PathGenerator.createEulerMapWithoutRedLines(height, width));
+                break;
+            case "hamiltonovsky":
+                drawingFragment.setUserGraph(PathGenerator.createHamiltonMapWithoutRedLines(height, width));
+                break;
         }
 
-        for (int j = 0; j < hamiltonRedLines.size(); j++) {
-            int finalJ = j;
-            if (preGeneratedLines.stream().noneMatch(line -> line.isLineSame(hamiltonRedLines.get(finalJ)))) {
-                preGeneratedLines.add(lines.get(j));
-            }
-        }
-
-        hamiltonMap = new Map(preGeneratedLines, nodesToSet, redLines);
-        return hamiltonMap;
     }
+
+
+
 }

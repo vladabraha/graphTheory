@@ -20,6 +20,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 import cz.uhk.graphstheory.R;
@@ -32,6 +33,7 @@ import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
 import cz.uhk.graphstheory.model.Map;
 import cz.uhk.graphstheory.util.GraphChecker;
 import cz.uhk.graphstheory.util.GraphGenerator;
+import cz.uhk.graphstheory.util.SpecificGraphGenerator;
 
 public class SecondActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, DrawingFragment.CommunicationInterface {
 
@@ -47,6 +49,8 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
     private DrawingFragmentListener drawingFragmentListener;
     String type;
     int height, width;
+
+    boolean userFinishedPreviousTask;
 
     DatabaseConnector databaseConnector;
 
@@ -78,24 +82,6 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
             String isValid;
             switch (displayedActivity) {
                 case 0:
-                    isValid = GraphChecker.checkIfGraphContainsBridge(drawingFragment.getUserGraph());
-                    switch (isValid) {
-                        case "true":
-                            String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
-                            assert userName != null;
-                            Double receivedPoints = databaseConnector.recordUserPoints(userName, "second-first");
-                            Toast.makeText(SecondActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
-                            createDialog();
-                            break;
-                        case "false":
-                            Toast.makeText(SecondActivity.this, "Jejda, špatně, mkrni na to ještě jednou", Toast.LENGTH_LONG).show();
-                            break;
-                        case "chybi ohraniceni cervenou carou":
-                            Toast.makeText(SecondActivity.this, "Zapomněl jsi označit most červenou čarou", Toast.LENGTH_LONG).show();
-                            break;
-                    }
-                    break;
-                case 1:
                     isValid = GraphChecker.checkIfGraphContainsArticulation(drawingFragment.getUserGraph());
                     switch (isValid) {
                         case "true":
@@ -115,8 +101,25 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
                             break;
                     }
                     break;
+                case 1:
+                    isValid = GraphChecker.checkIfGraphContainsBridge(drawingFragment.getUserGraph());
+                    switch (isValid) {
+                        case "true":
+                            String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
+                            assert userName != null;
+                            Double receivedPoints = databaseConnector.recordUserPoints(userName, "second-first");
+                            Toast.makeText(SecondActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
+                            createDialog();
+                            break;
+                        case "false":
+                            Toast.makeText(SecondActivity.this, "Jejda, špatně, mkrni na to ještě jednou", Toast.LENGTH_LONG).show();
+                            break;
+                        case "chybi ohraniceni cervenou carou":
+                            Toast.makeText(SecondActivity.this, "Zapomněl jsi označit most červenou čarou", Toast.LENGTH_LONG).show();
+                            break;
+                    }
+                    break;
             }
-
         });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -158,6 +161,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
                 }
             }
         });
+
     }
 
     private String getDisplayedActivity() {
@@ -166,9 +170,9 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
 
         switch (displayedActivity) {
             case 0:
-                return "most";
-            case 1:
                 return "artikulace";
+            case 1:
+                return "most";
         }
         return "artikulace";
     }
@@ -216,15 +220,28 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         int displayedActivity = sharedPref.getInt("displayedActivity-second", 0);
         if (displayedActivity == 0) {
-            Toast.makeText(this, "Vyznač v grafu most", Toast.LENGTH_LONG).show();
-        } else {
             Toast.makeText(this, "Vyznač v grafu artikulaci", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "Vyznač v grafu most", Toast.LENGTH_LONG).show();
         }
         //zmeni text bottomNavigationView
         Menu menu = bottomNavigationView.getMenu();
         menu.getItem(2).setTitle("označ");
-    }
 
+        //pokud uzivatel splnil predchozi ukol, tak se mu nasetuje novej graf, do kteryho muze kreslit (generuje se podle ukazky, ale bez cerveny cary
+        if (userFinishedPreviousTask){
+            userFinishedPreviousTask = false;
+            //set new map to create user graph
+            Map map;
+            if (displayedActivity == 0) {
+                map = SpecificGraphGenerator.createMapWithABridge(height, width, 15);
+            } else {
+                map = SpecificGraphGenerator.createMapWithArticulation(height, width, 15);
+            }
+            map.setRedLineList(new ArrayList<>());
+            drawingFragment.setMapAfterViewIsCreated(map);
+        }
+    }
 
     @Override
     public void onBackPressed() {
@@ -253,12 +270,10 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
 
         switch (displayedActivity) {
             case 0:
-                Toast.makeText(this, "Teď si ukážeme artikulaci v grafu", Toast.LENGTH_LONG).show();
-                secondActivityFragment.changeGraph("most");
+                secondActivityFragment.changeGraph("artikulace");
                 break;
             case 1:
-                Toast.makeText(this, "Teď si ukážeme most v grafu", Toast.LENGTH_LONG).show();
-                secondActivityFragment.changeGraph("artikulace");
+                secondActivityFragment.changeGraph("most");
                 break;
         }
     }
@@ -267,21 +282,32 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
     public void sentMetrics(int width, int height) {
         this.width = width;
         this.height = height;
-        int amountOfNodes = (int) Math.round(Math.random() * 9) + 4;
-        Map map = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
+
+        //nasetovani spravneho grafu po nacteni view (ale metrics se poslou jenom jednou)
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        int displayedActivity = sharedPref.getInt("displayedActivity-second", 0);
+        Map map;
+        if (displayedActivity == 0) {
+            map = SpecificGraphGenerator.createMapWithABridge(height, width, 15);
+        } else {
+            map = SpecificGraphGenerator.createMapWithArticulation(height, width, 15);
+        }
+        map.setRedLineList(new ArrayList<>());
+
         drawingFragment.setUserGraph(map);
     }
 
     @Override
     public void onPositiveButtonClick() {
         drawingFragment.changeDrawingMethod("clear"); //toto vymaže, co uživatel nakreslil, aby nebouchal jenom check, check...
-        tabLayoutFragment.switchSelectedTab(1);
         changeActivity();
+        tabLayoutFragment.switchSelectedTab(1);
+        userFinishedPreviousTask = true;
     }
 
     @Override
     public void onNegativeButtonClick() {
-        int amountOfNodes = (int) Math.round(Math.random() * 9) + 3;
+        int amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
         Map map = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
         drawingFragment.setUserGraph(map);
     }

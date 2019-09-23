@@ -392,7 +392,7 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
                 .setNegativeButton("Znovu ", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        int amountOfNodes = (int) Math.round(Math.random() * 9) + 3;
+                        int amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
                         Map map = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
                         drawingFragment.setUserGraph(map);
                     }
@@ -406,7 +406,7 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
     public void sentMetrics(int width, int height) {
         this.width = width;
         this.height = height;
-        int amountOfNodes = (int) Math.round(Math.random() * 9) + 3;
+        int amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
         Map map = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
         drawingFragment.setUserGraph(map);
     }

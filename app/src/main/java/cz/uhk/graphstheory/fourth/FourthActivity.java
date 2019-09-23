@@ -72,7 +72,6 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
 
         drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         floatingActionButton.setOnClickListener(v -> {
-            //todo tady osetrit co dal
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
             dialog.setCancelable(false);
             dialog.setTitle("Rozhodněte");

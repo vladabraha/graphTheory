@@ -185,10 +185,11 @@ public class GraphGenerator {
         do {
             run++;
             //ohraniceni, kvuli vyjizdecimu menu a spodku
-            float border = 20;
-            float xCoordinate = (float) (Math.random() * (width - border));
-            xCoordinate+= 10;
-            float yCoordinate = (float) (Math.random() * (height - border));
+            float xBorder = 20;
+            float yBorder = 30;
+            float xCoordinate = (float) (Math.random() * (width - xBorder));
+            xCoordinate+= 20;
+            float yCoordinate = (float) (Math.random() * (height - yBorder));
             yCoordinate+= 10;
 
             //pokud vyjde male cislo, pripocitame souradnice, aby nelezely na okraji obrazovky

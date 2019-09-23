@@ -204,13 +204,11 @@ public class SixthActivityFragment extends AbstractFragment implements GraphGene
                 euler = true;
                 hamilton = false;
                 previousMapToUpdate = null;
-                generatedMapViewModel.setMap(eulerMap);
                 break;
             case "hamiltonovsky":
                 euler = false;
                 hamilton = true;
                 previousMapToUpdate = null;
-                generatedMapViewModel.setMap(hamiltonMap);
                 break;
         }
     }
@@ -286,10 +284,6 @@ public class SixthActivityFragment extends AbstractFragment implements GraphGene
                 }
             }
         }
-
-
-
-
     }
 }
 

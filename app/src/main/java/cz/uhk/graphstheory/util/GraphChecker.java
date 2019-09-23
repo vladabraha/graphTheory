@@ -454,6 +454,7 @@ public class GraphChecker {
         return "true";
     }
 
+    //TEORIE (reseno nakonec jinak)
     //vezmu bod se sudym počtem sousedů (těch může být max. 2ks)
     //Přidám bod do zásobníku a jdu na jeho souseda
     //Odstraním hranu ze zásobníku hran (tu mezi prvním bodem a sousedem)
@@ -463,8 +464,52 @@ public class GraphChecker {
         ArrayList<CustomLine> lines = map.getCustomLines();
         ArrayList<Coordinate> circles = map.getCircles();
 
+        //spocitame pocet vrcholu se sudym pocetem sousedu
+        ArrayList<Coordinate> nodesWithMoreThanTwoNeighbours = new ArrayList<>();
+        for (Coordinate coordinate : circles){
+            int numberOfLinesConnectedToNode = (int) lines.stream().filter(m -> m.isPointInStartOrEndOfLine(coordinate)).count();
+            if (numberOfLinesConnectedToNode % 2 == 0 ){
+                nodesWithMoreThanTwoNeighbours.add(coordinate);
+            }
+        }
+        if (nodesWithMoreThanTwoNeighbours.size() > 2 || nodesWithMoreThanTwoNeighbours.isEmpty()) return "false";
 
-        //todo doimplementovat algoritmus
-        return "";
+        //kontrola, ze redlines maj vsechny normalni cary a zadnou novou navic
+        for (CustomLine line : lines){
+            boolean found = false;
+            for (CustomLine redline : redLines){
+                if (redline.isLineSame(line)) found = true;
+            }
+            if (!found) return "false";
+        }
+
+        for (CustomLine redline : redLines){
+            boolean found = false;
+            for (CustomLine line : lines){
+                if (line.isLineSame(redline)) found = true;
+            }
+            if (!found) return "false";
+        }
+
+        //kontrola, ze redlines na sebe navazuji
+        //tzn, ze kazdy 2 usecky musi mit spolecny prave jeden bod
+        for (int i = 0; i < redLines.size(); i++){
+            if (i > 1){
+                ArrayList<Coordinate> coordinates = new ArrayList<>();
+
+                CustomLine firstLine = redLines.get(i - 1);
+                Coordinate first = firstLine.getFrom();
+                Coordinate second = firstLine.getTo();
+
+                CustomLine secondLine = redLines.get(i);
+                Coordinate third = secondLine.getFrom();
+                Coordinate fourth = secondLine.getTo();
+
+                if (!first.equal(third) && !first.equal(fourth) && !second.equal(third) && !second.equal(fourth)){
+                    return "false";
+                }
+            }
+        }
+        return "true";
     }
 }
