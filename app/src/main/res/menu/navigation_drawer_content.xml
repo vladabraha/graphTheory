@@ -30,17 +30,18 @@
             android:title="@string/menu_sixth" />
         <item
             android:id="@+id/nav_seventh"
-            android:icon="@drawable/ic_menu_bone"
-            android:title="@string/menu_seventh" />
-        <item
-            android:id="@+id/nav_eighth"
             android:icon="@drawable/ic_menu_score"
             android:title="@string/menu_eight" />
+        <item
+            android:id="@+id/nav_eighth"
+            android:icon="@drawable/ic_menu_tree"
+            android:title="@string/menu_ninth" />
 
         <item
             android:id="@+id/nav_ninth"
-            android:icon="@drawable/ic_menu_tree"
-            android:title="@string/menu_ninth" />
+            android:icon="@drawable/ic_menu_bone"
+            android:title="@string/menu_seventh" />
+
 
     </group>
 

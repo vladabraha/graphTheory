@@ -1,6 +1,7 @@
 package cz.uhk.graphstheory.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -511,5 +512,40 @@ public class GraphChecker {
             }
         }
         return "true";
+    }
+
+    //todo napojit na aktivitu
+    public static boolean checkIfGraphIsCorrect(Map map, ArrayList<Integer> degreeList){
+        ArrayList<CustomLine> lines = map.getCustomLines();
+        ArrayList<Coordinate> circles = map.getCircles();
+
+        if (degreeList.size() != circles.size()) return false;
+
+        //spocitam stupne vrcholu jednotlivych uzlu
+        HashMap<Coordinate, Integer> degreesMap = new HashMap<>();
+        for (Coordinate node : circles){
+            int degree = 0;
+            for (CustomLine customLine : lines){
+                if (customLine.isPointInStartOrEndOfLine(node)) degree++;
+            }
+            degreesMap.put(node, degree);
+        }
+
+        //pro kazdej stupen vrcholu smazu z Hasmapy stejnou value a nemělo by mi na konci nic chybět -> tzn. projdu bez problemu a muzu rict, je to to spravne
+        for (Integer degree: degreeList){
+            Coordinate coordinateToDelete = null;
+            for(HashMap.Entry<Coordinate, Integer> entry : degreesMap.entrySet()) {
+                if (entry.getValue().equals(degree)){
+                   coordinateToDelete = entry.getKey();
+                   break;
+                }
+            }
+            if (coordinateToDelete != null){
+                degreesMap.remove(coordinateToDelete);
+            }else{
+                return false;
+            }
+        }
+        return true;
     }
 }
