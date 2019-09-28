@@ -203,6 +203,17 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
                 break;
             case 1:
                 changeToEducationFragment();
+                switch (displayedActivity) {
+                    case 0:
+                        Toast.makeText(this, "Nyní si ukážeme v zadaném grafu cestu", Toast.LENGTH_LONG).show();
+                        break;
+                    case 1:
+                        Toast.makeText(this, "Nyní si ukážeme v zadaném grafu tah", Toast.LENGTH_LONG).show();
+                        break;
+                    case 2:
+                        Toast.makeText(this, "Nyní si ukážeme v zadaném grafu kružnici", Toast.LENGTH_LONG).show();
+                        break;
+                }
                 break;
             case 2:
                 changeToDrawingFragment();

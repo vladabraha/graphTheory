@@ -514,7 +514,6 @@ public class GraphChecker {
         return "true";
     }
 
-    //todo napojit na aktivitu
     public static boolean checkIfGraphIsCorrect(Map map, ArrayList<Integer> degreeList){
         ArrayList<CustomLine> lines = map.getCustomLines();
         ArrayList<Coordinate> circles = map.getCircles();

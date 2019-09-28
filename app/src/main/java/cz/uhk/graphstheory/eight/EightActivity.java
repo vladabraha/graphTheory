@@ -1,4 +1,4 @@
-package cz.uhk.graphstheory.seventh;
+package cz.uhk.graphstheory.eight;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,14 +27,13 @@ import cz.uhk.graphstheory.common.DrawingFragment;
 import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
-import cz.uhk.graphstheory.eight.EightActivity;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
 import cz.uhk.graphstheory.model.Map;
 import cz.uhk.graphstheory.util.GraphChecker;
 import cz.uhk.graphstheory.util.GraphGenerator;
 import cz.uhk.graphstheory.util.Util;
 
-public class SeventhActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, DrawingFragment.CommunicationInterface {
+public class EightActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, DrawingFragment.CommunicationInterface {
 
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
@@ -67,7 +66,7 @@ public class SeventhActivity extends AbstractActivity implements TabLayoutFragme
         floatingActionButton = getFloatingActionButton();
         tabLayoutFragment = getTabLayoutFragment();
 
-        textFragment.setEducationText(R.string.seventh_activity_text);
+        textFragment.setEducationText(R.string.sixth_activity_text);
 
         drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         floatingActionButton.setOnClickListener(v -> {
@@ -75,11 +74,11 @@ public class SeventhActivity extends AbstractActivity implements TabLayoutFragme
             if (isValid) {
                 String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
                 assert userName != null;
-                Double receivedPoints = databaseConnector.recordUserPoints(userName, "seventh");
-                Toast.makeText(SeventhActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
+                Double receivedPoints = databaseConnector.recordUserPoints(userName, "eight");
+                Toast.makeText(EightActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
                 createDialog();
             } else {
-                Toast.makeText(SeventhActivity.this, "bohužel, to není správně, oprav se a zkus to znovu", Toast.LENGTH_LONG).show();
+                Toast.makeText(EightActivity.this, "bohužel, to není správně, oprav se a zkus to znovu", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -91,7 +90,7 @@ public class SeventhActivity extends AbstractActivity implements TabLayoutFragme
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_seventh); //tady treba hodit, co se ma zvyraznit
+        navigationView.setCheckedItem(R.id.nav_eighth); //tady treba hodit, co se ma zvyraznit
 
         bottomNavigationView = findViewById(R.id.graph_generator_navigation);
         bottomNavigationView.setSelectedItemId(R.id.circle);
@@ -125,13 +124,13 @@ public class SeventhActivity extends AbstractActivity implements TabLayoutFragme
 
     @Override
     protected Fragment getGraphFragment() {
-        return new SeventhActivityFragment();
+        return new EightActivityFragment();
     }
 
     @Override
     protected void changeToTextFragment() {
         super.changeToTextFragment();
-        textFragment.setEducationText(R.string.seventh_activity_text);
+        textFragment.setEducationText(R.string.eighth_activity_text);
     }
 
     @Override
@@ -188,7 +187,7 @@ public class SeventhActivity extends AbstractActivity implements TabLayoutFragme
         this.width = width;
         this.height = height;
 
-        if (amountOfNodes == 0) getAmountOfNodesAndGenerateGraphScore();
+        amountOfNodes = getAmountOfNodesAndGenerateGraphScore();
         Map map = new Map(new ArrayList<>(), GraphGenerator.generateNodes(height, width, 15, amountOfNodes));
         drawingFragment.setUserGraph(map);
         bottomNavigationView.setSelectedItemId(R.id.line);

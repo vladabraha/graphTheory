@@ -11,10 +11,12 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.navigation.NavigationView;
 
 import cz.uhk.graphstheory.R;
+import cz.uhk.graphstheory.eight.EightActivity;
 import cz.uhk.graphstheory.fifth.FifthActivity;
 import cz.uhk.graphstheory.first.GraphGeneratorActivity;
 import cz.uhk.graphstheory.fourth.FourthActivity;
 import cz.uhk.graphstheory.second.SecondActivity;
+import cz.uhk.graphstheory.seventh.SeventhActivity;
 import cz.uhk.graphstheory.sixth.SixthActivity;
 import cz.uhk.graphstheory.statistics.StatisticsActivity;
 import cz.uhk.graphstheory.third.ThirdActivity;
@@ -71,6 +73,20 @@ public abstract class AbstractAppCompactActivity extends AppCompatActivity imple
             if (sessionId != 6) {
                 Intent newActivityIntent = new Intent(this, SixthActivity.class);
                 newActivityIntent.putExtra("SESSION_ID", 6);
+                finish();
+                startActivity(newActivityIntent);
+            }
+        } else if (id == R.id.nav_seventh) {
+            if (sessionId != 7) {
+                Intent newActivityIntent = new Intent(this, SeventhActivity.class);
+                newActivityIntent.putExtra("SESSION_ID", 7);
+                finish();
+                startActivity(newActivityIntent);
+            }
+        } else if (id == R.id.nav_eighth) {
+            if (sessionId != 8) {
+                Intent newActivityIntent = new Intent(this, EightActivity.class);
+                newActivityIntent.putExtra("SESSION_ID", 8);
                 finish();
                 startActivity(newActivityIntent);
             }

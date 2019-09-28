@@ -29,7 +29,6 @@ import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
-import cz.uhk.graphstheory.model.Map;
 import cz.uhk.graphstheory.util.GraphChecker;
 import cz.uhk.graphstheory.util.PathGenerator;
 
@@ -47,7 +46,6 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
     private DrawingFragmentListener drawingFragmentListener;
     String type;
     int height, width;
-    Map hamiltonMap, eulerMap;
 
     DatabaseConnector databaseConnector;
 
