@@ -66,7 +66,7 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
         floatingActionButton = getFloatingActionButton();
         tabLayoutFragment = getTabLayoutFragment();
 
-        textFragment.setEducationText(R.string.sixth_activity_text);
+        textFragment.setEducationText(R.string.eighth_activity_text);
 
         drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         floatingActionButton.setOnClickListener(v -> {

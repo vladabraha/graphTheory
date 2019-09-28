@@ -65,6 +65,9 @@
     </string>
 
     <string name="seventh_activity_text">
+        <font fgcolor='blue'>Skóre grafu = grafová posloupnost</font> \n
+       Nechť G = (V, E) je graf s n vrcholy v1, v2, … vn. \n
+        <font fgcolor='red'><b>Skóre grafu </b> </font> G je posloupnost (degG(v1), degG(v2), …, degG(vn)).
     </string>
 
     <string name="eighth_activity_text">
