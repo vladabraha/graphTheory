@@ -27,6 +27,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Random;
 
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.abstraction.AbstractAppCompactActivity;
@@ -58,7 +59,7 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
 
     private DatabaseConnector databaseConnector;
     TextView navigationDrawerName, navigationDrawerEmail;
-    int height, width;
+    int height, width, length;
 
 
     @Override
@@ -108,6 +109,9 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
                 case 2:
                     isValid = GraphChecker.checkIfGraphContainsCycle(drawingFragment.getUserGraph());
                     break;
+                case 3:
+                    isValid = GraphChecker.checkIfGraphContainsSled(drawingFragment.getUserGraph(), length);
+                    break;
             }
             if (isValid) {
                 String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
@@ -126,8 +130,17 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
                         receivedPoints = databaseConnector.recordUserPoints(userName, "first-third");
                         Toast.makeText(GraphGeneratorActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
                         break;
+                    case 3:
+                        receivedPoints = databaseConnector.recordUserPoints(userName, "first-fourth");
+                        Toast.makeText(GraphGeneratorActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
+                        break;
                 }
+                drawingFragment.changeDrawingMethod("clear");
+                bottomNavigationView.setSelectedItemId(R.id.circle);
+                drawingFragment.changeDrawingMethod("circle");
                 createDialog();
+            } else {
+                Toast.makeText(GraphGeneratorActivity.this, "Bohužel, něco je špatně, oprav graf a zkus to znovu", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -213,29 +226,24 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
                 break;
             case 1:
                 changeToEducationFragment();
-                switch (displayedActivity) {
-                    case 0:
-                        Toast.makeText(this, "Nyní si ukážeme v zadaném grafu cestu", Toast.LENGTH_LONG).show();
-                        break;
-                    case 1:
-                        Toast.makeText(this, "Nyní si ukážeme v zadaném grafu tah", Toast.LENGTH_LONG).show();
-                        break;
-                    case 2:
-                        Toast.makeText(this, "Nyní si ukážeme v zadaném grafu kružnici", Toast.LENGTH_LONG).show();
-                        break;
-                }
+                Toast.makeText(this, "Nyní si ukážeme v zadaném grafu cestu", Toast.LENGTH_LONG).show();
                 break;
             case 2:
                 changeToDrawingFragment();
                 switch (displayedActivity) {
                     case 0:
-                        Toast.makeText(this, "Nakresli v zadaném grafu cestu", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "Nakresli cestu v grafu, případně si graf uprav", Toast.LENGTH_LONG).show();
                         break;
                     case 1:
-                        Toast.makeText(this, "Nakresli v zadaném grafu tah", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "Nakresli tah v grafu, případně si graf uprav", Toast.LENGTH_LONG).show();
                         break;
                     case 2:
-                        Toast.makeText(this, "Nakresli v zadaném grafu kružnici", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "Nakresli kružnici v grafu, případně si graf uprav", Toast.LENGTH_LONG).show();
+                        break;
+                    case 3:
+                        Random ran = new Random();
+                        length = ran.nextInt(7);
+                        Toast.makeText(this, "Nakresli sled délky " + length + " , případně si graf uprav", Toast.LENGTH_LONG).show();
                         break;
                 }
                 break;
@@ -287,19 +295,7 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
             }, 5000);
 
         }
-        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-        int displayedActivity = sharedPref.getInt("displayedActivity", 0);
-        switch (displayedActivity) {
-            case 0:
-                Toast.makeText(this, "Teď si ukážeme cestu v grafu", Toast.LENGTH_LONG).show();
-                break;
-            case 1:
-                Toast.makeText(this, "Teď si ukážeme tah v grafu", Toast.LENGTH_LONG).show();
-                break;
-            case 2:
-                Toast.makeText(this, "Teď si ukážeme kružnici v grafu", Toast.LENGTH_LONG).show();
-                break;
-        }
+
     }
 
     private void changeToTextFragment() {
@@ -369,7 +365,7 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         int displayedActivity = sharedPref.getInt("displayedActivity", 0);
 
-        if (displayedActivity < 2) {
+        if (displayedActivity < 3) {
             displayedActivity++;
         } else {
             displayedActivity = 0;
@@ -382,26 +378,11 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
         //tady tocime jednotlivy aktivity za zaznamenavame skore (tahle metoda se vola jenom po uspesnym vyplneni)
         String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
         assert userName != null;
-        Menu menu = bottomNavigationView.getMenu();
-        tabLayoutFragment.switchSelectedTab(1);
 
-        switch (displayedActivity) {
-            case 0:
-                generateGraphFragment.changeEducationGraph("cesta");
-                //zmeni text bottomNavigationView
-                menu.getItem(2).setTitle("cesta");
-                break;
-            case 1:
-                generateGraphFragment.changeEducationGraph("tah");
-                //zmeni text bottomNavigationView
-                menu.getItem(2).setTitle("tah");
-                break;
-            case 2:
-                generateGraphFragment.changeEducationGraph("kruznice");
-                //zmeni text bottomNavigationView
-                menu.getItem(2).setTitle("kružnice");
-                break;
-        }
+        int amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
+        Map map = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
+        drawingFragment.setUserGraph(map);
+
     }
 
     private void createDialog() {
@@ -435,10 +416,30 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
         int amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
         Map map = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
         drawingFragment.setUserGraph(map);
+        Menu menu = bottomNavigationView.getMenu();
+
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        int displayedActivity = sharedPref.getInt("displayedActivity", 0);
+
+        switch (displayedActivity) {
+            case 0:
+                menu.getItem(2).setTitle("cesta");
+                break;
+            case 1:
+                menu.getItem(2).setTitle("tah");
+                break;
+            case 2:
+                menu.getItem(2).setTitle("kužnice");
+                break;
+            case 3:
+                menu.getItem(2).setTitle("sled");
+                break;
+        }
     }
 
     @Override
     public void secondaryTableLayoutSelectedChange(int number) {
+        int length;
         switch (number) {
             case 0:
                 generateGraphFragment.changeEducationGraph("cesta");
@@ -449,8 +450,12 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
                 Toast.makeText(this, "Nyní si ukážeme v zadaném grafu tah", Toast.LENGTH_LONG).show();
                 break;
             case 2:
-                int length = generateGraphFragment.changeEducationGraph("kruznice");
+                length = generateGraphFragment.changeEducationGraph("kruznice");
                 Toast.makeText(this, "Nyní si ukážeme v zadaném grafu kružnici delky " + length, Toast.LENGTH_LONG).show();
+                break;
+            case 3:
+                length = generateGraphFragment.changeEducationGraph("kruznice");
+                Toast.makeText(this, "Nyní si ukážeme v zadaném grafu sled délky " + length, Toast.LENGTH_LONG).show();
                 break;
         }
     }

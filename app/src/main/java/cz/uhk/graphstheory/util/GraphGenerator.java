@@ -14,7 +14,7 @@ import cz.uhk.graphstheory.model.Map;
 
 public class GraphGenerator {
 
-    private static final int DISTANCE_BETWEEN_NEAREST_NODE = 100;
+    private static final int DISTANCE_BETWEEN_NEAREST_NODE = 200;
 
     /**
      * generate random map

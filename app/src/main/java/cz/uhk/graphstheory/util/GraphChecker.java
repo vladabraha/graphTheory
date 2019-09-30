@@ -547,4 +547,8 @@ public class GraphChecker {
         }
         return true;
     }
+
+    public static boolean checkIfGraphContainsSled(Map userGraph, int length) {
+        return userGraph.getRedLineList().size() == length;
+    }
 }
