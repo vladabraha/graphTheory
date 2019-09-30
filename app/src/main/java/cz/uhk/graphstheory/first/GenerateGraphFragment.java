@@ -1,21 +1,24 @@
 package cz.uhk.graphstheory.first;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+
+import java.util.ArrayList;
 import java.util.Objects;
 
-import cz.uhk.graphstheory.common.GraphGeneratedView;
 import cz.uhk.graphstheory.R;
+import cz.uhk.graphstheory.common.GraphGeneratedView;
+import cz.uhk.graphstheory.model.Coordinate;
 import cz.uhk.graphstheory.model.GeneratedMapViewModel;
 import cz.uhk.graphstheory.model.Map;
 import cz.uhk.graphstheory.util.GraphGenerator;
@@ -119,9 +122,32 @@ public class GenerateGraphFragment extends Fragment implements GraphGeneratorAct
     }
 
     //zmeni typ vykresleni, predava se jako parametr, protoze nejde volat metodu na view, ktere neni jeste vytvoreno
+
+    /**
+     *
+     * @param type of generated graph
+     * @return size of line if needed
+     */
     @Override
-    public void changeEducationGraph(String type) {
+    public int changeEducationGraph(String type) {
        this.type = type;
+        switch (type){
+            case "cesta":
+                graphGeneratedView.setRedLineList(PathGenerator.generateCesta(graphGeneratedView.getMap()));
+                graphGeneratedView.invalidate();
+                return 0;
+            case "tah":
+                graphGeneratedView.setRedLineList(PathGenerator.generateTah(graphGeneratedView.getMap()));
+                graphGeneratedView.invalidate();
+                return 0;
+            case "kruznice":
+                ArrayList<Coordinate> coordinates = PathGenerator.generateKruznice(graphGeneratedView.getMap());
+                int lenght = Math.round(coordinates.size() / 2);
+                graphGeneratedView.setRedLineList(coordinates);
+                graphGeneratedView.invalidate();
+                return lenght;
+        }
+        return 0;
     }
 
 }

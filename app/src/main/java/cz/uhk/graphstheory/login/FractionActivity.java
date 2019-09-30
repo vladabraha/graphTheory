@@ -21,7 +21,7 @@ public class FractionActivity extends AppCompatActivity {
         Button btnEnterTeam = findViewById(R.id.btnEnterTeam);
 
         btnEnterTeam.setOnClickListener(v -> {
-            String nameOfTeam = teamName.getText().toString().toLowerCase();
+            String nameOfTeam = teamName.getText().toString().toLowerCase().trim();
             String firstCharacter = nameOfTeam.substring(0, 1).toUpperCase();
             nameOfTeam = firstCharacter + nameOfTeam.substring(1);
             setResult(nameOfTeam);

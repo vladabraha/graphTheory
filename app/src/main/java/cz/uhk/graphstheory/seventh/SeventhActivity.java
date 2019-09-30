@@ -24,6 +24,7 @@ import java.util.Objects;
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.abstraction.AbstractActivity;
 import cz.uhk.graphstheory.common.DrawingFragment;
+import cz.uhk.graphstheory.common.SecondaryTabLayoutFragment;
 import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
@@ -34,7 +35,7 @@ import cz.uhk.graphstheory.util.GraphChecker;
 import cz.uhk.graphstheory.util.GraphGenerator;
 import cz.uhk.graphstheory.util.Util;
 
-public class SeventhActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, DrawingFragment.CommunicationInterface {
+public class SeventhActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, DrawingFragment.CommunicationInterface, SecondaryTabLayoutFragment.SecondaryTableLayoutCommunicationInterface {
 
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
@@ -129,6 +130,13 @@ public class SeventhActivity extends AbstractActivity implements TabLayoutFragme
     }
 
     @Override
+    protected ArrayList<String> getTabNames() {
+        ArrayList<String> tabNames = new ArrayList<>();
+        tabNames.add("Skóre grafu");
+        return tabNames;
+    }
+
+    @Override
     protected void changeToTextFragment() {
         super.changeToTextFragment();
         textFragment.setEducationText(R.string.seventh_activity_text);
@@ -168,6 +176,12 @@ public class SeventhActivity extends AbstractActivity implements TabLayoutFragme
         Map map = new Map(new ArrayList<>(), GraphGenerator.generateNodes(height, width, 15, amountOfNodes));
         drawingFragment.setUserGraph(map);
         bottomNavigationView.setSelectedItemId(R.id.line);
+
+        StringBuilder text = new StringBuilder();
+        for (Integer score : graphScore) {
+            text.append(score.toString()).append(", ");
+        }
+        Toast.makeText(this, "Nakresli graf s tímto skórem " + text, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -200,5 +214,10 @@ public class SeventhActivity extends AbstractActivity implements TabLayoutFragme
         amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
         graphScore = Util.generateGraphScore(amountOfNodes);
         return amountOfNodes;
+    }
+
+    @Override
+    public void secondaryTableLayoutSelectedChange(int number) {
+
     }
 }

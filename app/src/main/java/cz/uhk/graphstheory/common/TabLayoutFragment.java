@@ -3,13 +3,14 @@ package cz.uhk.graphstheory.common;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import com.google.android.material.tabs.TabLayout;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.Objects;
 
@@ -84,7 +85,7 @@ public class TabLayoutFragment extends Fragment {
         try {
             tableLayoutCommunicationInterface = (TableLayoutCommunicationInterface) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement OnArticleSelectedListener");
+            throw new ClassCastException(context.toString() + " must implement TableLayoutCommunicationInterface");
         }
     }
 

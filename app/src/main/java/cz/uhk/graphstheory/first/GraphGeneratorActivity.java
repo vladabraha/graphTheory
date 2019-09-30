@@ -25,11 +25,14 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.abstraction.AbstractAppCompactActivity;
 import cz.uhk.graphstheory.common.DrawingFragment;
+import cz.uhk.graphstheory.common.SecondaryTabLayoutFragment;
+import cz.uhk.graphstheory.common.SecondaryTabLayoutFragment.SecondaryTableLayoutCommunicationInterface;
 import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
@@ -39,7 +42,7 @@ import cz.uhk.graphstheory.model.User;
 import cz.uhk.graphstheory.util.GraphChecker;
 import cz.uhk.graphstheory.util.GraphGenerator;
 
-public class GraphGeneratorActivity extends AbstractAppCompactActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, NavigationView.OnNavigationItemSelectedListener, DrawingFragment.CommunicationInterface {
+public class GraphGeneratorActivity extends AbstractAppCompactActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, NavigationView.OnNavigationItemSelectedListener, DrawingFragment.CommunicationInterface, SecondaryTableLayoutCommunicationInterface {
 
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
@@ -47,6 +50,7 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
     private GenerateGraphFragment generateGraphFragment;
     private FloatingActionButton floatingActionButton;
     private TabLayoutFragment tabLayoutFragment;
+    private SecondaryTabLayoutFragment secondaryLayoutFragment;
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
@@ -78,6 +82,12 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
         generateGraphFragment = new GenerateGraphFragment();
         drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         tabLayoutFragment = new TabLayoutFragment();
+        ArrayList<String> tabNames = new ArrayList<>();
+        tabNames.add("Cesta");
+        tabNames.add("Tah");
+        tabNames.add("Kužnice");
+        tabNames.add("Sled");
+        secondaryLayoutFragment = new SecondaryTabLayoutFragment(tabNames);
         fragmentTransaction.add(R.id.generator_activity_group, tabLayoutFragment);
         fragmentTransaction.add(R.id.generator_activity_group, textFragment);
         fragmentTransaction.commit();
@@ -249,6 +259,7 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
         if (fragmentManager.getFragments().contains(textFragment)) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.remove(textFragment);
+            fragmentTransaction.remove(secondaryLayoutFragment);
             fragmentTransaction.add(R.id.generator_activity_group, drawingFragment);
             fragmentTransaction.commit();
             bottomNavigationView.setVisibility(View.VISIBLE);
@@ -263,6 +274,7 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
         } else if (fragmentManager.getFragments().contains(generateGraphFragment)) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.remove(generateGraphFragment);
+            fragmentTransaction.remove(secondaryLayoutFragment);
             fragmentTransaction.add(R.id.generator_activity_group, drawingFragment);
             fragmentTransaction.commit();
             bottomNavigationView.setVisibility(View.VISIBLE);
@@ -286,7 +298,6 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
                 break;
             case 2:
                 Toast.makeText(this, "Teď si ukážeme kružnici v grafu", Toast.LENGTH_LONG).show();
-                generateGraphFragment.changeEducationGraph("kruznice");
                 break;
         }
     }
@@ -298,6 +309,7 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
         if (fragmentManager.getFragments().contains(generateGraphFragment)) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.remove(generateGraphFragment);
+            fragmentTransaction.remove(secondaryLayoutFragment);
             fragmentTransaction.add(R.id.generator_activity_group, textFragment);
             fragmentTransaction.commit();
             bottomNavigationView.setVisibility(View.GONE);
@@ -305,6 +317,7 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
         } else if (fragmentManager.getFragments().contains(drawingFragment)) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.remove(drawingFragment);
+            fragmentTransaction.remove(secondaryLayoutFragment);
             fragmentTransaction.add(R.id.generator_activity_group, textFragment);
             fragmentTransaction.commit();
             bottomNavigationView.setVisibility(View.GONE);
@@ -319,6 +332,7 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
         if (fragmentManager.getFragments().contains(textFragment)) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.remove(textFragment);
+            fragmentTransaction.add(R.id.generator_activity_group, secondaryLayoutFragment);
             fragmentTransaction.add(R.id.generator_activity_group, generateGraphFragment);
             fragmentTransaction.commit();
             bottomNavigationView.setVisibility(View.GONE);
@@ -326,6 +340,7 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
         } else if (fragmentManager.getFragments().contains(drawingFragment)) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.remove(drawingFragment);
+            fragmentTransaction.add(R.id.generator_activity_group, secondaryLayoutFragment);
             fragmentTransaction.add(R.id.generator_activity_group, generateGraphFragment);
             fragmentTransaction.commit();
             bottomNavigationView.setVisibility(View.GONE);
@@ -422,8 +437,26 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
         drawingFragment.setUserGraph(map);
     }
 
+    @Override
+    public void secondaryTableLayoutSelectedChange(int number) {
+        switch (number) {
+            case 0:
+                generateGraphFragment.changeEducationGraph("cesta");
+                Toast.makeText(this, "Nyní si ukážeme v zadaném grafu cestu", Toast.LENGTH_LONG).show();
+                break;
+            case 1:
+                generateGraphFragment.changeEducationGraph("tah");
+                Toast.makeText(this, "Nyní si ukážeme v zadaném grafu tah", Toast.LENGTH_LONG).show();
+                break;
+            case 2:
+                int length = generateGraphFragment.changeEducationGraph("kruznice");
+                Toast.makeText(this, "Nyní si ukážeme v zadaném grafu kružnici delky " + length, Toast.LENGTH_LONG).show();
+                break;
+        }
+    }
+
     public interface ChangeGraphListener {
-        public void changeEducationGraph(String type);
+        public int changeEducationGraph(String type);
     }
 
 }

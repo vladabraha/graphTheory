@@ -23,6 +23,7 @@ import java.util.Objects;
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.abstraction.AbstractActivity;
 import cz.uhk.graphstheory.common.DrawingFragment;
+import cz.uhk.graphstheory.common.SecondaryTabLayoutFragment;
 import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
@@ -34,7 +35,7 @@ import cz.uhk.graphstheory.util.GraphConverter;
 import cz.uhk.graphstheory.util.GraphGenerator;
 import cz.uhk.graphstheory.util.PathGenerator;
 
-public class ThirdActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, DrawingFragment.CommunicationInterface {
+public class ThirdActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, DrawingFragment.CommunicationInterface, SecondaryTabLayoutFragment.SecondaryTableLayoutCommunicationInterface {
 
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
@@ -106,6 +107,13 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
     protected Fragment getGraphFragment() {
         thirdActivityFragment = new ThirdActivityFragment();
         return thirdActivityFragment;
+    }
+
+    @Override
+    protected ArrayList<String> getTabNames() {
+        ArrayList<String> tabNames = new ArrayList<>();
+        tabNames.add("Doplněk grafu");
+        return tabNames;
     }
 
     @Override
@@ -214,5 +222,10 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
     @Override
     public void onNegativeButtonClick() {
         createGraphWithDoplnek();
+    }
+
+    @Override
+    public void secondaryTableLayoutSelectedChange(int number) {
+
     }
 }

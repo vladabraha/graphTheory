@@ -83,7 +83,7 @@ public class PathGenerator {
         ArrayList<Coordinate> path;
         do {
             path = generateCesta(map);
-        }while (path.size() < 4);
+        }while (path.size() < (map.getCircles().size() - 1));
 
         path.add(path.get(path.size() - 1));
         path.add(path.get(0));

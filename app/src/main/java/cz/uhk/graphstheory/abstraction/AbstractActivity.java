@@ -17,10 +17,12 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.common.DrawingFragment;
+import cz.uhk.graphstheory.common.SecondaryTabLayoutFragment;
 import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
@@ -38,6 +40,7 @@ public abstract class AbstractActivity extends AbstractAppCompactActivity implem
     private DatabaseConnector databaseConnector;
     private TabLayoutFragment tabLayoutFragment;
     TextView navigationDrawerName, navigationDrawerEmail;
+    private SecondaryTabLayoutFragment secondaryLayoutFragment;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +60,8 @@ public abstract class AbstractActivity extends AbstractAppCompactActivity implem
         drawingFragment = new DrawingFragment();
         textFragment = new TextFragment();
         educationFragment = getGraphFragment();
+        ArrayList<String> tabName = getTabNames();
+        secondaryLayoutFragment = new SecondaryTabLayoutFragment(tabName);
 
         tabLayoutFragment = new TabLayoutFragment();
         fragmentTransaction.add(R.id.generator_activity_group, tabLayoutFragment);
@@ -128,6 +133,7 @@ public abstract class AbstractActivity extends AbstractAppCompactActivity implem
         if (fragmentManager.getFragments().contains(textFragment)) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.remove(textFragment);
+            fragmentTransaction.remove(secondaryLayoutFragment);
             fragmentTransaction.add(R.id.generator_activity_group, drawingFragment);
             fragmentTransaction.commit();
             showBottomNavigationView();
@@ -142,6 +148,7 @@ public abstract class AbstractActivity extends AbstractAppCompactActivity implem
         } else if (fragmentManager.getFragments().contains(educationFragment)) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.remove(educationFragment);
+            fragmentTransaction.remove(secondaryLayoutFragment);
             fragmentTransaction.add(R.id.generator_activity_group, drawingFragment);
             fragmentTransaction.commit();
             showBottomNavigationView();
@@ -164,6 +171,7 @@ public abstract class AbstractActivity extends AbstractAppCompactActivity implem
         if (fragmentManager.getFragments().contains(educationFragment)) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.remove(educationFragment);
+            fragmentTransaction.remove(secondaryLayoutFragment);
             fragmentTransaction.add(R.id.generator_activity_group, textFragment);
             fragmentTransaction.commit();
             hideBottomNavigationView();
@@ -171,6 +179,7 @@ public abstract class AbstractActivity extends AbstractAppCompactActivity implem
         } else if (fragmentManager.getFragments().contains(drawingFragment)) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.remove(drawingFragment);
+            fragmentTransaction.remove(secondaryLayoutFragment);
             fragmentTransaction.add(R.id.generator_activity_group, textFragment);
             fragmentTransaction.commit();
             hideBottomNavigationView();
@@ -185,6 +194,7 @@ public abstract class AbstractActivity extends AbstractAppCompactActivity implem
         if (fragmentManager.getFragments().contains(textFragment)) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.remove(textFragment);
+            fragmentTransaction.add(R.id.generator_activity_group, secondaryLayoutFragment);
             fragmentTransaction.add(R.id.generator_activity_group, educationFragment);
             fragmentTransaction.commit();
             hideBottomNavigationView();
@@ -192,6 +202,7 @@ public abstract class AbstractActivity extends AbstractAppCompactActivity implem
         } else if (fragmentManager.getFragments().contains(drawingFragment)) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.remove(drawingFragment);
+            fragmentTransaction.add(R.id.generator_activity_group, secondaryLayoutFragment);
             fragmentTransaction.add(R.id.generator_activity_group, educationFragment);
             fragmentTransaction.commit();
             hideBottomNavigationView();
@@ -297,5 +308,9 @@ public abstract class AbstractActivity extends AbstractAppCompactActivity implem
      * @return Fragment
      */
     protected abstract Fragment getGraphFragment();
+
+    protected abstract ArrayList<String> getTabNames();
+
+
 }
 

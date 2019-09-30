@@ -27,12 +27,12 @@
     <string name="menu_ninth">Stromy</string>
 
     <string name="first_activity_text">
-        <b>Sled</b> - konečná posloupnost S = (v0, e1, v1, e2,…, vk-1, ek, vk), přičemž pro všechny i = 1,…,k je e(vi-1,v1 ). (uzavřený,otevřený)
-        Ve sledu se hrany a vrcholy můžou opakovat.
-        <b>Tah</b> je taký sled, v kterém se žádná hrana nevyskytuje dvakrát.(uzavřený, otevřený) \n
-        <b>Otevřený tah</b>, v kterém jsou všechny vrcholy navzájem různé, se nazývá cesta. \n
-        <b>Uzavřená cesta</b> se nazývá kružnice. \n
-        <font fgcolor='red'>Délka sledu, tahu, cesty a kružnice = počet hran!!!</font>
+        <b>Sled</b> - konečná posloupnost S = (v0, e1, v1, e2,…, vk-1, ek, vk), přičemž pro všechny i = 1,…,k je e(vi-1,vi ) (uzavřený sled je takový, kde vi = vk, otevřený sled je takový kde vi != vk).
+        Ve sledu se hrany a vrcholy můžou opakovat. \n
+        <b>Tah</b> je taký sled, v kterém se žádná hrana nevyskytuje dvakrát, (uzavřený i otevřený). \n
+        <b>cesta.</b>, v kterém jsou všechny vrcholy navzájem různé, se nazývá <b>kružnice.</b> \n
+        <font fgcolor='red'>Délka sledu, tahu, cesty a kružnice = počet hran!!!</font> se nazývá <u>Otevřený tah</u> \n
+        <u>Uzavřená cesta</u>
     </string>
 
     <string name="second_activity_text">
@@ -110,6 +110,9 @@
     <string name="text_description_fraction_chooser">Pro vstup do konkrétního týmu je třeba zadat jeho přesný název</string>
 
 
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
     <string-array name="team_chooser">
         <item>Modrý tým</item>
         <item>Červený tým</item>

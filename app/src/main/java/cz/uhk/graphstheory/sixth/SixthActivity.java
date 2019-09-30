@@ -20,11 +20,13 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.abstraction.AbstractActivity;
 import cz.uhk.graphstheory.common.DrawingFragment;
+import cz.uhk.graphstheory.common.SecondaryTabLayoutFragment;
 import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
@@ -32,7 +34,7 @@ import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
 import cz.uhk.graphstheory.util.GraphChecker;
 import cz.uhk.graphstheory.util.PathGenerator;
 
-public class SixthActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, DrawingFragment.CommunicationInterface {
+public class SixthActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, DrawingFragment.CommunicationInterface, SecondaryTabLayoutFragment.SecondaryTableLayoutCommunicationInterface {
 
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
@@ -180,6 +182,14 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
     }
 
     @Override
+    protected ArrayList<String> getTabNames() {
+        ArrayList<String> tabNames = new ArrayList<>();
+        tabNames.add("Hamiltonovská kružnice");
+        tabNames.add("Euleruv tah");
+        return tabNames;
+    }
+
+    @Override
     protected void changeToTextFragment() {
         super.changeToTextFragment();
         textFragment.setEducationText(R.string.sixth_activity_text);
@@ -296,9 +306,19 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
                 drawingFragment.setUserGraph(PathGenerator.createHamiltonMapWithoutRedLines(height, width));
                 break;
         }
-
     }
 
-
-
+    @Override
+    public void secondaryTableLayoutSelectedChange(int number) {
+        switch (number) {
+            case 0:
+                Toast.makeText(this, "Teď si ukážeme hamiltonovskou kružnici v grafu", Toast.LENGTH_LONG).show();
+                sixthActivityFragment.changeGraph("hamiltonovsky");
+                break;
+            case 1:
+                Toast.makeText(this, "Teď si ukážeme eulerův tah v grafu", Toast.LENGTH_LONG).show();
+                sixthActivityFragment.changeGraph("euleruv");
+                break;
+        }
+    }
 }

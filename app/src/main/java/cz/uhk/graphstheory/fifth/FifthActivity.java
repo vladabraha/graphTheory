@@ -23,18 +23,17 @@ import java.util.Objects;
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.abstraction.AbstractActivity;
 import cz.uhk.graphstheory.common.DrawingFragment;
+import cz.uhk.graphstheory.common.SecondaryTabLayoutFragment;
 import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
 import cz.uhk.graphstheory.model.Coordinate;
-import cz.uhk.graphstheory.model.CustomLine;
 import cz.uhk.graphstheory.model.Map;
 import cz.uhk.graphstheory.util.GraphChecker;
-import cz.uhk.graphstheory.util.GraphConverter;
 import cz.uhk.graphstheory.util.GraphGenerator;
 
-public class FifthActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, DrawingFragment.CommunicationInterface {
+public class FifthActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, DrawingFragment.CommunicationInterface, SecondaryTabLayoutFragment.SecondaryTableLayoutCommunicationInterface {
 
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
@@ -124,6 +123,13 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
     }
 
     @Override
+    protected ArrayList<String> getTabNames() {
+        ArrayList<String> tabNames = new ArrayList<>();
+        tabNames.add("Bipartitní graf");
+        return tabNames;
+    }
+
+    @Override
     protected void changeToTextFragment() {
         super.changeToTextFragment();
         textFragment.setEducationText(R.string.fifth_activity_text);
@@ -142,7 +148,7 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
     @Override
     protected void changeToEducationFragment() {
         super.changeToEducationFragment();
-        Toast.makeText(this, "Právě se zobrazuje bipartitní graf", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Poskládej si graf, abys viděl bipartitní graf", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -163,13 +169,14 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
 
     @Override
     public void sentMetrics(int width, int height) {
-//        this.height = height;
-//        this.width = width;
-
         int amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
         ArrayList<Coordinate> nodes = GraphGenerator.generateNodes(height, width, 15, amountOfNodes );
         Map mapToSet = new Map(new ArrayList<>(), nodes);
         drawingFragment.setUserGraph(mapToSet);
     }
 
+    @Override
+    public void secondaryTableLayoutSelectedChange(int number) {
+
+    }
 }

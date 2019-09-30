@@ -1,4 +1,4 @@
-package cz.uhk.graphstheory.statistics;
+package cz.uhk.graphstheory.common;
 
 
 import android.content.Context;
@@ -11,42 +11,47 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.tabs.TabLayout;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 import cz.uhk.graphstheory.R;
-import cz.uhk.graphstheory.common.TabLayoutFragment;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class StatisticsTab extends Fragment {
+public class SecondaryTabLayoutFragment extends Fragment {
 
-    private StatisticsTab.TableLayoutCommunicationInterface tableLayoutCommunicationInterface;
+    private SecondaryTableLayoutCommunicationInterface secondaryTableLayoutCommunicationInterface;
     private TabLayout tabLayout;
+    private ArrayList<String> tabName;
 
-
-    public StatisticsTab() {
+    public SecondaryTabLayoutFragment() {
         // Required empty public constructor
     }
 
+    public SecondaryTabLayoutFragment(ArrayList<String> tabName) {
+        this.tabName = tabName;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_statistics_tab, container, false);
-        tabLayout =  view.findViewById(R.id.statisticsTabLayout);
-        tabLayout.addTab(tabLayout.newTab().setText("Pořadí hráčů"));
-        tabLayout.addTab(tabLayout.newTab().setText("Pořádí v týmu"));
-        tabLayout.addTab(tabLayout.newTab().setText("Pořadí týmů"));
+        View view = inflater.inflate(R.layout.fragment_secondary_tab_layout, container, false);
+        tabLayout =  view.findViewById(R.id.secondaryTabLayout);
 
-        TabLayout.Tab tab = tabLayout.getTabAt(0);
-        Objects.requireNonNull(tab).select();
+        if (!tabName.isEmpty()){
+            for (String text : tabName){
+                tabLayout.addTab(tabLayout.newTab().setText(text));
+                TabLayout.Tab tab = tabLayout.getTabAt(0);
+                Objects.requireNonNull(tab).select();
+            }
+        }
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                tableLayoutCommunicationInterface.tableLayoutSelectedChange(tab.getPosition());
+                secondaryTableLayoutCommunicationInterface.secondaryTableLayoutSelectedChange(tab.getPosition());
             }
 
             @Override
@@ -79,9 +84,9 @@ public class StatisticsTab extends Fragment {
         super.onAttach(context);
 
         try {
-            tableLayoutCommunicationInterface = (StatisticsTab.TableLayoutCommunicationInterface) context;
+            secondaryTableLayoutCommunicationInterface = (SecondaryTableLayoutCommunicationInterface) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement TableLayoutCommunicationInterface");
+            throw new ClassCastException(context.toString() + " must implement SecondaryTableLayoutCommunicationInterface");
         }
     }
 
@@ -91,9 +96,8 @@ public class StatisticsTab extends Fragment {
 
     }
 
-    public interface TableLayoutCommunicationInterface{
-        public void tableLayoutSelectedChange(int number);
+    public interface SecondaryTableLayoutCommunicationInterface {
+        public void secondaryTableLayoutSelectedChange(int number);
     }
-
 
 }

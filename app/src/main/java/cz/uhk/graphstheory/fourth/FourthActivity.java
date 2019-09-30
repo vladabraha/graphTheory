@@ -25,6 +25,7 @@ import java.util.Objects;
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.abstraction.AbstractActivity;
 import cz.uhk.graphstheory.common.DrawingFragment;
+import cz.uhk.graphstheory.common.SecondaryTabLayoutFragment;
 import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
@@ -35,7 +36,7 @@ import cz.uhk.graphstheory.model.Map;
 import cz.uhk.graphstheory.util.GraphConverter;
 import cz.uhk.graphstheory.util.GraphGenerator;
 
-public class FourthActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, DrawingFragment.CommunicationInterface {
+public class FourthActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, DrawingFragment.CommunicationInterface, SecondaryTabLayoutFragment.SecondaryTableLayoutCommunicationInterface {
 
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
@@ -134,6 +135,13 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
     protected Fragment getGraphFragment() {
         fourthActivityFragment = new FourthActivityFragment();
         return fourthActivityFragment;
+    }
+
+    @Override
+    protected ArrayList<String> getTabNames() {
+        ArrayList<String> tabNames = new ArrayList<>();
+        tabNames.add("Izomorfismus");
+        return tabNames;
     }
 
     @Override
@@ -305,5 +313,10 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
 
     private void showMessage(String text) {
         Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void secondaryTableLayoutSelectedChange(int number) {
+
     }
 }

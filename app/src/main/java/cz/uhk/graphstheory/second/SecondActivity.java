@@ -26,6 +26,7 @@ import java.util.Objects;
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.abstraction.AbstractActivity;
 import cz.uhk.graphstheory.common.DrawingFragment;
+import cz.uhk.graphstheory.common.SecondaryTabLayoutFragment;
 import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
@@ -35,7 +36,7 @@ import cz.uhk.graphstheory.util.GraphChecker;
 import cz.uhk.graphstheory.util.GraphGenerator;
 import cz.uhk.graphstheory.util.SpecificGraphGenerator;
 
-public class SecondActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, DrawingFragment.CommunicationInterface {
+public class SecondActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, DrawingFragment.CommunicationInterface, SecondaryTabLayoutFragment.SecondaryTableLayoutCommunicationInterface {
 
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
@@ -184,6 +185,14 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
     }
 
     @Override
+    protected ArrayList<String> getTabNames() {
+        ArrayList<String> tabNames = new ArrayList<>();
+        tabNames.add("Most");
+        tabNames.add("Artikulace");
+        return tabNames;
+    }
+
+    @Override
     protected void changeToTextFragment() {
         super.changeToTextFragment();
         textFragment.setEducationText(R.string.second_activity_text);
@@ -310,5 +319,10 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
         int amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
         Map map = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
         drawingFragment.setUserGraph(map);
+    }
+
+    @Override
+    public void secondaryTableLayoutSelectedChange(int number) {
+
     }
 }
