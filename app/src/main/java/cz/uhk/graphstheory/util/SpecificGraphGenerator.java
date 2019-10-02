@@ -39,17 +39,18 @@ public class SpecificGraphGenerator {
 
         //tohle jenom proto aby to bylo videt
         ArrayList<CustomLine> redLines = new ArrayList<>();
-        redLines.add(newCustomLine);
-        redLines.add(newCustomLine2);
+//        redLines.add(newCustomLine);
+//        redLines.add(newCustomLine2);
         nodesToSet.add(newNode);
 
         //jeste aby to bylo i v normálních čarách
         firstPartOfBipartite.add(newCustomLine);
         firstPartOfBipartite.add(newCustomLine2);
-
+        ArrayList<Coordinate> redCircle = new ArrayList<>(1);
+        redCircle.add(newNode);
 
         firstPartOfBipartite.addAll(secondPartOfBipartite);
-        return new Map(firstPartOfBipartite, nodesToSet, redLines);
+        return new Map(firstPartOfBipartite, nodesToSet, redLines, redCircle);
     }
 
     public static Map createMapWithABridge(int height, int width, int BRUSH_SIZE) {

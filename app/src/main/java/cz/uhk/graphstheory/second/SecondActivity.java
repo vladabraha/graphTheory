@@ -323,6 +323,15 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
 
     @Override
     public void secondaryTableLayoutSelectedChange(int number) {
+        switch (number) {
+            case 0:
+                Toast.makeText(this, "Teď si ukážeme artikulaci v grafu", Toast.LENGTH_LONG).show();
+                secondActivityFragment.changeGraph("artikulace");
+                break;
+            case 1:
+                Toast.makeText(this, "Teď si ukážeme most v grafu", Toast.LENGTH_LONG).show();
+                secondActivityFragment.changeGraph("most");
+        }
 
     }
 }

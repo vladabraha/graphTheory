@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -16,8 +17,6 @@ import java.util.ArrayList;
 import cz.uhk.graphstheory.model.Coordinate;
 import cz.uhk.graphstheory.model.CustomLine;
 import cz.uhk.graphstheory.model.Map;
-import cz.uhk.graphstheory.util.GraphGenerator;
-import cz.uhk.graphstheory.util.PathGenerator;
 
 /**
  * trida slouzici jenom pro vygenerovani jednoho grafu (mozna toho da i vic?)
@@ -32,9 +31,10 @@ public class GraphGeneratedView extends View {
     private ArrayList<Coordinate> circleCoordinates = new ArrayList<>();
     private ArrayList<Coordinate> allLineList = new ArrayList<>(); //seznam všech vytvořených line, ktere propojuji kruhy
     private ArrayList<Coordinate> redLineList = new ArrayList<>();
+    private ArrayList<Coordinate> redCirclesCoordinates = new ArrayList<>();
 
     public static final int DEFAULT_COLOR = Color.BLACK;
-    public static final int LINE_COLOR = Color.RED;
+    public static final int RED = Color.RED;
     public static final int DEFAULT_BG_COLOR = Color.WHITE;
     public static int BRUSH_SIZE = 15;
 
@@ -107,7 +107,7 @@ public class GraphGeneratedView extends View {
 
         for (int i = 0; i < redLineList.size(); i++) {
             if (i % 2 != 0) {
-                mPaint.setColor(LINE_COLOR);
+                mPaint.setColor(RED);
                 mPaint.setStrokeWidth(BRUSH_SIZE);
 
                 if (!allLineList.isEmpty())
@@ -121,6 +121,24 @@ public class GraphGeneratedView extends View {
                 mPaint.setStrokeWidth(BRUSH_SIZE);
                 mPaint.setStyle(Paint.Style.FILL);
                 mCanvas.drawCircle(coordinate.x, coordinate.y, BRUSH_SIZE + 30, mPaint);
+            }
+        }
+
+        String value = "A";
+        int charValue = value.charAt(0);
+        if (redCirclesCoordinates != null && redCirclesCoordinates.size() > 0){
+            for (Coordinate coordinate : redCirclesCoordinates) {
+                mPaint.setColor(RED);
+                mPaint.setStrokeWidth(BRUSH_SIZE);
+                mPaint.setStyle(Paint.Style.FILL);
+                mCanvas.drawCircle(coordinate.x, coordinate.y, BRUSH_SIZE + 30, mPaint);
+
+                //TODO přidat názvy vrcholů k dalšímu seznamu
+                mPaint.setColor(Color.BLACK);
+                mPaint.setTextSize(80);
+                String nextChar = String.valueOf( (char) (charValue + 1));
+                mCanvas.drawText(nextChar, coordinate.x - (BRUSH_SIZE * 2 ), coordinate.y + (BRUSH_SIZE * 2), mPaint);
+                Log.d("souradnice", coordinate.x + " y je " + coordinate.y);
             }
         }
 
@@ -229,7 +247,7 @@ public class GraphGeneratedView extends View {
             }
         }
 
-        return new Map(lines, circleCoordinates, path);
+        return new Map(lines, circleCoordinates, path, redCirclesCoordinates);
     }
 
     public void setMap(Map map) {
@@ -240,7 +258,8 @@ public class GraphGeneratedView extends View {
         redLineList.clear();
 
         circleCoordinates = map.getCircles();
-        if (!circleCoordinates.isEmpty() || !allLineList.isEmpty()) {
+        redCirclesCoordinates = map.getRedCircles();
+        if (!circleCoordinates.isEmpty() || !allLineList.isEmpty() || !redCirclesCoordinates.isEmpty()) {
             invalidate();
         }
 

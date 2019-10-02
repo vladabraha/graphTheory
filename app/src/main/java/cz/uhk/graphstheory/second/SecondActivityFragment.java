@@ -80,6 +80,15 @@ public class SecondActivityFragment extends AbstractFragment {
     public void changeGraph(String type) {
         this.type = type; //toto se prohodi pri nacteni
         disableListener = false;
+        switch (type) {
+            case "artikulace":
+                createArticulation();
+                break;
+
+            case "most":
+                createBridge();
+                break;
+        }
     }
 }
 

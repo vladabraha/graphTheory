@@ -40,7 +40,7 @@ public class SecondaryTabLayoutFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_secondary_tab_layout, container, false);
         tabLayout =  view.findViewById(R.id.secondaryTabLayout);
 
-        if (!tabName.isEmpty()){
+        if (Objects.requireNonNull(!tabName.isEmpty())){
             for (String text : tabName){
                 tabLayout.addTab(tabLayout.newTab().setText(text));
                 TabLayout.Tab tab = tabLayout.getTabAt(0);

@@ -8,6 +8,7 @@ public class Map {
     private ArrayList<CustomLine> customLines;
     private ArrayList<Coordinate> circles;
     private ArrayList<CustomLine> redLineList = new ArrayList<>();
+    private ArrayList<Coordinate> redCircles;
 
 
     public Map(ArrayList<CustomLine> customLines, ArrayList<Coordinate> circles) {
@@ -21,11 +22,20 @@ public class Map {
         this.redLineList = redLineList;
     }
 
+    public Map(ArrayList<CustomLine> customLines, ArrayList<Coordinate> circles, ArrayList<CustomLine> redLineList, ArrayList<Coordinate> redCircles) {
+        this.customLines = customLines;
+        this.circles = circles;
+        this.redLineList = redLineList;
+        this.redCircles = redCircles;
+    }
+
+
 
     public Map(Map map) {
         ArrayList<CustomLine> customLinesCopied = new ArrayList<>();
         ArrayList<Coordinate> circlesCopied = new ArrayList<>();
         ArrayList<CustomLine> redLineListCopied = new ArrayList<>();
+        ArrayList<Coordinate> redCirclesCopied = new ArrayList<>();
 
         for (CustomLine customLine : map.customLines) {
             Coordinate from = new Coordinate(customLine.getFrom().x, customLine.getFrom().y);
@@ -35,6 +45,10 @@ public class Map {
 
         for (Coordinate coordinate : map.circles) {
             circlesCopied.add(new Coordinate(coordinate.x, coordinate.y));
+        }
+
+        for (Coordinate coordinate : map.redCircles) {
+            redCirclesCopied.add(new Coordinate(coordinate.x, coordinate.y));
         }
 
         for (CustomLine customLine : map.redLineList) {
@@ -70,5 +84,13 @@ public class Map {
 
     public void setCircles(ArrayList<Coordinate> circles) {
         this.circles = circles;
+    }
+
+    public ArrayList<Coordinate> getRedCircles() {
+        return redCircles;
+    }
+
+    public void setRedCircles(ArrayList<Coordinate> redCircles) {
+        this.redCircles = redCircles;
     }
 }

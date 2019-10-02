@@ -18,7 +18,6 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import java.util.ArrayList;
 
 import cz.uhk.graphstheory.model.Coordinate;
-
 import cz.uhk.graphstheory.model.CustomLine;
 import cz.uhk.graphstheory.model.FingerPath;
 import cz.uhk.graphstheory.model.Map;
@@ -30,7 +29,7 @@ public class PaintView extends View {
 
     public static int BRUSH_SIZE = 15;
     public static final int DEFAULT_COLOR = Color.BLACK;
-    public static final int PATH_COLOR = Color.RED;
+    public static final int RED_COLOR = Color.RED;
     public static final int DEFAULT_BG_COLOR = Color.WHITE;
     private static final float TOUCH_TOLERANCE_FINGER_MOVE = 5; //tolerance posunutí prstu při změně
     private static final float TOUCH_TOLERANCE_FINGER_TAPPED = 15; //tolerance posunutí prstu při změně
@@ -54,6 +53,7 @@ public class PaintView extends View {
     private ArrayList<Coordinate> circleCoordinates = new ArrayList<>();
     private ArrayList<Coordinate> allLineList = new ArrayList<>(); //seznam všech vytvořených line, ktere propojuji kruhy
     private ArrayList<Coordinate> redLineList = new ArrayList<>(); //seznam vytvořené cesty
+    private ArrayList<Coordinate> redCirclesCoordinates = new ArrayList<>(); //seznam cervenych vrcholu, napr. pro artikulaci
     private boolean circle = true;
     private boolean line = false;
     private boolean remove = false;
@@ -160,7 +160,7 @@ public class PaintView extends View {
                 if (line) {
                     mPaint.setColor(DEFAULT_COLOR);
                 } else if (path) {
-                    mPaint.setColor(PATH_COLOR);
+                    mPaint.setColor(RED_COLOR);
                 }
                 mPaint.setStrokeWidth(BRUSH_SIZE);
 
@@ -180,7 +180,7 @@ public class PaintView extends View {
 
         for (int i = 0; i < redLineList.size(); i++) {
             if (i % 2 != 0) {
-                mPaint.setColor(PATH_COLOR);
+                mPaint.setColor(RED_COLOR);
                 mPaint.setStrokeWidth(BRUSH_SIZE);
 
                 if (!redLineList.isEmpty())
@@ -191,6 +191,15 @@ public class PaintView extends View {
         if (circleCoordinates.size() > 0) {
             for (Coordinate coordinate : circleCoordinates) {
                 mPaint.setColor(DEFAULT_COLOR);
+                mPaint.setStrokeWidth(BRUSH_SIZE);
+                mPaint.setStyle(Paint.Style.FILL);
+                mCanvas.drawCircle(coordinate.x, coordinate.y, BRUSH_SIZE + 30, mPaint);
+            }
+        }
+
+        if (redCirclesCoordinates != null && redCirclesCoordinates.size() > 0){
+            for (Coordinate coordinate : circleCoordinates) {
+                mPaint.setColor(RED_COLOR);
                 mPaint.setStrokeWidth(BRUSH_SIZE);
                 mPaint.setStyle(Paint.Style.FILL);
                 mCanvas.drawCircle(coordinate.x, coordinate.y, BRUSH_SIZE + 30, mPaint);
@@ -424,7 +433,7 @@ public class PaintView extends View {
                 path.add(line);
             }
         }
-        return new Map(lines, circleCoordinates, path);
+        return new Map(lines, circleCoordinates, path, redCirclesCoordinates);
     }
 
     public void setMap(Map map) {
@@ -435,7 +444,8 @@ public class PaintView extends View {
         redLineList.clear();
 
         circleCoordinates = map.getCircles();
-        if (!circleCoordinates.isEmpty() || !allLineList.isEmpty()) {
+        redCirclesCoordinates = map.getRedCircles();
+        if (!circleCoordinates.isEmpty() || !allLineList.isEmpty() || !redCirclesCoordinates.isEmpty()) {
             invalidate();
         }
 
