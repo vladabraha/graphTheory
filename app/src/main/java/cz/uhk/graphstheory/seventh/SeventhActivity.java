@@ -35,7 +35,8 @@ import cz.uhk.graphstheory.util.GraphChecker;
 import cz.uhk.graphstheory.util.GraphGenerator;
 import cz.uhk.graphstheory.util.Util;
 
-public class SeventhActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, DrawingFragment.CommunicationInterface, SecondaryTabLayoutFragment.SecondaryTableLayoutCommunicationInterface {
+public class SeventhActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface,
+        DrawingFragment.CommunicationInterface, SecondaryTabLayoutFragment.SecondaryTableLayoutCommunicationInterface, SeventhActivityFragment.SeventhFragmentActivityCommunicationInterface {
 
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
@@ -48,6 +49,7 @@ public class SeventhActivity extends AbstractActivity implements TabLayoutFragme
 
     private ArrayList<Integer> graphScore = new ArrayList<>();
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    StringBuilder scoreText;
 
     int height, width, amountOfNodes;
 
@@ -143,6 +145,14 @@ public class SeventhActivity extends AbstractActivity implements TabLayoutFragme
     }
 
     @Override
+    protected void changeToEducationFragment() {
+        super.changeToEducationFragment();
+        if (scoreText != null && scoreText.length() != 0) {
+            Toast.makeText(this, scoreText, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
     protected void showBottomNavigationView() {
         bottomNavigationView.setVisibility(View.VISIBLE);
     }
@@ -217,7 +227,17 @@ public class SeventhActivity extends AbstractActivity implements TabLayoutFragme
     }
 
     @Override
+    public void onScoreComputed(ArrayList<Integer> graphScore) {
+        scoreText = new StringBuilder("Skóre grafu je ");
+        for (Integer integer : graphScore) {
+            scoreText.append(integer).append(" ");
+        }
+        Toast.makeText(this, scoreText, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
     public void secondaryTableLayoutSelectedChange(int number) {
 
     }
+
 }

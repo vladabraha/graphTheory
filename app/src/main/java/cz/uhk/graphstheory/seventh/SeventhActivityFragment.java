@@ -1,5 +1,6 @@
 package cz.uhk.graphstheory.seventh;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -22,9 +23,9 @@ public class SeventhActivityFragment extends AbstractFragment {
     private int width;
     private int height;
 
-
     private static final int MAXIMUM_AMOUNT_OF_NODES = 12;
     private static final int MINIMUM_AMOUNT_OF_NODES = 5;
+    private SeventhFragmentActivityCommunicationInterface seventhFragmentActivityCommunicationInterface;
 
     public SeventhActivityFragment() {
         // Required empty public constructor
@@ -50,33 +51,44 @@ public class SeventhActivityFragment extends AbstractFragment {
                         int BRUSH_SIZE = getGraphGeneratedView().getBrushSize();
                         ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfEdges);
 
-                        //myšlenka - mam body, rozdělím je na polovinu a každý bod z jedné poloviny spojím s každým bodem z druhé poloviny
-                        ArrayList<Coordinate> firstPartOfNodes  = new ArrayList<>();
-                        ArrayList<Coordinate> secondPartOfNodes = new ArrayList<>();
-                        ArrayList<CustomLine> bipartite = new ArrayList<>();
+                        //myšlenka - pro každý vrchol spočítám všechny čáry, který obsahuji daný uzel a mám jednu hodnotu skore grafu
+                        Map mapToSet = GraphGenerator.generateMap(height, width, BRUSH_SIZE, amountOfEdges);
+                        ArrayList<Coordinate> nodes = mapToSet.getCircles();
+                        ArrayList<CustomLine> lines = mapToSet.getCustomLines();
 
-                        for (int i = 0; i < nodesToSet.size(); i++){
-                            if (i < (nodesToSet.size() / 2)){
-                                firstPartOfNodes.add(nodesToSet.get(i));
-                            }else {
-                                secondPartOfNodes.add(nodesToSet.get(i));
+                        ArrayList<Integer> graphScore = new ArrayList<>();
+                        for (Coordinate coordinate : nodes){
+                            int score = 0;
+                            for (CustomLine customLine : lines){
+                                if (customLine.isPointInStartOrEndOfLine(coordinate)) score++;
                             }
+                            graphScore.add(score);
                         }
 
-                        for (Coordinate coordinateFirstPart: firstPartOfNodes){
-                            for (Coordinate coordinateSecondPart: secondPartOfNodes){
-                                CustomLine customLine = new CustomLine(coordinateFirstPart, coordinateSecondPart);
-                                bipartite.add(customLine);
-                            }
-                        }
-
-                        Map mapToSet = new Map(bipartite, nodesToSet);
+                        graphScore.sort((o1, o2) -> o2-o1);
+                        seventhFragmentActivityCommunicationInterface.onScoreComputed(graphScore);
                         getGraphGeneratedView().setMap(mapToSet);
-//                        graphGeneratedView.setRedLineList(PathGenerator.generateCesta(graphGeneratedView.getMap()));
+
                     }
                     disableListener = true;
                 }
             }
         });
     }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            seventhFragmentActivityCommunicationInterface = (SeventhFragmentActivityCommunicationInterface) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement SeventhFragmentActivityCommunicationInterface");
+        }
+    }
+
+    public interface SeventhFragmentActivityCommunicationInterface {
+        public void onScoreComputed(ArrayList<Integer> graphScore);
+    }
+
 }

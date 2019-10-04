@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -115,17 +114,23 @@ public class GraphGeneratedView extends View {
             }
         }
 
+        String value = "A";
+        int charValue = value.charAt(0);
         if (circleCoordinates.size() > 0) {
             for (Coordinate coordinate : circleCoordinates) {
                 mPaint.setColor(DEFAULT_COLOR);
                 mPaint.setStrokeWidth(BRUSH_SIZE);
                 mPaint.setStyle(Paint.Style.FILL);
                 mCanvas.drawCircle(coordinate.x, coordinate.y, BRUSH_SIZE + 30, mPaint);
+
+                mPaint.setColor(Color.WHITE);
+                mPaint.setTextSize(80);
+                charValue++;
+                String nextChar = String.valueOf( (char) charValue);
+                mCanvas.drawText(nextChar, coordinate.x - (BRUSH_SIZE * 2 ), coordinate.y + (BRUSH_SIZE * 2), mPaint);
             }
         }
 
-        String value = "A";
-        int charValue = value.charAt(0);
         if (redCirclesCoordinates != null && redCirclesCoordinates.size() > 0){
             for (Coordinate coordinate : redCirclesCoordinates) {
                 mPaint.setColor(RED);
@@ -136,9 +141,7 @@ public class GraphGeneratedView extends View {
                 //TODO přidat názvy vrcholů k dalšímu seznamu
                 mPaint.setColor(Color.BLACK);
                 mPaint.setTextSize(80);
-                String nextChar = String.valueOf( (char) (charValue + 1));
-                mCanvas.drawText(nextChar, coordinate.x - (BRUSH_SIZE * 2 ), coordinate.y + (BRUSH_SIZE * 2), mPaint);
-                Log.d("souradnice", coordinate.x + " y je " + coordinate.y);
+                mCanvas.drawText("A", coordinate.x - (BRUSH_SIZE * 2 ), coordinate.y + (BRUSH_SIZE * 2), mPaint);
             }
         }
 
@@ -295,4 +298,5 @@ public class GraphGeneratedView extends View {
         public void sentPreviousMap(Map map);
         public void sentUpdatedMap(Map map);
     }
+
 }

@@ -47,8 +47,10 @@ public class Map {
             circlesCopied.add(new Coordinate(coordinate.x, coordinate.y));
         }
 
-        for (Coordinate coordinate : map.redCircles) {
-            redCirclesCopied.add(new Coordinate(coordinate.x, coordinate.y));
+        if (map.getRedCircles() != null){
+            for (Coordinate coordinate : map.redCircles) {
+                redCirclesCopied.add(new Coordinate(coordinate.x, coordinate.y));
+            }
         }
 
         for (CustomLine customLine : map.redLineList) {
