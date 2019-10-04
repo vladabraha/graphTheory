@@ -37,7 +37,7 @@ public class GenerateGraphFragment extends Fragment implements GraphGeneratorAct
 
     private String type = "";
 
-    private static final int MAXIMUM_AMOUNT_OF_NODES = 12;
+    private static final int MAXIMUM_AMOUNT_OF_NODES = 7;
     private static final int MINIMUM_AMOUNT_OF_NODES = 5;
 
     public GenerateGraphFragment() {
