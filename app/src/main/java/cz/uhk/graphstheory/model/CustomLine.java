@@ -9,6 +9,13 @@ public class CustomLine {
         this.to = to;
     }
 
+    public CustomLine(CustomLine customLine) {
+        Coordinate from = customLine.getFrom();
+        Coordinate to = customLine.getTo();
+        this.from = new Coordinate(from.x, from.y);
+        this.to = new Coordinate(to.x, to.y);
+    }
+
     public Coordinate getFrom() {
         return from;
     }

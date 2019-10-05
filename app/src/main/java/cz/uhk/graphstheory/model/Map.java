@@ -8,7 +8,7 @@ public class Map {
     private ArrayList<CustomLine> customLines;
     private ArrayList<Coordinate> circles;
     private ArrayList<CustomLine> redLineList = new ArrayList<>();
-    private ArrayList<Coordinate> redCircles;
+    private ArrayList<Coordinate> redCircles = new ArrayList<>();
 
 
     public Map(ArrayList<CustomLine> customLines, ArrayList<Coordinate> circles) {
@@ -62,6 +62,7 @@ public class Map {
         this.customLines = customLinesCopied;
         this.circles = circlesCopied;
         this.redLineList = redLineListCopied;
+        this.redCircles = redCirclesCopied;
     }
 
     public ArrayList<CustomLine> getRedLineList() {
