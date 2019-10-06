@@ -13,8 +13,4 @@ public class Coordinate{
         return coordinate.x == this.x && coordinate.y == this.y;
     }
 
-    // Overriding clone() method of Object class
-    public Object clone()throws CloneNotSupportedException{
-        return super.clone();
-    }
 }

@@ -30,18 +30,18 @@ public class GraphChecker {
                 coordinateArrayList.add(path.get(i).getFrom());
                 coordinateArrayList.add(path.get(i).getTo());
             }
-            for (Coordinate coordinate : coordinateArrayList){
+            for (Coordinate coordinate : coordinateArrayList) {
                 int numberOfOccurance = 0;
-                for (Coordinate coordinate2 : coordinateArrayList){
+                for (Coordinate coordinate2 : coordinateArrayList) {
                     if (coordinate.equal(coordinate2)) numberOfOccurance++;
                 }
                 if (numberOfOccurance > 2) return false;
             }
-        }else {
+        } else {
             return Boolean.parseBoolean(null);
         }
         return true;
-}
+    }
 
     public static boolean checkIfGraphContainsTah(Map map) {
         ArrayList<CustomLine> redLineList = map.getRedLineList();
@@ -208,97 +208,85 @@ public class GraphChecker {
      */
     public static String checkIfGraphContainsArticulation(Map map) {
         ArrayList<CustomLine> customLines = map.getCustomLines();
-        ArrayList<CustomLine> redLines = map.getRedLineList();
         ArrayList<Coordinate> circles = map.getCircles();
+        ArrayList<Coordinate> redCircles = map.getRedCircles();
 
-        if (customLines.size() < 2 || circles.size() < 2 || redLines.size() < 2) return "false";
+        if (customLines.size() < 2 || circles.size() < 2) return "false";
+        if (redCircles.size() != 1) return "chyba v poctu cervenych bodu";
 
         //aritkulace bude ohranicena 2 cervenymi carami
-        Coordinate articulation;
-        if (redLines.get(0).getFrom().equal(redLines.get(1).getFrom()) || redLines.get(0).getFrom().equal(redLines.get(1).getTo())) {
-            articulation = redLines.get(0).getFrom();
-        } else if (redLines.get(0).getTo().equal(redLines.get(1).getFrom()) || redLines.get(0).getTo().equal(redLines.get(1).getTo())) {
-            articulation = redLines.get(0).getTo();
-        } else {
-            return "chybi ohraniceni cervenou carou";
-        }
+        Coordinate articulation = redCircles.get(0);
 
         //hledani prvniho bodu mimo artikulaci
         Coordinate firstCoordinate = null;
-        if (redLines.get(0).getFrom().equal(articulation)) {
-            firstCoordinate = redLines.get(0).getTo();
-        } else if (redLines.get(0).getTo().equal(articulation)) {
-            firstCoordinate = redLines.get(0).getFrom();
-        }
-
-        //myslenka - projdu vsechny sousedy od prvniho bodu a budu si pamatovat, ktery jsem prosel
-        //v dalsim kole budu prochazet sousedy sousedů, ktere jsem jeste nenavstivil, takhle postupne projdu vsechny z teho kategorie
-        //na konci by mi meli chybet v seznamu nejake uzly - ty z druhe strany, kterou artikulace spojovala
-        ArrayList<Coordinate> alreadyVisitedNodes = new ArrayList<>();
-        ArrayList<Coordinate> nodesToExplore = new ArrayList<>();
-
-        //pro prvni uzel najdeme vsechny nody se kterymi je spojen a jeste jsme v nich nebyly
         for (CustomLine customLine : customLines) {
-            if (customLine.getFrom().equal(Objects.requireNonNull(firstCoordinate))) {
-                boolean isVisited = false;
-                for (Coordinate alreadyVisitedCoordinate : alreadyVisitedNodes) {
-                    if (alreadyVisitedCoordinate.equal(customLine.getTo())) {
-                        isVisited = true;
-                    }
-                }
-                if (!isVisited) {
-                    alreadyVisitedNodes.add(customLine.getTo());
-                    nodesToExplore.add(customLine.getTo());
-                }
-            } else if (customLine.getTo().equal(Objects.requireNonNull(firstCoordinate))) {
-                boolean isVisited = false;
-                for (Coordinate alreadyVisitedCoordinate : alreadyVisitedNodes) {
-                    if (alreadyVisitedCoordinate.equal(customLine.getFrom())) {
-                        isVisited = true;
-                    }
-                }
-                if (!isVisited) {
-                    alreadyVisitedNodes.add(customLine.getFrom());
-                    nodesToExplore.add(customLine.getFrom());
+            if (customLine.isPointInStartOrEndOfLine(articulation)) {
+                if (customLine.getFrom().equal(articulation)) {
+                    firstCoordinate = customLine.getTo();
+                } else {
+                    firstCoordinate = customLine.getFrom();
                 }
             }
         }
 
-        for (int i = 0; i < nodesToExplore.size(); i++) {
-            Coordinate coordinateToExplore = nodesToExplore.get(i);
-            for (CustomLine customLine : customLines) {
-                //nejdriv kontrola, ze se nepresuneme pres artikulaci do druhe půlky
-                if (!customLine.getFrom().equal(articulation) && !customLine.getTo().equal(articulation)) {
-                    if (customLine.getFrom().equal(coordinateToExplore)) {
-                        boolean isVisited = false;
-                        for (Coordinate alreadyVisitedCoordinate : alreadyVisitedNodes) {
-                            if (alreadyVisitedCoordinate.equal(customLine.getTo())) {
-                                isVisited = true;
-                            }
+        //myslenka - mám artikulaci - vezmu jeden bod z cesty z artikulace
+        //vezmu prvni caru z vrcholu a nalezeny bod hodim do seznamu a odmazu cestu ze zkopirovaneho zasobniku vsech cest
+        //takhle budu pokracovat (budu si ještě kontrolovat, že nejdu zase přes artikulaci na druhou stranu
+        // dokud nedojdu na konec - pokud uz dal nemuzu, vyhodim uzel ze seznamu a vezmu predposledni a zkusim pro nej najit další cesty, dokud nevyprazdnim seznma
+        //na konci bych měl mít seznam všech prozkoumaných vrcholů (ty si musím evidovat ve speciálním seznamu) menší o 2 než seznam všech vrcholů, aby to byla artikulace
+
+        ArrayList<CustomLine> customLinesCopy = new ArrayList<>();
+        for (CustomLine customLine : customLines) {
+            customLinesCopy.add(new CustomLine(customLine));
+        }
+        ArrayList<Coordinate> nodesOnStack = new ArrayList<>();
+        ArrayList<Coordinate> visitedNodes = new ArrayList<>();
+        nodesOnStack.add(firstCoordinate);
+        visitedNodes.add(firstCoordinate);
+        assert firstCoordinate != null;
+
+        do {
+            Coordinate coordinateOnStack = nodesOnStack.get(nodesOnStack.size() - 1);
+            boolean found = false;
+            int maxRun = customLinesCopy.size();
+            for (int i = 0; i < maxRun; i++) {
+                CustomLine customLine = customLinesCopy.get(i);
+                if (customLine.isPointInStartOrEndOfLine(coordinateOnStack)) {
+                    if (customLine.getFrom().equal(coordinateOnStack) && !customLine.getTo().equal(articulation)) {
+                        Coordinate foundCoordinate = customLine.getTo();
+                        if (visitedNodes.stream().noneMatch(m -> m.equal(foundCoordinate)) && !foundCoordinate.equal(articulation)) {
+                            nodesOnStack.add(foundCoordinate);
+                            visitedNodes.add(foundCoordinate);
+                            found = true;
+                            customLinesCopy.remove(i);
+                            break;
+                        } else {
+                            customLinesCopy.remove(i);
+                            i--;
+                            maxRun--;
                         }
-                        if (!isVisited) {
-                            alreadyVisitedNodes.add(customLine.getTo());
-                            nodesToExplore.add(customLine.getTo());
-                        }
-                    } else if (customLine.getTo().equal(coordinateToExplore)) {
-                        boolean isVisited = false;
-                        for (Coordinate alreadyVisitedCoordinate : alreadyVisitedNodes) {
-                            if (alreadyVisitedCoordinate.equal(customLine.getFrom())) {
-                                isVisited = true;
-                            }
-                        }
-                        if (!isVisited) {
-                            alreadyVisitedNodes.add(customLine.getFrom());
-                            nodesToExplore.add(customLine.getFrom());
+                    } else if (customLine.getTo().equal(coordinateOnStack) && !customLine.getFrom().equal(articulation)){
+                        Coordinate foundCoordinate = customLine.getFrom();
+                        if (visitedNodes.stream().noneMatch(m -> m.equal(foundCoordinate)) && !foundCoordinate.equal(articulation)) {
+                            nodesOnStack.add(foundCoordinate);
+                            visitedNodes.add(foundCoordinate);
+                            found = true;
+                            customLinesCopy.remove(i);
+                            break;
+                        } else {
+                            customLinesCopy.remove(i);
+                            i--;
+                            maxRun--;
                         }
                     }
                 }
             }
-            nodesToExplore.remove(i);
-            i--;
-        }
+            if (!found && !nodesOnStack.isEmpty()) {
+                nodesOnStack.remove(nodesOnStack.size() - 1);
+            }
+        } while (!nodesOnStack.isEmpty());
 
-        if (alreadyVisitedNodes.size() == circles.size()) {
+        if (visitedNodes.size() >= circles.size() - 1) {
             return "false";
         } else {
             return "true";
@@ -417,12 +405,12 @@ public class GraphChecker {
 
         ArrayList<Coordinate> alreadyVisitedNodes = new ArrayList<>();
 
-        for (CustomLine redLine : redLines){
+        for (CustomLine redLine : redLines) {
             alreadyVisitedNodes.add(redLine.getFrom());
             alreadyVisitedNodes.add(redLine.getTo());
         }
-        for (Coordinate circle : circles){
-            if (alreadyVisitedNodes.stream().noneMatch(node -> node.equal(circle))){
+        for (Coordinate circle : circles) {
+            if (alreadyVisitedNodes.stream().noneMatch(node -> node.equal(circle))) {
                 return "false";
             }
         }
@@ -430,17 +418,17 @@ public class GraphChecker {
 
 
         //kontrola, zdali cara neprochazi mistem, kde nebyla puvodne hrana
-        for (CustomLine redLine: redLines){
-            if (lines.stream().noneMatch(line -> line.isLineSame(redLine))){
+        for (CustomLine redLine : redLines) {
+            if (lines.stream().noneMatch(line -> line.isLineSame(redLine))) {
                 return "false";
             }
         }
 
         //každy bod max. 2x
-        for(Coordinate coordinate : alreadyVisitedNodes){
+        for (Coordinate coordinate : alreadyVisitedNodes) {
             AtomicInteger numberOfOccurrence = new AtomicInteger();
             alreadyVisitedNodes.forEach(node -> {
-                if (node.equal(coordinate)){
+                if (node.equal(coordinate)) {
                     numberOfOccurrence.getAndIncrement();
                 }
             });
@@ -449,7 +437,7 @@ public class GraphChecker {
 
         CustomLine firstRedLine = redLines.get(0);
         CustomLine lastRedLine = redLines.get(redLines.size() - 1);
-        if (!firstRedLine.isPointInStartOrEndOfLine(lastRedLine.getFrom()) && !firstRedLine.isPointInStartOrEndOfLine(lastRedLine.getTo()) ){
+        if (!firstRedLine.isPointInStartOrEndOfLine(lastRedLine.getFrom()) && !firstRedLine.isPointInStartOrEndOfLine(lastRedLine.getTo())) {
             return "false";
         }
         return "true";
@@ -460,33 +448,34 @@ public class GraphChecker {
     //Přidám bod do zásobníku a jdu na jeho souseda
     //Odstraním hranu ze zásobníku hran (tu mezi prvním bodem a sousedem)
     //pokračuju dál, pokud už nemám souseda, přádám ho do eulerovy cesty a odstraním vrchol ze zásobníku
-    public static String checkIfGraphHasEulerPath(Map map){
+    public static String checkIfGraphHasEulerPath(Map map) {
         ArrayList<CustomLine> redLines = map.getRedLineList();
         ArrayList<CustomLine> lines = map.getCustomLines();
         ArrayList<Coordinate> circles = map.getCircles();
 
         //spocitame pocet vrcholu se sudym pocetem sousedu
         ArrayList<Coordinate> nodesWithMoreThanTwoNeighbours = new ArrayList<>();
-        for (Coordinate coordinate : circles){
+        for (Coordinate coordinate : circles) {
             int numberOfLinesConnectedToNode = (int) lines.stream().filter(m -> m.isPointInStartOrEndOfLine(coordinate)).count();
-            if (numberOfLinesConnectedToNode % 2 == 0 ){
+            if (numberOfLinesConnectedToNode % 2 == 0) {
                 nodesWithMoreThanTwoNeighbours.add(coordinate);
             }
         }
-        if (nodesWithMoreThanTwoNeighbours.size() > 2 || nodesWithMoreThanTwoNeighbours.isEmpty()) return "false";
+        if (nodesWithMoreThanTwoNeighbours.size() > 2 || nodesWithMoreThanTwoNeighbours.isEmpty())
+            return "false";
 
         //kontrola, ze redlines maj vsechny normalni cary a zadnou novou navic
-        for (CustomLine line : lines){
+        for (CustomLine line : lines) {
             boolean found = false;
-            for (CustomLine redline : redLines){
+            for (CustomLine redline : redLines) {
                 if (redline.isLineSame(line)) found = true;
             }
             if (!found) return "false";
         }
 
-        for (CustomLine redline : redLines){
+        for (CustomLine redline : redLines) {
             boolean found = false;
-            for (CustomLine line : lines){
+            for (CustomLine line : lines) {
                 if (line.isLineSame(redline)) found = true;
             }
             if (!found) return "false";
@@ -494,8 +483,8 @@ public class GraphChecker {
 
         //kontrola, ze redlines na sebe navazuji
         //tzn, ze kazdy 2 usecky musi mit spolecny prave jeden bod
-        for (int i = 0; i < redLines.size(); i++){
-            if (i > 1){
+        for (int i = 0; i < redLines.size(); i++) {
+            if (i > 1) {
                 ArrayList<Coordinate> coordinates = new ArrayList<>();
 
                 CustomLine firstLine = redLines.get(i - 1);
@@ -506,7 +495,7 @@ public class GraphChecker {
                 Coordinate third = secondLine.getFrom();
                 Coordinate fourth = secondLine.getTo();
 
-                if (!first.equal(third) && !first.equal(fourth) && !second.equal(third) && !second.equal(fourth)){
+                if (!first.equal(third) && !first.equal(fourth) && !second.equal(third) && !second.equal(fourth)) {
                     return "false";
                 }
             }
@@ -514,7 +503,7 @@ public class GraphChecker {
         return "true";
     }
 
-    public static boolean checkIfGraphIsCorrect(Map map, ArrayList<Integer> degreeList){
+    public static boolean checkIfGraphIsCorrect(Map map, ArrayList<Integer> degreeList) {
         ArrayList<CustomLine> lines = map.getCustomLines();
         ArrayList<Coordinate> circles = map.getCircles();
 
@@ -522,26 +511,26 @@ public class GraphChecker {
 
         //spocitam stupne vrcholu jednotlivych uzlu
         HashMap<Coordinate, Integer> degreesMap = new HashMap<>();
-        for (Coordinate node : circles){
+        for (Coordinate node : circles) {
             int degree = 0;
-            for (CustomLine customLine : lines){
+            for (CustomLine customLine : lines) {
                 if (customLine.isPointInStartOrEndOfLine(node)) degree++;
             }
             degreesMap.put(node, degree);
         }
 
         //pro kazdej stupen vrcholu smazu z Hasmapy stejnou value a nemělo by mi na konci nic chybět -> tzn. projdu bez problemu a muzu rict, je to to spravne
-        for (Integer degree: degreeList){
+        for (Integer degree : degreeList) {
             Coordinate coordinateToDelete = null;
-            for(HashMap.Entry<Coordinate, Integer> entry : degreesMap.entrySet()) {
-                if (entry.getValue().equals(degree)){
-                   coordinateToDelete = entry.getKey();
-                   break;
+            for (HashMap.Entry<Coordinate, Integer> entry : degreesMap.entrySet()) {
+                if (entry.getValue().equals(degree)) {
+                    coordinateToDelete = entry.getKey();
+                    break;
                 }
             }
-            if (coordinateToDelete != null){
+            if (coordinateToDelete != null) {
                 degreesMap.remove(coordinateToDelete);
-            }else{
+            } else {
                 return false;
             }
         }

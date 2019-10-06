@@ -138,7 +138,6 @@ public class GraphGeneratedView extends View {
                 mPaint.setStyle(Paint.Style.FILL);
                 mCanvas.drawCircle(coordinate.x, coordinate.y, BRUSH_SIZE + 30, mPaint);
 
-                //TODO přidat názvy vrcholů k dalšímu seznamu
                 mPaint.setColor(Color.BLACK);
                 mPaint.setTextSize(80);
                 mCanvas.drawText("A", coordinate.x - (BRUSH_SIZE * 2 ), coordinate.y + (BRUSH_SIZE * 2), mPaint);

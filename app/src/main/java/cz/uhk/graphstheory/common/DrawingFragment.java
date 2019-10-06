@@ -13,11 +13,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.TabActivity;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
+import cz.uhk.graphstheory.model.Coordinate;
 import cz.uhk.graphstheory.model.DrawMapViewModel;
 import cz.uhk.graphstheory.model.Map;
 
@@ -30,7 +32,7 @@ import cz.uhk.graphstheory.model.Map;
 // * Use the {@link DrawingFragment#newInstance} factory method to
 // * create an instance of this fragment.
 // */
-public class DrawingFragment extends Fragment implements TabActivity.OnFragmentInteractionListener, DrawingFragmentListener {
+public class DrawingFragment extends Fragment implements TabActivity.OnFragmentInteractionListener, DrawingFragmentListener, PaintView.CommunicationInterface {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 //    private static final String ARG_PARAM1 = "param1";
@@ -41,10 +43,11 @@ public class DrawingFragment extends Fragment implements TabActivity.OnFragmentI
     private DisplayMetrics metrics;
     CommunicationInterface mListener;
     private int width, height;
+    private static int BRUSH_SIZE;
 
-    boolean disableListener = false;
+    private boolean disableListener = false;
     private Map sentMap;
-    boolean shouldBeSentMapSet;
+    private boolean shouldBeSentMapSet, shouldBeNodeColorSwitched;
 
 //    private GraphListener mListener;
 
@@ -95,6 +98,7 @@ public class DrawingFragment extends Fragment implements TabActivity.OnFragmentI
         }else if (drawMapViewModel.getMap() != null) {
             paintView.setMap(drawMapViewModel.getMap());
         }
+        paintView.setmListener(this);
         view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -109,7 +113,7 @@ public class DrawingFragment extends Fragment implements TabActivity.OnFragmentI
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof CommunicationInterface) {
             mListener = (CommunicationInterface) context;
@@ -157,6 +161,10 @@ public class DrawingFragment extends Fragment implements TabActivity.OnFragmentI
         paintView.setMap(map);
     }
 
+    public void setShouldBeNodeColorSwitched(boolean shouldBeNodeColorSwitched) {
+        this.shouldBeNodeColorSwitched = shouldBeNodeColorSwitched;
+    }
+
     public void setMapAfterViewIsCreated(Map map){
         shouldBeSentMapSet = true;
         sentMap = map;
@@ -166,7 +174,53 @@ public class DrawingFragment extends Fragment implements TabActivity.OnFragmentI
         return metrics;
     }
 
+    @Override
+    public void sentTouchUpCoordinates(Coordinate coordinate) {
+        if (shouldBeNodeColorSwitched){
+            Map map = paintView.getMap();
+            boolean found = false, redNode = false;
+            Coordinate nodeToSwitch = null;
+            ArrayList<Coordinate> redCircles = map.getRedCircles();
+            ArrayList<Coordinate> circles = map.getCircles();
+
+            for (Coordinate nodeCoordinate : circles){
+                if (checkIsInCircle(nodeCoordinate.x, nodeCoordinate.y, coordinate.x, coordinate.y)){
+                    found = true;
+                    redNode = false;
+                    nodeToSwitch = nodeCoordinate;
+                    break;
+                }
+            }
+            if (!found && redCircles != null){
+                for (Coordinate redNodeCoordinate : redCircles){
+                    if (checkIsInCircle(redNodeCoordinate.x, redNodeCoordinate.y, coordinate.x, coordinate.y)){
+                        found = true;
+                        redNode = true;
+                        nodeToSwitch = redNodeCoordinate;
+                        break;
+                    }
+                }
+            }
+            if (found){
+                if (redNode){
+                    circles.add(nodeToSwitch);
+                    redCircles.remove(Objects.requireNonNull(nodeToSwitch));
+                }else {
+                    redCircles.add(nodeToSwitch);
+                    circles.remove(Objects.requireNonNull(nodeToSwitch));
+                }
+            }
+            paintView.setMap(new Map(map.getCustomLines(), circles, map.getRedLineList(), redCircles));
+        }
+    }
+
+    private boolean checkIsInCircle(float circle_x, float circle_y, float point_x, float point_y) {
+        if (BRUSH_SIZE == 0) BRUSH_SIZE = PaintView.getBrushSize();
+        double D = Math.pow(point_x - circle_x, 2) + Math.pow(point_y - circle_y, 2);
+        return D <= Math.pow(BRUSH_SIZE + 30, 2);
+    }
+
     public interface CommunicationInterface {
-        public void sentMetrics(int width, int height);
+        void sentMetrics(int width, int height);
     }
 }

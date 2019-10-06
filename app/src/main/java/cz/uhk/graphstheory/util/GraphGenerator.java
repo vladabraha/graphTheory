@@ -185,12 +185,12 @@ public class GraphGenerator {
         do {
             run++;
             //ohraniceni, kvuli vyjizdecimu menu a spodku
-            float xBorder = 20;
-            float yBorder = 30;
+            float xBorder = 30;
+            float yBorder = 150;
             float xCoordinate = (float) (Math.random() * (width - xBorder));
             xCoordinate+= 20;
             float yCoordinate = (float) (Math.random() * (height - yBorder));
-            yCoordinate+= 10;
+            yCoordinate+= 60;
 
             //pokud vyjde male cislo, pripocitame souradnice, aby nelezely na okraji obrazovky
             if (xCoordinate < BRUSH_SIZE) xCoordinate += BRUSH_SIZE;
