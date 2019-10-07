@@ -54,7 +54,6 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
     private SecondaryTabLayoutFragment secondaryLayoutFragment;
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-
     private DrawingFragmentListener drawingFragmentListener;
 
     private DatabaseConnector databaseConnector;

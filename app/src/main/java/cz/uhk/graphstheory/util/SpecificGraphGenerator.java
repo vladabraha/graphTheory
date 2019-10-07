@@ -1,6 +1,7 @@
 package cz.uhk.graphstheory.util;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import cz.uhk.graphstheory.model.Coordinate;
 import cz.uhk.graphstheory.model.CustomLine;
@@ -8,7 +9,7 @@ import cz.uhk.graphstheory.model.Map;
 
 public class SpecificGraphGenerator {
 
-    private static final int MAXIMUM_AMOUNT_OF_NODES = 12;
+    private static final int MAXIMUM_AMOUNT_OF_NODES = 7;
     private static final int MINIMUM_AMOUNT_OF_NODES = 5;
 
     public static Map createMapWithArticulation(int height, int width, int BRUSH_SIZE) {
@@ -54,9 +55,9 @@ public class SpecificGraphGenerator {
     }
 
     public static Map createMapWithABridge(int height, int width, int BRUSH_SIZE) {
-        int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
-        if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES) amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
-        ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfEdges);
+        int amountOfNodes = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
+        if (amountOfNodes < MINIMUM_AMOUNT_OF_NODES) amountOfNodes = MINIMUM_AMOUNT_OF_NODES;
+        ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfNodes);
 
         //myšlenka - mam body, vezmu polovinu a nějak je spojim
         ArrayList<Coordinate> firstPartOfNodes = new ArrayList<>();
@@ -86,5 +87,50 @@ public class SpecificGraphGenerator {
 
         firstPartOfBipartite.addAll(secondPartOfBipartite);
         return new Map(firstPartOfBipartite, nodesToSet, redLines);
+    }
+
+    //Myšlenka - vytvořím si 2 seznamy vrcholů a ty mezi sebou všechny propojím
+    public static Map generateBipartiteGraph(int height, int width, int BRUSH_SIZE){
+        int amountOfNodes = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
+        if (amountOfNodes < MINIMUM_AMOUNT_OF_NODES) amountOfNodes = MINIMUM_AMOUNT_OF_NODES;
+        ArrayList<Coordinate> firstPart = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfNodes);
+        ArrayList<Coordinate> secondPart = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfNodes);
+        ArrayList<CustomLine> customLines = new ArrayList<>();
+
+        for (Coordinate firstPartOfCoordinate : firstPart){
+            for (Coordinate secondPartOfCoordinate : secondPart){
+                customLines.add(new CustomLine(firstPartOfCoordinate, secondPartOfCoordinate));
+            }
+        }
+        firstPart.addAll(secondPart);
+        return new Map(customLines, firstPart);
+    }
+
+    /**
+     * generate graph same as bipartite but without random 2 lines
+     * @param height of viewport
+     * @param width of viewport
+     * @param BRUSH_SIZE size of node
+     * @return map to set
+     */
+    public static Map generateGraphSimilarToBipartiteGraph(int height, int width, int BRUSH_SIZE){
+        int amountOfNodes = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
+        if (amountOfNodes < MINIMUM_AMOUNT_OF_NODES) amountOfNodes = MINIMUM_AMOUNT_OF_NODES;
+        ArrayList<Coordinate> firstPart = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfNodes);
+        ArrayList<Coordinate> secondPart = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfNodes);
+        ArrayList<CustomLine> customLines = new ArrayList<>();
+
+        for (Coordinate firstPartOfCoordinate : firstPart){
+            for (Coordinate secondPartOfCoordinate : secondPart){
+                customLines.add(new CustomLine(firstPartOfCoordinate, secondPartOfCoordinate));
+            }
+        }
+        for (int i = 0; i < 2; i++){
+            Random random = new Random();
+            int index = random.nextInt(customLines.size() - 1);
+            customLines.remove(index);
+        }
+        firstPart.addAll(secondPart);
+        return new Map(customLines, firstPart);
     }
 }

@@ -1,5 +1,8 @@
 package cz.uhk.graphstheory.fifth;
 
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -7,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -19,6 +23,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Random;
 
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.abstraction.AbstractActivity;
@@ -28,10 +33,10 @@ import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
-import cz.uhk.graphstheory.model.Coordinate;
 import cz.uhk.graphstheory.model.Map;
 import cz.uhk.graphstheory.util.GraphChecker;
 import cz.uhk.graphstheory.util.GraphGenerator;
+import cz.uhk.graphstheory.util.SpecificGraphGenerator;
 
 public class FifthActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, DrawingFragment.CommunicationInterface, SecondaryTabLayoutFragment.SecondaryTableLayoutCommunicationInterface {
 
@@ -44,6 +49,8 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
     private DrawingFragmentListener drawingFragmentListener;
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    int height, width;
+    boolean isGraphBipartite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,16 +72,67 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
 
         drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         floatingActionButton.setOnClickListener(v -> {
-            boolean isValid = GraphChecker.checkIfGraphIsBipartite(drawingFragment.getUserGraph());
-            if (isValid) {
-                Toast.makeText(FifthActivity.this, "výborně, můžeš zkusit další, nebo jít dál", Toast.LENGTH_LONG).show();
-                String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
-                assert userName != null;
-                databaseConnector.recordUserPoints(userName, "fifth");
-                drawingFragment.changeDrawingMethod("clear"); //toto vymaže, co uživatel nakreslil, aby nebouchal jenom check, check...
-            }else {
-                Toast.makeText(FifthActivity.this, "bohužel, to není správně", Toast.LENGTH_LONG).show();
+
+            switch (getCurrentActivity()) {
+                //rozhodování o tom jestli je graf bipartitní
+                case 0:
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+                    dialog.setCancelable(false);
+                    dialog.setTitle("Rozhodněte");
+                    dialog.setMessage("Jedná se v tomto případě o bipartitní graf?");
+                    dialog.setPositiveButton("Ano", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                            //Action for "Delete".
+                            if (isGraphBipartite) {
+                                showMessage("ano, máš pravdu!");
+                                String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
+                                assert userName != null;
+                                databaseConnector.recordUserPoints(userName, "fifth-first");
+                                changeActivity();
+                            } else {
+                                showMessage("bohužel, právě naopak");
+                                setContentAccordingCurrentActivity();
+                            }
+                        }
+                    })
+                            .setNegativeButton("Ne ", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //Action for "Cancel".
+                                    if (!isGraphBipartite) {
+                                        showMessage("ano, máš pravdu!");
+                                        String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
+                                        assert userName != null;
+                                        databaseConnector.recordUserPoints(userName, "fourth-first");
+                                        changeActivity();
+                                    } else {
+                                        showMessage("bohužel, právě naopak");
+                                        setContentAccordingCurrentActivity();
+                                    }
+                                }
+                            });
+
+                    final AlertDialog alert = dialog.create();
+                    alert.show();
+                    break;
+
+                //nakresli bipartitní graf
+                case 1:
+                    boolean isValid = GraphChecker.checkIfGraphIsBipartite(drawingFragment.getUserGraph());
+                    if (isValid) {
+                        Toast.makeText(FifthActivity.this, "výborně, můžeš zkusit další, nebo jít dál", Toast.LENGTH_LONG).show();
+                        String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
+                        assert userName != null;
+                        databaseConnector.recordUserPoints(userName, "fifth-second");
+                        drawingFragment.changeDrawingMethod("clear"); //toto vymaže, co uživatel nakreslil, aby nebouchal jenom check, check...
+                        changeActivity();
+                    } else {
+                        Toast.makeText(FifthActivity.this, "bohužel, to není správně", Toast.LENGTH_LONG).show();
+                    }
+                    break;
             }
+
         });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -117,6 +175,10 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
         });
     }
 
+    private void showMessage(String text) {
+        Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+    }
+
     @Override
     protected Fragment getGraphFragment() {
         return new FifthActivityFragment();
@@ -154,7 +216,15 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
     @Override
     protected void changeToDrawingFragment() {
         super.changeToDrawingFragment();
-        Toast.makeText(this, "Nakresli bipartitní graf", Toast.LENGTH_LONG).show();
+        switch (getCurrentActivity()){
+            case 0:
+                Toast.makeText(this, "Rozhodni, zda se se jedná o bipartitní graf", Toast.LENGTH_LONG).show();
+                break;
+            case 1 :
+                Toast.makeText(this, "Nakresli bipartitní graf", Toast.LENGTH_LONG).show();
+                break;
+        }
+
     }
 
     @Override
@@ -169,14 +239,62 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
 
     @Override
     public void sentMetrics(int width, int height) {
-        int amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
-        ArrayList<Coordinate> nodes = GraphGenerator.generateNodes(height, width, 15, amountOfNodes );
-        Map mapToSet = new Map(new ArrayList<>(), nodes);
-        drawingFragment.setUserGraph(mapToSet);
+        this.width = width;
+        this.height = height;
+        setContentAccordingCurrentActivity();
     }
 
     @Override
     public void secondaryTableLayoutSelectedChange(int number) {
 
+    }
+
+    private void setContentAccordingCurrentActivity(){
+        switch (getCurrentActivity()){
+            case 0:
+                Random random = new Random();
+                isGraphBipartite = random.nextBoolean();
+                if (isGraphBipartite){
+                    Map mapToSet = SpecificGraphGenerator.generateBipartiteGraph(height, width, 15);
+                    drawingFragment.setUserGraph(mapToSet);
+                }else {
+                    int amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
+                    Map mapToSet = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
+                    drawingFragment.setUserGraph(mapToSet);
+                }
+                break;
+            case 1:
+                Map mapToSet = SpecificGraphGenerator.generateGraphSimilarToBipartiteGraph(height, width, 15);
+                drawingFragment.setUserGraph(mapToSet);
+                break;
+        }
+    }
+
+    private void changeActivity() {
+        //do shared preferences si ukladame posledni otevrenou aktivitu, abychom se mohli tocit do kolecka a neotevirali pripadne porad stejnou aktivitu
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        int displayedActivity = sharedPref.getInt("displayedActivity-fifth", 0);
+
+        if (displayedActivity < 1) {
+            displayedActivity++;
+        } else {
+            displayedActivity = 0;
+        }
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt("displayedActivity", displayedActivity);
+        editor.apply();
+
+       setContentAccordingCurrentActivity();
+    }
+
+    /**
+     * 0 - rozpoznej jestli je to bipartitni graf
+     * 1 - nakresli bipartitni graf
+     * @return 0 nebo 1
+     */
+    private int getCurrentActivity() {
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        return sharedPref.getInt("displayedActivity-fifth", 0);
     }
 }
