@@ -47,6 +47,7 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
 
     private ArrayList<Integer> graphScore = new ArrayList<>();
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private EightActivityFragment eightActivityFragment;
 
     int height, width, amountOfNodes;
 
@@ -71,7 +72,7 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
 
         drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         floatingActionButton.setOnClickListener(v -> {
-            boolean isValid = GraphChecker.checkIfGraphIsCorrect(drawingFragment.getUserGraph(), graphScore);
+            boolean isValid = GraphChecker.checkIfGraphHasCertainAmountOfComponent(drawingFragment.getUserGraph(), 3);
             if (isValid) {
                 String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
                 assert userName != null;
@@ -125,13 +126,15 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
 
     @Override
     protected Fragment getGraphFragment() {
-        return new EightActivityFragment();
+        eightActivityFragment = new EightActivityFragment();
+        return eightActivityFragment;
     }
 
     @Override
     protected ArrayList<String> getTabNames() {
         ArrayList<String> tabNames = new ArrayList<>();
-
+        tabNames.add("Strom");
+        tabNames.add("Les");
         return tabNames;
     }
 
@@ -209,8 +212,19 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
         return amountOfNodes;
     }
 
+
     @Override
     public void secondaryTableLayoutSelectedChange(int number) {
-
+        switch (number) {
+            case 0:
+                Toast.makeText(this, "Teď si ukážeme strom", Toast.LENGTH_LONG).show();
+                eightActivityFragment.changeGraph("tree");
+                break;
+            case 1:
+                Toast.makeText(this, "Teď si ukážeme les", Toast.LENGTH_LONG).show();
+                eightActivityFragment.changeGraph("forrest");
+                break;
+        }
     }
+
 }

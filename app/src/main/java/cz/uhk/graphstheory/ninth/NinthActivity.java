@@ -1,4 +1,4 @@
-package cz.uhk.graphstheory.seventh;
+package cz.uhk.graphstheory.ninth;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -31,11 +31,12 @@ import cz.uhk.graphstheory.database.DatabaseConnector;
 import cz.uhk.graphstheory.eight.EightActivity;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
 import cz.uhk.graphstheory.model.Map;
+import cz.uhk.graphstheory.seventh.SeventhActivityFragment;
 import cz.uhk.graphstheory.util.GraphChecker;
 import cz.uhk.graphstheory.util.GraphGenerator;
 import cz.uhk.graphstheory.util.Util;
 
-public class SeventhActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface,
+public class NinthActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface,
         DrawingFragment.CommunicationInterface, SecondaryTabLayoutFragment.SecondaryTableLayoutCommunicationInterface, SeventhActivityFragment.SeventhFragmentActivityCommunicationInterface {
 
     private DrawingFragment drawingFragment;
@@ -70,7 +71,7 @@ public class SeventhActivity extends AbstractActivity implements TabLayoutFragme
         floatingActionButton = getFloatingActionButton();
         tabLayoutFragment = getTabLayoutFragment();
 
-        textFragment.setEducationText(R.string.seventh_activity_text);
+        textFragment.setEducationText(R.string.ninth_activity_text);
 
         drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         floatingActionButton.setOnClickListener(v -> {
@@ -79,10 +80,10 @@ public class SeventhActivity extends AbstractActivity implements TabLayoutFragme
                 String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
                 assert userName != null;
                 Double receivedPoints = databaseConnector.recordUserPoints(userName, "seventh");
-                Toast.makeText(SeventhActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
+                Toast.makeText(NinthActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
                 createDialog();
             } else {
-                Toast.makeText(SeventhActivity.this, "bohužel, to není správně, oprav se a zkus to znovu", Toast.LENGTH_LONG).show();
+                Toast.makeText(NinthActivity.this, "bohužel, to není správně, oprav se a zkus to znovu", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -128,7 +129,7 @@ public class SeventhActivity extends AbstractActivity implements TabLayoutFragme
 
     @Override
     protected Fragment getGraphFragment() {
-        return new SeventhActivityFragment();
+        return new NinthActivityFragment();
     }
 
     @Override

@@ -1,6 +1,6 @@
 package cz.uhk.graphstheory.model;
 
-public class Coordinate{
+public class Coordinate implements Comparable {
     public float x;
     public float y;
 
@@ -13,4 +13,9 @@ public class Coordinate{
         return coordinate.x == this.x && coordinate.y == this.y;
     }
 
+    @Override
+    public int compareTo(Object objectToCompare) {
+        float difference =  this.y - ((Coordinate) objectToCompare).y ;
+        return (int) difference;
+    }
 }

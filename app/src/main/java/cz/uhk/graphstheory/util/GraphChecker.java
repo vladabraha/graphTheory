@@ -265,7 +265,7 @@ public class GraphChecker {
                             i--;
                             maxRun--;
                         }
-                    } else if (customLine.getTo().equal(coordinateOnStack) && !customLine.getFrom().equal(articulation)){
+                    } else if (customLine.getTo().equal(coordinateOnStack) && !customLine.getFrom().equal(articulation)) {
                         Coordinate foundCoordinate = customLine.getFrom();
                         if (visitedNodes.stream().noneMatch(m -> m.equal(foundCoordinate)) && !foundCoordinate.equal(articulation)) {
                             nodesOnStack.add(foundCoordinate);
@@ -503,13 +503,13 @@ public class GraphChecker {
         return "true";
     }
 
-    public static boolean checkIfGraphIsCorrect(Map map, ArrayList<Integer> degreeList) {
+    public static boolean checkIfGraphHasCorrectScore(Map map, ArrayList<Integer> degreeList) {
         ArrayList<CustomLine> lines = map.getCustomLines();
         ArrayList<Coordinate> circles = map.getCircles();
 
         if (degreeList.size() != circles.size()) return false;
 
-        //spocitam stupne vrcholu jednotlivych uzlu
+        //spocitam stupne vrcholu jednotlivych uzlu a vlozim si je do hashmapy
         HashMap<Coordinate, Integer> degreesMap = new HashMap<>();
         for (Coordinate node : circles) {
             int degree = 0;
@@ -539,5 +539,71 @@ public class GraphChecker {
 
     public static boolean checkIfGraphContainsSled(Map userGraph, int length) {
         return userGraph.getRedLineList().size() == length;
+    }
+
+    //myšlenka - budu prochazet vsechny usecky, ktery maj danej bod v from nebo to a druhej konec hodim do seznamu
+    //na konci prohledani odstranim bod ze zasobniku a pokracuju dalsim bodem, dokud neprojdu takto vsechny vrcholy na ktere dosahnu
+    //pokud mi zbydou jeste nějaké vrcholy k prozkoumání, mám druhou komponentu, vyberu tedy libovolny zbyvajici bod a provedu na nem opět prohledávání
+    //toto opakuji tolikrat, kolik ma byt kompo
+    public static boolean checkIfGraphHasCertainAmountOfComponent(Map userGraph, int amountOfComponent) {
+        ArrayList<CustomLine> customLines = userGraph.getCustomLines();
+        ArrayList<Coordinate> nodes = userGraph.getCircles();
+
+
+        ArrayList<CustomLine> customLinesCopied = new ArrayList<>();
+        ArrayList<Coordinate> nodesCopied = new ArrayList<>();
+
+        for (Coordinate coordinate : nodes) {
+            nodesCopied.add(new Coordinate(coordinate.x, coordinate.y));
+        }
+
+        for (CustomLine customLine : customLines) {
+            customLinesCopied.add(new CustomLine(customLine));
+        }
+
+        ArrayList<Coordinate> coordinatesToExplore = new ArrayList<>();
+        coordinatesToExplore.add(nodesCopied.get(0));
+
+        int foundComponents = 0;
+        boolean found = false;
+        do {
+            for (int i = 0; i < coordinatesToExplore.size(); i++) {
+                Coordinate coordinateToExplore = coordinatesToExplore.get(i);
+                for (int j = 0; j < customLinesCopied.size(); j++) {
+                    CustomLine customLine = customLinesCopied.get(j);
+                    if (customLine.isPointInStartOrEndOfLine(coordinateToExplore)) {
+                        if (customLine.getFrom().equal(coordinateToExplore)) {
+                            coordinatesToExplore.add(customLine.getTo());
+                            for (Coordinate node : nodesCopied) {
+                                if (node.equal(customLine.getTo())) {
+                                    nodesCopied.remove(node);
+                                    break;
+                                }
+                            }
+                        } else {
+                            coordinatesToExplore.add(customLine.getFrom());
+                            for (Coordinate node : nodesCopied) {
+                                if (node.equal(customLine.getFrom())) {
+                                    nodesCopied.remove(node);
+                                    break;
+                                }
+                            }
+                        }
+                        customLinesCopied.remove(j);
+                        j--;
+                    }
+                }
+                coordinatesToExplore.remove(i);
+                i--;
+            }
+            if (coordinatesToExplore.isEmpty() && !nodesCopied.isEmpty()) {
+                coordinatesToExplore.add(nodesCopied.get(0));
+                nodesCopied.remove(0);
+                foundComponents++;
+            } else if (coordinatesToExplore.isEmpty()) {
+                found = true;
+            }
+        } while (!found);
+        return foundComponents == amountOfComponent;
     }
 }

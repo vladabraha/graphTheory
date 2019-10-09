@@ -61,6 +61,10 @@
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".ninth.NinthActivity"
+            android:noHistory="true"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".TabActivity"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>

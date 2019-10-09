@@ -185,10 +185,10 @@ public class GraphGenerator {
         do {
             run++;
             //ohraniceni, kvuli vyjizdecimu menu a spodku
-            float xBorder = 30;
+            float xBorder = 210; //o kolik se snizi viewport - musi byt vetsi číslo, než xcoodrinate, jinak vyleti prvek z obrazu)
             float yBorder = 150;
             float xCoordinate = (float) (Math.random() * (width - xBorder));
-            xCoordinate+= 20;
+            xCoordinate+= 150;
             float yCoordinate = (float) (Math.random() * (height - yBorder));
             yCoordinate+= 60;
 

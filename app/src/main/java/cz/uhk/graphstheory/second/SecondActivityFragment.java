@@ -55,7 +55,7 @@ public class SecondActivityFragment extends AbstractFragment {
                                 createBridge();
                                 break;
                             default:
-                                createArticulation();
+                                createBridge();
                                 break;
                         }
                     }

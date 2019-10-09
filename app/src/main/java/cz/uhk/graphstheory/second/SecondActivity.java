@@ -156,9 +156,9 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
                         return true;
                     case R.id.path:
                         drawingFragment.changeDrawingMethod("path");
-                        if (displayedActivity[0] == 0){
+                        if (displayedActivity[0] == 0) {
                             drawingFragment.setShouldBeNodeColorSwitched(true);
-                        }else {
+                        } else {
                             drawingFragment.setShouldBeNodeColorSwitched(false);
                         }
                         return true;
@@ -179,11 +179,11 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
 
         switch (displayedActivity) {
             case 0:
-                return "artikulace";
-            case 1:
                 return "most";
+            case 1:
+                return "artikulace";
         }
-        return "artikulace";
+        return "most";
     }
 
     @Override
@@ -247,7 +247,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
         menu.getItem(4).setTitle("");
 
         //pokud uzivatel splnil predchozi ukol, tak se mu nasetuje novej graf, do kteryho muze kreslit (generuje se podle ukazky, ale bez cerveny cary
-        if (userFinishedPreviousTask){
+        if (userFinishedPreviousTask) {
             userFinishedPreviousTask = false;
             //set new map to create user graph
             Map map;
@@ -343,12 +343,13 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
     public void secondaryTableLayoutSelectedChange(int number) {
         switch (number) {
             case 0:
+                Toast.makeText(this, "Teď si ukážeme most v grafu", Toast.LENGTH_LONG).show();
+                secondActivityFragment.changeGraph("most");
+                break;
+            case 1:
                 Toast.makeText(this, "Teď si ukážeme artikulaci v grafu", Toast.LENGTH_LONG).show();
                 secondActivityFragment.changeGraph("artikulace");
                 break;
-            case 1:
-                Toast.makeText(this, "Teď si ukážeme most v grafu", Toast.LENGTH_LONG).show();
-                secondActivityFragment.changeGraph("most");
         }
 
     }

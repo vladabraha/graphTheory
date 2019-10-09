@@ -15,6 +15,7 @@ import cz.uhk.graphstheory.eight.EightActivity;
 import cz.uhk.graphstheory.fifth.FifthActivity;
 import cz.uhk.graphstheory.first.GraphGeneratorActivity;
 import cz.uhk.graphstheory.fourth.FourthActivity;
+import cz.uhk.graphstheory.ninth.NinthActivity;
 import cz.uhk.graphstheory.second.SecondActivity;
 import cz.uhk.graphstheory.seventh.SeventhActivity;
 import cz.uhk.graphstheory.sixth.SixthActivity;
@@ -90,7 +91,14 @@ public abstract class AbstractAppCompactActivity extends AppCompatActivity imple
                 finish();
                 startActivity(newActivityIntent);
             }
-        } else if (id == R.id.nav_statistic) {
+        } else if (id == R.id.nav_ninth) {
+            if (sessionId != 9) {
+                Intent newActivityIntent = new Intent(this, NinthActivity.class);
+                newActivityIntent.putExtra("SESSION_ID", 9);
+                finish();
+                startActivity(newActivityIntent);
+            }
+        }else if (id == R.id.nav_statistic) {
             if (sessionId != 99) {
                 Intent newActivityIntent = new Intent(this, StatisticsActivity.class);
                 newActivityIntent.putExtra("SESSION_ID", 99);
