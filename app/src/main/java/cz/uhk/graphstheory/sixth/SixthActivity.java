@@ -117,7 +117,6 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
                     }
                     break;
             }
-
         });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -221,7 +220,10 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
     @Override
     protected void changeToDrawingFragment() {
         super.changeToDrawingFragment();
+        showToastMessageAccordingCurrentActivity();
+    }
 
+    private void showToastMessageAccordingCurrentActivity() {
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         int displayedActivity = sharedPref.getInt("displayedActivity-sixth", 0);
         if (displayedActivity == 0) {
@@ -257,22 +259,22 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
         editor.putInt("displayedActivity-sixth", displayedActivity);
         editor.apply();
 
-        switch (displayedActivity) {
-            case 0:
-                Toast.makeText(this, "Teď si ukážeme hamiltonovskou kružnici v grafu", Toast.LENGTH_LONG).show();
-                sixthActivityFragment.changeGraph("hamiltonovsky");
-                break;
-            case 1:
-                Toast.makeText(this, "Teď si ukážeme eulerův tah v grafu", Toast.LENGTH_LONG).show();
-                sixthActivityFragment.changeGraph("euleruv");
-                break;
-        }
+        setGraphAccordingCurrentActivity(width, height);
+        showToastMessageAccordingCurrentActivity();
     }
 
     @Override
     public void sentMetrics(int width, int height) {
         this.width = width;
         this.height = height;
+        setGraphAccordingCurrentActivity(width, height);
+        //zmeni text bottomNavigationView
+        Menu menu = bottomNavigationView.getMenu();
+        menu.getItem(2).setTitle("označ");
+        drawingFragment.changeDrawingMethod("path");
+    }
+
+    private void setGraphAccordingCurrentActivity(int width, int height) {
         switch (getDisplayedActivity()) {
             case "euleruv":
                 drawingFragment.setUserGraph(PathGenerator.createEulerMapWithoutRedLines(height, width));
@@ -283,10 +285,6 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
                 bottomNavigationView.setSelectedItemId(R.id.path);
                 break;
         }
-        //zmeni text bottomNavigationView
-        Menu menu = bottomNavigationView.getMenu();
-        menu.getItem(2).setTitle("označ");
-        drawingFragment.changeDrawingMethod("path");
     }
 
     @Override
@@ -306,6 +304,7 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
                 drawingFragment.setUserGraph(PathGenerator.createHamiltonMapWithoutRedLines(height, width));
                 break;
         }
+
     }
 
     @Override

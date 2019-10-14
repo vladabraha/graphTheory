@@ -1,7 +1,6 @@
 package cz.uhk.graphstheory.fourth;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
@@ -23,7 +22,7 @@ public class FourthActivityFragment extends AbstractFragment {
     private int width;
     private int height;
 
-    public static final int MAXIMUM_AMOUNT_OF_NODES = 12;
+    public static final int MAXIMUM_AMOUNT_OF_NODES = 7;
     public static final int MINIMUM_AMOUNT_OF_NODES = 5;
 
     private Map firstMapToSet;

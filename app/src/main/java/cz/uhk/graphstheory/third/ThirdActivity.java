@@ -75,7 +75,7 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
 
         drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         floatingActionButton.setOnClickListener(v -> {
-            if (checkIfGraphHasDoplnek(drawingFragment.getUserGraph())) {
+            if (checkIfGraphIsComplementGraph(drawingFragment.getUserGraph())) {
                 String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
                 assert userName != null;
                 Double receivedPoints = databaseConnector.recordUserPoints(userName, "third");
@@ -98,10 +98,8 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
         navigationView.setCheckedItem(R.id.nav_third); //tady treba hodit, co se ma zvyraznit
 
         bottomNavigationView = findViewById(R.id.graph_generator_navigation);
-        bottomNavigationView.setSelectedItemId(R.id.circle);
         bottomNavigationView.setSelectedItemId(R.id.path);
     }
-
 
     @Override
     protected Fragment getGraphFragment() {
@@ -125,6 +123,7 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
         //zmeni text bottomNavigationView
         Menu menu = bottomNavigationView.getMenu();
         menu.getItem(2).setTitle("doplněk");
+        menu.getItem(4).setTitle("");
     }
 
     @Override
@@ -165,10 +164,10 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
         isAttached = true;
         this.width = width;
         this.height = height;
-        createGraphWithDoplnek();
+        createComplementGraph();
     }
 
-    private void createGraphWithDoplnek() {
+    private void createComplementGraph() {
         int amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
         Map firstMap = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
 
@@ -192,7 +191,7 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
     //myšlenka - pokud vezmu ten prvni graf a připočítám k němu stejnej rozdíl, dostanu stejnej graf
     //na něm porovnám, zdali má červené čáry (doplněk) stejný souřadnice jako když by to generoval algoritmus
     //podmínkou je lock na posunování uzlů
-    private boolean checkIfGraphHasDoplnek(Map userGraph) {
+    private boolean checkIfGraphIsComplementGraph(Map userGraph) {
         ArrayList<CustomLine> redLines = userGraph.getRedLineList();
         ArrayList<CustomLine> redLinesToCheck = mapToCheck.getRedLineList();
 
@@ -221,7 +220,7 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
 
     @Override
     public void onNegativeButtonClick() {
-        createGraphWithDoplnek();
+        createComplementGraph();
     }
 
     @Override

@@ -1,5 +1,9 @@
 package cz.uhk.graphstheory.model;
 
+import androidx.annotation.NonNull;
+
+import org.jetbrains.annotations.NotNull;
+
 public class CustomLine {
     private Coordinate from;
     private Coordinate to;
@@ -32,7 +36,7 @@ public class CustomLine {
         this.to = to;
     }
 
-    public boolean isPointInStartOrEndOfLine(Coordinate coordinate){
+    public boolean isPointInStartOrEndOfLine(@NotNull Coordinate coordinate){
         if (coordinate.x == from.x && coordinate.y == from.y){
             return true;
         }else return coordinate.x == to.x && coordinate.y == to.y;
@@ -46,6 +50,7 @@ public class CustomLine {
     }
 
     // Overriding clone() method of Object class
+    @NonNull
     public Object clone()throws CloneNotSupportedException{
         return super.clone();
     }

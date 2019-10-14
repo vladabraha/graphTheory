@@ -35,7 +35,7 @@ public abstract class AbstractAppCompactActivity extends AppCompatActivity imple
         //zabrani znovu spusteni pustene aktivity
         int sessionId = getIntent().getIntExtra("SESSION_ID", 0);
 
-        if (id == R.id.paths) {
+        if (id == R.id.nav_first) {
             if (sessionId != 1) {
                 Intent newActivityIntent = new Intent(this, GraphGeneratorActivity.class);
                 newActivityIntent.putExtra("SESSION_ID", 1);

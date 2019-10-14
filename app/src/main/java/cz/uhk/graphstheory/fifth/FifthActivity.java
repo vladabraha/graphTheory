@@ -218,7 +218,7 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
         super.changeToDrawingFragment();
         switch (getCurrentActivity()){
             case 0:
-                Toast.makeText(this, "Rozhodni, zda se se jedná o bipartitní graf", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Rozhodni, zda se se jedná o vygenerovaný bipartitní graf", Toast.LENGTH_LONG).show();
                 break;
             case 1 :
                 Toast.makeText(this, "Nakresli bipartitní graf", Toast.LENGTH_LONG).show();

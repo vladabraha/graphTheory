@@ -150,6 +150,7 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setCheckedItem(R.id.nav_first); //tady treba hodit, co se ma zvyraznit
 
         bottomNavigationView = findViewById(R.id.graph_generator_navigation);
         bottomNavigationView.setSelectedItemId(R.id.circle);
@@ -229,22 +230,26 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
                 break;
             case 2:
                 changeToDrawingFragment();
-                switch (displayedActivity) {
-                    case 0:
-                        Toast.makeText(this, "Nakresli cestu v grafu, případně si graf uprav", Toast.LENGTH_LONG).show();
-                        break;
-                    case 1:
-                        Toast.makeText(this, "Nakresli tah v grafu, případně si graf uprav", Toast.LENGTH_LONG).show();
-                        break;
-                    case 2:
-                        Toast.makeText(this, "Nakresli kružnici v grafu, případně si graf uprav", Toast.LENGTH_LONG).show();
-                        break;
-                    case 3:
-                        Random ran = new Random();
-                        length = ran.nextInt(7);
-                        Toast.makeText(this, "Nakresli sled délky " + length + " , případně si graf uprav", Toast.LENGTH_LONG).show();
-                        break;
-                }
+                showProperToastMessage(displayedActivity);
+                break;
+        }
+    }
+
+    private void showProperToastMessage(int displayedActivity) {
+        switch (displayedActivity) {
+            case 0:
+                Toast.makeText(this, "Nakresli cestu v grafu, případně si graf uprav", Toast.LENGTH_LONG).show();
+                break;
+            case 1:
+                Toast.makeText(this, "Nakresli tah v grafu, případně si graf uprav", Toast.LENGTH_LONG).show();
+                break;
+            case 2:
+                Toast.makeText(this, "Nakresli kružnici v grafu, případně si graf uprav", Toast.LENGTH_LONG).show();
+                break;
+            case 3:
+                Random ran = new Random();
+                length = ran.nextInt(7);
+                Toast.makeText(this, "Nakresli sled délky " + length + " , případně si graf uprav", Toast.LENGTH_LONG).show();
                 break;
         }
     }
@@ -381,6 +386,7 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
         int amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
         Map map = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
         drawingFragment.setUserGraph(map);
+        showProperToastMessage(displayedActivity);
 
     }
 

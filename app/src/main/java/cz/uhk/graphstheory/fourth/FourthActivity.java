@@ -87,8 +87,10 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
                         String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
                         assert userName != null;
                         databaseConnector.recordUserPoints(userName, "fourth");
+                        showGraphRandomlyIsomorfic(height);
                     } else {
                         showMessage("bohužel, právě naopak");
+                        showGraphRandomlyIsomorfic(height);
                     }
                 }
             })
@@ -102,8 +104,10 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
                                 String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
                                 assert userName != null;
                                 databaseConnector.recordUserPoints(userName, "fourth");
+                                showGraphRandomlyIsomorfic(height);
                             } else {
                                 showMessage("bohužel, právě naopak");
+                                showGraphRandomlyIsomorfic(height);
                             }
                         }
                     });
@@ -286,7 +290,10 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
     public void sentMetrics(int width, int height) {
         this.height = height;
         this.width = width;
+        showGraphRandomlyIsomorfic(height);
+    }
 
+    private void showGraphRandomlyIsomorfic(int height) {
         firstMap = createMap();
         if (Math.random() > 0.5) {
             secondMap = createSameGraph(firstMap);
@@ -303,7 +310,6 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
 
         ArrayList<Map> secondMapTwice = GraphConverter.convertMapsToSplitScreenArray(secondMap, height);
         secondMap = secondMapTwice.get(1);
-
 
         firstMap.getCustomLines().addAll(secondMap.getCustomLines());
         firstMap.getCircles().addAll(secondMap.getCircles());

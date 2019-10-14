@@ -201,7 +201,7 @@ public class GraphChecker {
     }
 
     /**
-     * bod aritkulace musí být ohraničen 2 přímkami z redline listu
+     * projde všechny spoje na jednu stranu od označené artikulace a pokud má na konci nalezených více jak n-1 nodu vrati false
      *
      * @param map uzivatelova mapa
      * @return -
@@ -286,7 +286,7 @@ public class GraphChecker {
             }
         } while (!nodesOnStack.isEmpty());
 
-        if (visitedNodes.size() >= circles.size() - 1) {
+        if (visitedNodes.size() > circles.size() - 1) {
             return "false";
         } else {
             return "true";
