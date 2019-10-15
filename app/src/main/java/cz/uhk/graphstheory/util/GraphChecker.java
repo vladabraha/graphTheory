@@ -546,6 +546,7 @@ public class GraphChecker {
     //pokud mi zbydou jeste nějaké vrcholy k prozkoumání, mám druhou komponentu, vyberu tedy libovolny zbyvajici bod a provedu na nem opět prohledávání
     //toto opakuji tolikrat, kolik ma byt kompo
     public static boolean checkIfGraphHasCertainAmountOfComponent(Map userGraph, int amountOfComponent) {
+        if (!checkIfGraphDoesNotContainsCycle(userGraph)) return false;
         ArrayList<CustomLine> customLines = userGraph.getCustomLines();
         ArrayList<Coordinate> nodes = userGraph.getCircles();
 
@@ -605,5 +606,157 @@ public class GraphChecker {
             }
         } while (!found);
         return foundComponents == amountOfComponent;
+    }
+
+    //Myšlenka - projdu všechny uzly a ty který maj víc jak 2 liny si dám do seznamu, ten projdu a pro každej uzel z toho zkusím jestli neobsahuje kružnici
+    //tzn. když budu procházet jednotlivý usečky, tak zdali se nevrátím přes některou zpátky do stejného bodu
+    //alg. vezmu prvni bod spojenej s naším bodem a od něj už zkousím hledat všechny čáry, který jsou s nim spojeny - ty si dávám na stack
+    //jakmile projedu všechny takové úsečky, odstraním si z nich ty, které jsem už použil pro hledání dalších vrcholů, odstraním bod ze stacku a pokračuju stejnou metodou pro další uzly
+    //
+    //speciální případ, pokud graf nemá žádný vrchol s více jak 2 hranami, vezmu první bod, který uživatel vybral a zkusím projet všechny navazující úsečky, zdali neobsahují kružnici
+    //tedy obdobně jako v předchozím případě vezmu první spojenej bod s prvním bodem a prohledávám všechny liny, zdali některý neobsahuje můj bod, pokud jo, odstraním ho stacku, vezmu další a pokračuju dál
+    public static boolean checkIfGraphDoesNotContainsCycle(Map userGraph) {
+        ArrayList<CustomLine> customLines = userGraph.getCustomLines();
+        ArrayList<Coordinate> nodes = userGraph.getCircles();
+
+        ArrayList<Coordinate> nodesWithMultipleLinesFirst = new ArrayList<>();
+        ArrayList<Coordinate> nodesWithMultipleLinesSecond = new ArrayList<>();
+        ArrayList<Coordinate> nodesToCheck = new ArrayList<>();
+
+        //v teto casti najdeme uzly s více než 2 hranami
+        for (CustomLine customLine : customLines) {
+            if (nodesWithMultipleLinesFirst.stream().noneMatch(m -> m.equal(customLine.getTo()))) {
+                nodesWithMultipleLinesFirst.add(customLine.getTo());
+            } else if (nodesWithMultipleLinesSecond.stream().noneMatch(m -> m.equal(customLine.getTo()))) {
+                nodesWithMultipleLinesSecond.add(customLine.getTo());
+            } else {
+                nodesToCheck.add(customLine.getTo());
+            }
+            if (nodesWithMultipleLinesFirst.stream().noneMatch(m -> m.equal(customLine.getFrom()))) {
+                nodesWithMultipleLinesFirst.add(customLine.getFrom());
+            } else if (nodesWithMultipleLinesSecond.stream().noneMatch(m -> m.equal(customLine.getFrom()))) {
+                nodesWithMultipleLinesSecond.add(customLine.getFrom());
+            } else {
+                nodesToCheck.add(customLine.getFrom());
+            }
+        }
+
+        //nalezeni prvniho bodu, kterej se spojuje (ten může mít jenom 2 hrany a presto tvořit kružnici
+        Coordinate firstNode;
+        Coordinate firstNodeCandidate = customLines.get(0).getFrom();
+        Coordinate secondNodeCandidate = customLines.get(0).getTo();
+        if (customLines.get(1).getFrom().equal(firstNodeCandidate) || customLines.get(1).getTo().equal(firstNodeCandidate)) {
+            firstNode = secondNodeCandidate;
+        } else {
+            firstNode = firstNodeCandidate;
+        }
+
+        //projed vsechny vrcholy, ktery maj vic jak 2 cary k sobe
+        do {
+            //tady akorat kopie
+            ArrayList<CustomLine> customLinesCopied = new ArrayList<>();
+            for (CustomLine customLine : customLines) {
+                customLinesCopied.add(new CustomLine(customLine.getFrom(), customLine.getTo()));
+            }
+            ArrayList<Coordinate> nodesCopied = new ArrayList<>();
+            for (Coordinate coordinate : nodesCopied) {
+                nodesCopied.add(new Coordinate(coordinate.x, coordinate.y));
+            }
+
+            //pokud nemá žádnej vrchol více jak 2 hrany, tak to proji celý, jeslti tam nic nenajdeš od začátku
+            if (nodesToCheck.isEmpty()) {
+                ArrayList<Coordinate> nodesOnStack = new ArrayList<>();
+                for (CustomLine customLine : customLinesCopied) {
+                    if (customLine.getFrom().equal(firstNode)) {
+                        nodesOnStack.add(customLine.getTo());
+                        customLinesCopied.remove(customLine);
+                        break;
+                    } else if (customLine.getTo().equal(firstNode)) {
+                        nodesOnStack.add(customLine.getFrom());
+                        customLinesCopied.remove(customLine);
+                        break;
+                    }
+                }
+
+                do {
+                    Coordinate coordinate = nodesOnStack.get(0);
+                    Iterator<CustomLine> iterator = customLinesCopied.iterator();
+                    while (iterator.hasNext()) {
+                        CustomLine customLine = iterator.next();
+                        if (customLine.getFrom().equal(coordinate)) {
+                            if (customLine.getTo().equal(firstNode)) return false;
+                            nodesOnStack.add(customLine.getTo());
+                            iterator.remove();
+                        } else if (customLine.getTo().equal(coordinate)) {
+                            if (customLine.getFrom().equal(firstNode)) return false;
+                            nodesOnStack.add(customLine.getFrom());
+                            iterator.remove();
+                        }
+                    }
+                    nodesOnStack.remove(0);
+                } while (!nodesOnStack.isEmpty());
+
+                return true; //pokud nema zadnej uzel vic jak 2 hrany k jinymu uzlu, je to v pořádku
+            }
+            Coordinate coordinate = nodesToCheck.get(0); //vezmu prvni bod k prozkoumani
+            ArrayList<Coordinate> nodesOnStack = new ArrayList<>();
+            ArrayList<CustomLine> customLinesAlreadyUsed = new ArrayList<>(); //ukladam si, ktery hrany jsem uz zkousel, abych se netočil v dalších nodech od toho nodu, ktery ma vic jak 2 hrany
+            boolean stop = false;
+            //hledam dalsi bod, kterej je po mem bodu, co ma vic jak 2 hrany
+            do {
+                for (CustomLine customLine : customLinesCopied) {
+                    if (customLinesAlreadyUsed.stream().noneMatch(m -> m.isLineSame(customLine))) {
+                        if (customLine.getFrom().equal(coordinate)) {
+                            nodesOnStack.add(customLine.getTo());
+                            customLinesAlreadyUsed.add(customLine);
+                            break;
+                        } else if (customLine.getTo().equal(coordinate)) {
+                            nodesOnStack.add(customLine.getFrom());
+                            customLinesAlreadyUsed.add(customLine);
+                            break;
+                        }
+                    }
+                }
+                //pokud jsem zadnej bod nenašel (nebo už mi všechny ostatni došly) vyhodim tento bod z hledani (tam kružnice nebude)
+                if (nodesOnStack.isEmpty()) {
+                    stop = true;
+                } else {
+                    do {
+                        //vezmu si posledni bod na zasobniku (na zacatku tam je akorta ten prvni bod za tim bodem co ma vic jak 2 hrany
+                        Coordinate coordinateToExplore = nodesOnStack.get(nodesOnStack.size() - 1);
+                        Iterator<CustomLine> iterator = customLinesCopied.iterator();
+                        boolean found = false;
+                        while (iterator.hasNext()) {
+                            CustomLine customLine = iterator.next();
+                            //pokud najdu usecku, tkera muj bod spojuje s nejakym dalsim, hodim si ten dalsi bod do seznamu a odstranim usecku ze seznamu
+                            if (customLinesAlreadyUsed.stream().noneMatch(m -> m.isLineSame(customLine))) { //tady ještě kontrola, že neprocházím tu úsečku,k která mě už dostala k tomuto bodu
+                                if (customLine.getFrom().equal(coordinateToExplore)) {
+                                    if (customLine.getTo().equal(coordinate) || customLine.getTo().equal(firstNode))
+                                        return false; //pokud jsem se dostal k bodu, co ma vic jak ty 2 hrany, tak jsem objevil kruznici a vracim false
+                                    nodesOnStack.add(customLine.getTo());
+                                    iterator.remove();
+                                    found = true;
+                                } else if (customLine.getTo().equal(coordinateToExplore)) {
+
+                                    if (customLine.getFrom().equal(coordinate) || customLine.getFrom().equal(firstNode))
+                                        return false; //pokud jsem se dostal k bodu, co ma vic jak ty 2 hrany, tak jsem objevil kruznici a vracim false
+                                    nodesOnStack.add(customLine.getFrom());
+                                    iterator.remove();
+                                    found = true;
+                                }
+                            } else {
+                                iterator.remove();
+                            }
+                        }
+                        if (!found) {
+                            nodesOnStack.remove(nodesOnStack.size() - 1);
+                        }
+                    } while (!nodesOnStack.isEmpty());
+                }
+            } while (!stop);
+            nodesToCheck.remove(0); //smazani zkouseneho bodu (toho co ma vic jak 2 hrany)
+
+        } while (!nodesToCheck.isEmpty());
+        return true;
     }
 }

@@ -95,7 +95,7 @@ public class NinthActivity extends AbstractActivity implements TabLayoutFragment
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_seventh); //tady treba hodit, co se ma zvyraznit
+        navigationView.setCheckedItem(R.id.nav_ninth); //tady treba hodit, co se ma zvyraznit
 
         bottomNavigationView = findViewById(R.id.graph_generator_navigation);
         bottomNavigationView.setSelectedItemId(R.id.circle);

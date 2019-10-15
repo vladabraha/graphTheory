@@ -25,7 +25,7 @@ import cz.uhk.graphstheory.util.GraphGenerator;
 import cz.uhk.graphstheory.util.PathGenerator;
 
 
-public class GenerateGraphFragment extends Fragment implements GraphGeneratorActivity.ChangeGraphListener {
+public class GenerateGraphFragment extends Fragment {
 
     private GraphGeneratedView graphGeneratedView;
     private GeneratedMapViewModel generatedMapViewModel;
@@ -81,7 +81,7 @@ public class GenerateGraphFragment extends Fragment implements GraphGeneratorAct
                         int BRUSH_SIZE = graphGeneratedView.getBrushSize();
                         Map mapToSet = GraphGenerator.generateMap(height, width, BRUSH_SIZE, amountOfEdges);
                         graphGeneratedView.setMap(mapToSet);
-                        graphGeneratedView.setRedLineList(PathGenerator.generateCesta(graphGeneratedView.getMap()));
+                        graphGeneratedView.setRedLineList(PathGenerator.generatePath(graphGeneratedView.getMap()));
                     }
                     disableListener = true;
                 }
@@ -92,15 +92,15 @@ public class GenerateGraphFragment extends Fragment implements GraphGeneratorAct
         if (!type.isEmpty()){
             switch (type){
                 case "cesta":
-                    graphGeneratedView.setRedLineList(PathGenerator.generateCesta(graphGeneratedView.getMap()));
+                    graphGeneratedView.setRedLineList(PathGenerator.generatePath(graphGeneratedView.getMap()));
                     graphGeneratedView.invalidate();
                     break;
                 case "tah":
-                    graphGeneratedView.setRedLineList(PathGenerator.generateTah(graphGeneratedView.getMap()));
+                    graphGeneratedView.setRedLineList(PathGenerator.generateTrail(graphGeneratedView.getMap()));
                     graphGeneratedView.invalidate();
                     break;
                 case "kruznice":
-                    graphGeneratedView.setRedLineList(PathGenerator.generateKruznice(graphGeneratedView.getMap()));
+                    graphGeneratedView.setRedLineList(PathGenerator.generateCycle(graphGeneratedView.getMap()));
                     graphGeneratedView.invalidate();
                     break;
             }
@@ -109,7 +109,7 @@ public class GenerateGraphFragment extends Fragment implements GraphGeneratorAct
 
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
     }
@@ -128,20 +128,20 @@ public class GenerateGraphFragment extends Fragment implements GraphGeneratorAct
      * @param type of generated graph
      * @return size of line if needed
      */
-    @Override
+
     public int changeEducationGraph(String type) {
        this.type = type;
         switch (type){
             case "cesta":
-                graphGeneratedView.setRedLineList(PathGenerator.generateCesta(graphGeneratedView.getMap()));
+                graphGeneratedView.setRedLineList(PathGenerator.generatePath(graphGeneratedView.getMap()));
                 graphGeneratedView.invalidate();
                 return 0;
             case "tah":
-                graphGeneratedView.setRedLineList(PathGenerator.generateTah(graphGeneratedView.getMap()));
+                graphGeneratedView.setRedLineList(PathGenerator.generateTrail(graphGeneratedView.getMap()));
                 graphGeneratedView.invalidate();
                 return 0;
             case "kruznice":
-                ArrayList<Coordinate> coordinates = PathGenerator.generateKruznice(graphGeneratedView.getMap());
+                ArrayList<Coordinate> coordinates = PathGenerator.generateCycle(graphGeneratedView.getMap());
                 int lenght = Math.round(coordinates.size() / 2);
                 graphGeneratedView.setRedLineList(coordinates);
                 graphGeneratedView.invalidate();

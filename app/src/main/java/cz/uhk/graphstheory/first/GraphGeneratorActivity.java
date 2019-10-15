@@ -464,9 +464,4 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
                 break;
         }
     }
-
-    public interface ChangeGraphListener {
-        public int changeEducationGraph(String type);
-    }
-
 }

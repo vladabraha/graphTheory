@@ -9,14 +9,12 @@ import cz.uhk.graphstheory.model.Map;
 
 public class PathGenerator {
 
-    //todo prejmenovat metody do anglictiny
-
     /**
      * z predane mapy vrati nahodne vytvorenou cestu (kazdy vrchol max. jednou)
      * @param map mapa
      * @return list primek, kterymi prochazi cesta
      */
-    public static ArrayList<Coordinate> generateCesta(Map map) {
+    public static ArrayList<Coordinate> generatePath(Map map) {
         int numberOfNodes = map.getCircles().size();
         int pathLength = (int) Math.round(Math.random() * numberOfNodes);
         if (pathLength < ((map.getCircles().size() / 2) + 1)) pathLength = (map.getCircles().size() / 2) + 1;
@@ -48,7 +46,7 @@ public class PathGenerator {
      * @param map mapa
      * @return list primek, kterymi prochazi tah
      */
-    public static ArrayList<Coordinate> generateTah(Map map){
+    public static ArrayList<Coordinate> generateTrail(Map map){
         ArrayList<Coordinate> nodes = map.getCircles();
         int numberOfNodes = map.getCircles().size();
         int randomNumberOfRedLines = (int) ((((numberOfNodes * (numberOfNodes - 1)) /2 )-1) * Math.random());
@@ -79,10 +77,10 @@ public class PathGenerator {
         return tah;
     }
 
-    public static ArrayList<Coordinate> generateKruznice(Map map) {
+    public static ArrayList<Coordinate> generateCycle(Map map) {
         ArrayList<Coordinate> path;
         do {
-            path = generateCesta(map);
+            path = generatePath(map);
         }while (path.size() < (map.getCircles().size() - 1));
 
         path.add(path.get(path.size() - 1));
@@ -90,7 +88,7 @@ public class PathGenerator {
        return path;
     }
 
-    public static Map createDoplnekToGraph(Map firstMap) {
+    public static Map createComplementToGraph(Map firstMap) {
         ArrayList<Coordinate> nodes = firstMap.getCircles();
         ArrayList<CustomLine> lines = firstMap.getCustomLines();
         ArrayList<CustomLine> redLines = new ArrayList<>();

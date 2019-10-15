@@ -2,6 +2,7 @@ package cz.uhk.graphstheory.eight;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -20,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Random;
 
 import cz.uhk.graphstheory.R;
 import cz.uhk.graphstheory.abstraction.AbstractActivity;
@@ -30,6 +32,7 @@ import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
 import cz.uhk.graphstheory.model.Map;
+import cz.uhk.graphstheory.ninth.NinthActivity;
 import cz.uhk.graphstheory.util.GraphChecker;
 import cz.uhk.graphstheory.util.GraphGenerator;
 import cz.uhk.graphstheory.util.Util;
@@ -49,7 +52,7 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private EightActivityFragment eightActivityFragment;
 
-    int height, width, amountOfNodes;
+    int height, width, amountOfNodes, amountOfComponent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +75,8 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
 
         drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         floatingActionButton.setOnClickListener(v -> {
-            boolean isValid = GraphChecker.checkIfGraphHasCertainAmountOfComponent(drawingFragment.getUserGraph(), 3);
+            boolean isValid = GraphChecker.checkIfGraphHasCertainAmountOfComponent(drawingFragment.getUserGraph(), amountOfComponent);
+//            boolean isValid = GraphChecker.checkIfGraphDoesNotContainsCycle(drawingFragment.getUserGraph());
             if (isValid) {
                 String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
                 assert userName != null;
@@ -106,17 +110,9 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
                     case R.id.line:
                         drawingFragment.changeDrawingMethod("line");
                         return true;
-                    case R.id.path:
-                        drawingFragment.changeDrawingMethod("path");
-                        return true;
                     case R.id.delete:
                         drawingFragment.changeDrawingMethod("remove");
                         return true;
-                    case R.id.clear:
-                        drawingFragment.changeDrawingMethod("clear");
-                        bottomNavigationView.setSelectedItemId(R.id.circle);
-                        drawingFragment.changeDrawingMethod("circle");
-                        return false; // return true if you want the item to be displayed as the selected item
                     default:
                         return false;
                 }
@@ -166,8 +162,8 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
 
     @Override
     public void onPositiveButtonClick() {
-        Intent newActivityIntent = new Intent(this, EightActivity.class);
-        newActivityIntent.putExtra("SESSION_ID", 8);
+        Intent newActivityIntent = new Intent(this, NinthActivity.class);
+        newActivityIntent.putExtra("SESSION_ID", 9);
         finish();
         startActivity(newActivityIntent);
     }
@@ -178,19 +174,32 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
         Map map = new Map(new ArrayList<>(), GraphGenerator.generateNodes(height, width, 15, amountOfNodes));
         drawingFragment.setUserGraph(map);
         bottomNavigationView.setSelectedItemId(R.id.line);
+        generateNewMessageWithNewAmountOfComponent();
     }
 
     @Override
     protected void changeToDrawingFragment() {
         super.changeToDrawingFragment();
-
-        if (amountOfNodes == 0) getAmountOfNodesAndGenerateGraphScore();
-
-        StringBuilder text = new StringBuilder();
-        for (Integer score : graphScore) {
-            text.append(score.toString()).append(", ");
+        if (amountOfComponent == 0) {
+            generateNewMessageWithNewAmountOfComponent();
+        }else {
+            if (amountOfComponent == 1 ){
+                Toast.makeText(this, "Nakresli les s jednou komponentou", Toast.LENGTH_LONG).show();
+            }else {
+                Toast.makeText(this, "Nakresli les s " + amountOfComponent + " komponentami", Toast.LENGTH_LONG).show();
+            }
         }
-        Toast.makeText(this, "Nakresli graf s tímto skórem " + text, Toast.LENGTH_LONG).show();
+    }
+
+    private void generateNewMessageWithNewAmountOfComponent() {
+        Random ran = new Random();
+        amountOfComponent = ran.nextInt(3);
+        if (amountOfComponent == 0) amountOfComponent++;
+        if (amountOfComponent == 1 ){
+            Toast.makeText(this, "Nakresli les s jednou komponentou", Toast.LENGTH_LONG).show();
+        }else {
+            Toast.makeText(this, "Nakresli les s " + amountOfComponent + " komponentami", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -203,7 +212,9 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
         drawingFragment.setUserGraph(map);
         bottomNavigationView.setSelectedItemId(R.id.line);
 
-
+        Menu menu = bottomNavigationView.getMenu();
+        menu.getItem(2).setTitle("");
+        menu.getItem(4).setTitle("");
     }
 
     private int getAmountOfNodesAndGenerateGraphScore() {

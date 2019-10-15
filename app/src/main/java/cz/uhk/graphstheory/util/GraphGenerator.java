@@ -14,7 +14,7 @@ import cz.uhk.graphstheory.model.Map;
 
 public class GraphGenerator {
 
-    private static final int DISTANCE_BETWEEN_NEAREST_NODE = 250;
+    private static final int DISTANCE_BETWEEN_NEAREST_NODE = 300;
 
     /**
      * generate random map
@@ -186,7 +186,7 @@ public class GraphGenerator {
             run++;
             //ohraniceni, kvuli vyjizdecimu menu a spodku
             float xBorder = 210; //o kolik se snizi viewport - musi byt vetsi číslo, než xcoodrinate, jinak vyleti prvek z obrazu)
-            float yBorder = 150;
+            float yBorder = 210;
             float xCoordinate = (float) (Math.random() * (width - xBorder));
             xCoordinate+= 150;
             float yCoordinate = (float) (Math.random() * (height - yBorder));

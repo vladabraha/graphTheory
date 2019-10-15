@@ -177,7 +177,7 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
 
         //tohle je pro ulozeni si celýho grafu bez vymazanejch čar, abych na tom mohl zavolat jenom dogenerovani do uplnyho grafu a pak to mohl porovnat
         Map secondMap = new Map(splittedMap2);
-        mapToCheck = PathGenerator.createDoplnekToGraph(secondMap); //v tomhle bude mapa, vuci ktere budeme kreslit to, co vyvtvoril uzivatel
+        mapToCheck = PathGenerator.createComplementToGraph(secondMap); //v tomhle bude mapa, vuci ktere budeme kreslit to, co vyvtvoril uzivatel
 
         splittedMap2.setCustomLines(new ArrayList<>());
 
