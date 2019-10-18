@@ -1,6 +1,5 @@
 package cz.uhk.graphstheory.ninth;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -23,9 +22,8 @@ public class NinthActivityFragment extends AbstractFragment {
     private int width;
     private int height;
 
-    private static final int MAXIMUM_AMOUNT_OF_NODES = 12;
+    private static final int MAXIMUM_AMOUNT_OF_NODES = 7;
     private static final int MINIMUM_AMOUNT_OF_NODES = 5;
-    private SeventhFragmentActivityCommunicationInterface seventhFragmentActivityCommunicationInterface;
 
     public NinthActivityFragment() {
         // Required empty public constructor
@@ -44,30 +42,7 @@ public class NinthActivityFragment extends AbstractFragment {
                     width = view.getMeasuredWidth();
                     height = view.getMeasuredHeight();
                     if (width != 0) {
-
-                        //set init bipartitní graf educational fragment
-                        int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
-                        if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES) amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
-                        int BRUSH_SIZE = getGraphGeneratedView().getBrushSize();
-                        ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfEdges);
-
-                        //myšlenka - pro každý vrchol spočítám všechny čáry, který obsahuji daný uzel a mám jednu hodnotu skore grafu
-                        Map mapToSet = GraphGenerator.generateMap(height, width, BRUSH_SIZE, amountOfEdges);
-                        ArrayList<Coordinate> nodes = mapToSet.getCircles();
-                        ArrayList<CustomLine> lines = mapToSet.getCustomLines();
-
-                        ArrayList<Integer> graphScore = new ArrayList<>();
-                        for (Coordinate coordinate : nodes){
-                            int score = 0;
-                            for (CustomLine customLine : lines){
-                                if (customLine.isPointInStartOrEndOfLine(coordinate)) score++;
-                            }
-                            graphScore.add(score);
-                        }
-
-                        graphScore.sort((o1, o2) -> o2-o1);
-                        seventhFragmentActivityCommunicationInterface.onScoreComputed(graphScore);
-                        getGraphGeneratedView().setMap(mapToSet);
+                        getGraphGeneratedView().setMap(generateSpanningTree());
 
                     }
                     disableListener = true;
@@ -76,19 +51,45 @@ public class NinthActivityFragment extends AbstractFragment {
         });
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    //VZHLEDE K TOMU, ŽE JE KOSTRA TO SAME CO STROM, AKORÁT TAM CHYBÍ NĚJAKÝ ČÁRY NAVÍC Z PŮVODNÍHO GRAFU, VYGENERUJU STROM JAKO ČERVENÝ ČÁRY A PŘIDÁM NĚJAKÝ NORMÁLNÍ HRANY
+    //myšlenka - projdu uzly, vezmu ten co má nejnižší y souřadnici a postupně ho budu propojovat dál s nodama, který leží níž
+    //nejnižsí souřadnici si zajistím tak, že budu mít array list serazenej pomoci comparatoru
+    //plus tam 3 od konce trochu náhodně pospojuju, aby to nějak vypadalo
+    private Map generateSpanningTree() {
+        int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
+        if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES) amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
+        int BRUSH_SIZE = getGraphGeneratedView().getBrushSize();
+        ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfEdges);
+//        Collections.sort(nodesToSet);
 
-        try {
-            seventhFragmentActivityCommunicationInterface = (SeventhFragmentActivityCommunicationInterface) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement SeventhFragmentActivityCommunicationInterface");
+        ArrayList<CustomLine> redLinesList = new ArrayList<>();
+        for (int i = 0; i < nodesToSet.size(); i++) {
+            if (i == nodesToSet.size() - 3 && i > 0) {
+                redLinesList.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(i - 1)));
+                redLinesList.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(i + 1)));
+                redLinesList.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(i + 2)));
+            } else if (i < nodesToSet.size() - 3 && i > 0) {
+                redLinesList.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(i - 1)));
+            }
         }
+        //k vytvořené kostře přidám náhodně najaké hrany
+        ArrayList<CustomLine> edges = GraphGenerator.generateRandomEdges(nodesToSet);
+        return new Map(edges, nodesToSet, redLinesList);
     }
 
-    public interface SeventhFragmentActivityCommunicationInterface {
-        public void onScoreComputed(ArrayList<Integer> graphScore);
-    }
+
+//    @Override
+//    public void onAttach(Context context) {
+//        super.onAttach(context);
+//        try {
+//            seventhFragmentActivityCommunicationInterface = (SeventhFragmentActivityCommunicationInterface) context;
+//        } catch (ClassCastException e) {
+//            throw new ClassCastException(context.toString() + " must implement SeventhFragmentActivityCommunicationInterface");
+//        }
+//    }
+//
+//    public interface SeventhFragmentActivityCommunicationInterface {
+//        public void onScoreComputed(ArrayList<Integer> graphScore);
+//    }
 
 }

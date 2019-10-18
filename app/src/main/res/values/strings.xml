@@ -77,6 +77,7 @@
     </string>
 
     <string name="ninth_activity_text">
+        <font fgcolor='blue'><b>Kostra grafu</b></font> G=(V,E) je strom T=(V,E´), který obsahuje všechny vrcholy grafu a E´ E, tj. acyklický a souvislý faktor grafu G.
     </string>
 
     <string name="example_text">

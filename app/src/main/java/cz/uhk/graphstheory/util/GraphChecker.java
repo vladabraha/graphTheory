@@ -731,14 +731,14 @@ public class GraphChecker {
                             //pokud najdu usecku, tkera muj bod spojuje s nejakym dalsim, hodim si ten dalsi bod do seznamu a odstranim usecku ze seznamu
                             if (customLinesAlreadyUsed.stream().noneMatch(m -> m.isLineSame(customLine))) { //tady ještě kontrola, že neprocházím tu úsečku,k která mě už dostala k tomuto bodu
                                 if (customLine.getFrom().equal(coordinateToExplore)) {
-                                    if (customLine.getTo().equal(coordinate) || customLine.getTo().equal(firstNode))
+                                    if (customLine.getTo().equal(coordinate))
                                         return false; //pokud jsem se dostal k bodu, co ma vic jak ty 2 hrany, tak jsem objevil kruznici a vracim false
                                     nodesOnStack.add(customLine.getTo());
                                     iterator.remove();
                                     found = true;
                                 } else if (customLine.getTo().equal(coordinateToExplore)) {
 
-                                    if (customLine.getFrom().equal(coordinate) || customLine.getFrom().equal(firstNode))
+                                    if (customLine.getFrom().equal(coordinate))
                                         return false; //pokud jsem se dostal k bodu, co ma vic jak ty 2 hrany, tak jsem objevil kruznici a vracim false
                                     nodesOnStack.add(customLine.getFrom());
                                     iterator.remove();
@@ -758,5 +758,27 @@ public class GraphChecker {
 
         } while (!nodesToCheck.isEmpty());
         return true;
+    }
+
+    //vzhledem k tomu, že definicí kostry grafu je to same co  stromu, tedy že neobsahuje kružnici a je spojitý, tedy má jednu komponentu, využijeme checker na strom
+    //akorát zkontrolujeme, že se jedná o stejně početný graf na nody, jaký byl vygenerován a přehodíme pro checker redlines na běžné customlines (edges)
+    public static String checkIfGraphIsSpanningTree(Map userGraph, Map generatedMap) {
+
+        //pokud je jiný počet nodů, než byl vygenerovaný, nebo neobsahuje o jedna menší počet červných linek než uzlů, vrať false
+
+        //TODO PŘIDAT CHECKER NA TO, JESTLI ČERVENÉ ČÁRY VEDOU PŘES BĚŽNÉ CUSTOMLINY
+        if (generatedMap.getCircles().size() != userGraph.getCircles().size() || generatedMap.getCustomLines().size() != userGraph.getCustomLines().size()) {
+            return "graf";
+        }else if (userGraph.getRedLineList().size() != userGraph.getCircles().size() - 1 ){
+            return "false";
+        }else {
+            Map mapForChecker = new Map(userGraph);
+            mapForChecker.setCustomLines(mapForChecker.getRedLineList());
+            mapForChecker.setRedCircles(new ArrayList<>());
+            if (checkIfGraphHasCertainAmountOfComponent(mapForChecker, 1)){
+                return "true";
+            }
+        }
+        return "false";
     }
 }

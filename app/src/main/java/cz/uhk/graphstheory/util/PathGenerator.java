@@ -129,10 +129,10 @@ public class PathGenerator {
     public static Map createHamiltonMapWithoutRedLines(int height, int width) {
         final int MAXIMUM_AMOUNT_OF_NODES = 9;
         final int MINIMUM_AMOUNT_OF_NODES = 4;
-        int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
-        if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES)
-            amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
-        ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, 15, amountOfEdges);
+        int amountOfNodes = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
+        if (amountOfNodes < MINIMUM_AMOUNT_OF_NODES)
+            amountOfNodes = MINIMUM_AMOUNT_OF_NODES;
+        ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, 15, amountOfNodes);
         ArrayList<CustomLine> lines = new ArrayList<>();
         ArrayList<CustomLine> redLines = new ArrayList<>();
         ArrayList<CustomLine> preGeneratedLines = GraphGenerator.generateRandomEdges(nodesToSet);

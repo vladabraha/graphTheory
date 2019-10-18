@@ -1,13 +1,15 @@
 package cz.uhk.graphstheory.ninth;
 
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -28,31 +30,28 @@ import cz.uhk.graphstheory.common.SecondaryTabLayoutFragment;
 import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
-import cz.uhk.graphstheory.eight.EightActivity;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
 import cz.uhk.graphstheory.model.Map;
-import cz.uhk.graphstheory.seventh.SeventhActivityFragment;
 import cz.uhk.graphstheory.util.GraphChecker;
 import cz.uhk.graphstheory.util.GraphGenerator;
-import cz.uhk.graphstheory.util.Util;
 
 public class NinthActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface,
-        DrawingFragment.CommunicationInterface, SecondaryTabLayoutFragment.SecondaryTableLayoutCommunicationInterface, SeventhActivityFragment.SeventhFragmentActivityCommunicationInterface {
+        DrawingFragment.CommunicationInterface, SecondaryTabLayoutFragment.SecondaryTableLayoutCommunicationInterface {
 
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
     private BottomNavigationView bottomNavigationView;
     private Fragment educationGraphFragment;
     private FloatingActionButton floatingActionButton;
-
     private DrawingFragmentListener drawingFragmentListener;
     private TabLayoutFragment tabLayoutFragment;
 
-    private ArrayList<Integer> graphScore = new ArrayList<>();
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    StringBuilder scoreText;
 
-    int height, width, amountOfNodes;
+    private Map generatedMap;
+
+
+    int height, width;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,15 +74,21 @@ public class NinthActivity extends AbstractActivity implements TabLayoutFragment
 
         drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         floatingActionButton.setOnClickListener(v -> {
-            boolean isValid = GraphChecker.checkIfGraphHasCorrectScore(drawingFragment.getUserGraph(), graphScore);
-            if (isValid) {
-                String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
-                assert userName != null;
-                Double receivedPoints = databaseConnector.recordUserPoints(userName, "seventh");
-                Toast.makeText(NinthActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
-                createDialog();
-            } else {
-                Toast.makeText(NinthActivity.this, "bohužel, to není správně, oprav se a zkus to znovu", Toast.LENGTH_LONG).show();
+            String isValid = GraphChecker.checkIfGraphIsSpanningTree(drawingFragment.getUserGraph(), generatedMap);
+            switch (isValid) {
+                case "true":
+                    String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
+                    assert userName != null;
+                    Double receivedPoints = databaseConnector.recordUserPoints(userName, "ninth");
+                    Toast.makeText(NinthActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
+                    createDialog();
+                    break;
+                case "false":
+                    Toast.makeText(NinthActivity.this, "bohužel, to není správně, oprav se a zkus to znovu", Toast.LENGTH_LONG).show();
+                    break;
+                case "graf":
+                    Toast.makeText(NinthActivity.this, "graf je jiný, než byl vygenerován, doplň graf do původní podoby, nebo si nech vygenerovat nový", Toast.LENGTH_LONG).show();
+                    break;
             }
         });
 
@@ -115,11 +120,6 @@ public class NinthActivity extends AbstractActivity implements TabLayoutFragment
                     case R.id.delete:
                         drawingFragment.changeDrawingMethod("remove");
                         return true;
-                    case R.id.clear:
-                        drawingFragment.changeDrawingMethod("clear");
-                        bottomNavigationView.setSelectedItemId(R.id.circle);
-                        drawingFragment.changeDrawingMethod("circle");
-                        return false; // return true if you want the item to be displayed as the selected item
                     default:
                         return false;
                 }
@@ -135,7 +135,7 @@ public class NinthActivity extends AbstractActivity implements TabLayoutFragment
     @Override
     protected ArrayList<String> getTabNames() {
         ArrayList<String> tabNames = new ArrayList<>();
-        tabNames.add("Skóre grafu");
+        tabNames.add("Kostra grafu");
         return tabNames;
     }
 
@@ -148,9 +148,8 @@ public class NinthActivity extends AbstractActivity implements TabLayoutFragment
     @Override
     protected void changeToEducationFragment() {
         super.changeToEducationFragment();
-        if (scoreText != null && scoreText.length() != 0) {
-            Toast.makeText(this, scoreText, Toast.LENGTH_LONG).show();
-        }
+        Toast.makeText(this, "Kostra grafu je v grafu zvýrazněna červenou čarou", Toast.LENGTH_LONG).show();
+
     }
 
     @Override
@@ -175,37 +174,29 @@ public class NinthActivity extends AbstractActivity implements TabLayoutFragment
 
     @Override
     public void onPositiveButtonClick() {
-        Intent newActivityIntent = new Intent(this, EightActivity.class);
-        newActivityIntent.putExtra("SESSION_ID", 8);
-        finish();
-        startActivity(newActivityIntent);
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setCancelable(false);
+        dialog.setTitle("Gratulujeme");
+        dialog.setMessage("Jste na konci, prošli jste všemi výukovými materiály, které tato aplikace zatím nabízí. Můžete se kdykoliv vrátit ");
+        dialog.setPositiveButton("Ano", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                generateNewSpanningTree(height, width);
+            }
+        });
     }
 
     @Override
     public void onNegativeButtonClick() {
-        amountOfNodes = getAmountOfNodesAndGenerateGraphScore();
-        Map map = new Map(new ArrayList<>(), GraphGenerator.generateNodes(height, width, 15, amountOfNodes));
-        drawingFragment.setUserGraph(map);
-        bottomNavigationView.setSelectedItemId(R.id.line);
-
-        StringBuilder text = new StringBuilder();
-        for (Integer score : graphScore) {
-            text.append(score.toString()).append(", ");
-        }
-        Toast.makeText(this, "Nakresli graf s tímto skórem " + text, Toast.LENGTH_LONG).show();
+        generateNewSpanningTree(height, width);
+        Toast.makeText(this, "Nakresli v zadaném grafu kostru ", Toast.LENGTH_LONG).show();
     }
+
 
     @Override
     protected void changeToDrawingFragment() {
         super.changeToDrawingFragment();
-
-        if (amountOfNodes == 0) getAmountOfNodesAndGenerateGraphScore();
-
-        StringBuilder text = new StringBuilder();
-        for (Integer score : graphScore) {
-            text.append(score.toString()).append(", ");
-        }
-        Toast.makeText(this, "Nakresli graf s tímto skórem " + text, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Nakresli v zadaném grafu kostru ", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -213,27 +204,23 @@ public class NinthActivity extends AbstractActivity implements TabLayoutFragment
         this.width = width;
         this.height = height;
 
-        if (amountOfNodes == 0) getAmountOfNodesAndGenerateGraphScore();
-        Map map = new Map(new ArrayList<>(), GraphGenerator.generateNodes(height, width, 15, amountOfNodes));
-        drawingFragment.setUserGraph(map);
-        bottomNavigationView.setSelectedItemId(R.id.line);
+        generateNewSpanningTree(height, width);
 
+        Menu menu = bottomNavigationView.getMenu();
+        menu.getItem(4).setTitle("");
 
     }
 
-    private int getAmountOfNodesAndGenerateGraphScore() {
-        amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
-        graphScore = Util.generateGraphScore(amountOfNodes);
-        return amountOfNodes;
-    }
+    private void generateNewSpanningTree(int height, int width) {
+        final int MAXIMUM_AMOUNT_OF_NODES = 9;
+        final int MINIMUM_AMOUNT_OF_NODES = 4;
+        int amountOfNodes = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
+        if (amountOfNodes < MINIMUM_AMOUNT_OF_NODES) amountOfNodes = MINIMUM_AMOUNT_OF_NODES;
 
-    @Override
-    public void onScoreComputed(ArrayList<Integer> graphScore) {
-        scoreText = new StringBuilder("Skóre grafu je ");
-        for (Integer integer : graphScore) {
-            scoreText.append(integer).append(" ");
-        }
-        Toast.makeText(this, scoreText, Toast.LENGTH_LONG).show();
+        Map mapToSet = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
+        generatedMap = new Map(mapToSet);
+        drawingFragment.setUserGraph(mapToSet);
+        bottomNavigationView.setSelectedItemId(R.id.path);
     }
 
     @Override
