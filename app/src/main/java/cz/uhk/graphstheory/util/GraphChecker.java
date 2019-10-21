@@ -760,13 +760,26 @@ public class GraphChecker {
         return true;
     }
 
+
+    /**
+     *  zjistí, zdali graf obsahuje kostru grafu
+     * @param userGraph uživatelem nakreselný graf
+     * @param generatedMap graf, který byl pro uživatele vygenerován
+     * @return graf - jinej graf, než byl vygenerován, false, červenou čarou není zvýrazněná kostra, true, červenou čarou je zvýrazněná kostra
+     */
     //vzhledem k tomu, že definicí kostry grafu je to same co  stromu, tedy že neobsahuje kružnici a je spojitý, tedy má jednu komponentu, využijeme checker na strom
     //akorát zkontrolujeme, že se jedná o stejně početný graf na nody, jaký byl vygenerován a přehodíme pro checker redlines na běžné customlines (edges)
     public static String checkIfGraphIsSpanningTree(Map userGraph, Map generatedMap) {
 
         //pokud je jiný počet nodů, než byl vygenerovaný, nebo neobsahuje o jedna menší počet červných linek než uzlů, vrať false
 
-        //TODO PŘIDAT CHECKER NA TO, JESTLI ČERVENÉ ČÁRY VEDOU PŘES BĚŽNÉ CUSTOMLINY
+       //kontrola, zdali kostra grafu prochází přes již existující čáry
+        ArrayList<CustomLine> redLineList = userGraph.getRedLineList(); //uživatelova kostra
+        ArrayList<CustomLine> customLines = userGraph.getCustomLines(); //uživatelovy čáry
+        for (CustomLine redLine : redLineList){
+            if (customLines.stream().noneMatch(m -> m.isLineSame(redLine))) return "cesta";
+        }
+
         if (generatedMap.getCircles().size() != userGraph.getCircles().size() || generatedMap.getCustomLines().size() != userGraph.getCustomLines().size()) {
             return "graf";
         }else if (userGraph.getRedLineList().size() != userGraph.getCircles().size() - 1 ){

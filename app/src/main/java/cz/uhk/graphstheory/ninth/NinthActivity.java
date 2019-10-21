@@ -89,6 +89,9 @@ public class NinthActivity extends AbstractActivity implements TabLayoutFragment
                 case "graf":
                     Toast.makeText(NinthActivity.this, "graf je jiný, než byl vygenerován, doplň graf do původní podoby, nebo si nech vygenerovat nový", Toast.LENGTH_LONG).show();
                     break;
+                case "cesta":
+                    Toast.makeText(NinthActivity.this, "kostra je vedená minimálně v jednom úseku přes neexistující hranu v původním grafu", Toast.LENGTH_LONG).show();
+                    break;
             }
         });
 
@@ -207,8 +210,8 @@ public class NinthActivity extends AbstractActivity implements TabLayoutFragment
         generateNewSpanningTree(height, width);
 
         Menu menu = bottomNavigationView.getMenu();
+        menu.getItem(2).setTitle("kostra");
         menu.getItem(4).setTitle("");
-
     }
 
     private void generateNewSpanningTree(int height, int width) {
