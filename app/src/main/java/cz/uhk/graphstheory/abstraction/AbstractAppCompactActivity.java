@@ -1,6 +1,8 @@
 package cz.uhk.graphstheory.abstraction;
 
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
@@ -24,6 +26,26 @@ import cz.uhk.graphstheory.third.ThirdActivity;
 
 public abstract class AbstractAppCompactActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    //tohle slouží ke znovu otevření současné aktivity při otočení displaye, tím se předejde chybám, ke kterým dochází při otočení displaye
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        int orientation = newConfig.orientation;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT){
+            Log.d("tag", "Portrait");
+            finish();
+            startActivity(getIntent());
+        }
+
+        else if (orientation == Configuration.ORIENTATION_LANDSCAPE){
+            Log.d("tag", "Landscape");
+            finish();
+            startActivity(getIntent());
+        }
+        else
+            Log.w("tag", "other: " + orientation);
+    }
 
     //this code implements all activities except the first one
     @Override

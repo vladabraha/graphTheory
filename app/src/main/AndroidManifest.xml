@@ -15,53 +15,64 @@
         <activity
             android:name=".statistics.StatisticsActivity"
             android:noHistory="true"
+            android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:theme="@style/AppTheme.NoActionBar">
-
         </activity>
 
         <activity android:name=".login.FractionActivity" />
+
         <activity
             android:name=".login.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".first.GraphGeneratorActivity"
+            android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:theme="@style/AppTheme.NoActionBar" />
+            <!--  configChanges da vedet o tom, ze se zmenila rotace obrazovky          -->
         <activity
             android:name=".second.SecondActivity"
+            android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".third.ThirdActivity"
+            android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".fourth.FourthActivity"
+            android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".fifth.FifthActivity"
+            android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".sixth.SixthActivity"
+            android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".seventh.SeventhActivity"
+            android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".eight.EightActivity"
+            android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ninth.NinthActivity"
+            android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

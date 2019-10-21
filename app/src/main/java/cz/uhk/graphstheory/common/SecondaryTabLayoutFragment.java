@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.tabs.TabLayout;
@@ -40,7 +41,7 @@ public class SecondaryTabLayoutFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_secondary_tab_layout, container, false);
         tabLayout =  view.findViewById(R.id.secondaryTabLayout);
 
-        if (Objects.requireNonNull(!tabName.isEmpty())){
+        if (tabName != null && (!tabName.isEmpty())){
             for (String text : tabName){
                 tabLayout.addTab(tabLayout.newTab().setText(text));
                 TabLayout.Tab tab = tabLayout.getTabAt(0);
@@ -80,7 +81,7 @@ public class SecondaryTabLayoutFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
         try {
