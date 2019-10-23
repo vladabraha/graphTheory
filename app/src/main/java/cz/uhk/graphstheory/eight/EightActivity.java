@@ -84,7 +84,9 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
                 Toast.makeText(EightActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
                 createDialog();
             } else {
-                Toast.makeText(EightActivity.this, "bohužel, to není správně, oprav se a zkus to znovu", Toast.LENGTH_LONG).show();
+                for (int i = 0; i < 2; i++){
+                    Toast.makeText(EightActivity.this, "bohužel, to není správně, oprav se a zkus to znovu", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -184,9 +186,13 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
             generateNewMessageWithNewAmountOfComponent();
         }else {
             if (amountOfComponent == 1 ){
-                Toast.makeText(this, "Nakresli les s jednou komponentou", Toast.LENGTH_LONG).show();
+                for (int i = 0; i < 2; i++){
+                    Toast.makeText(this, "Nakresli les s jednou komponentou", Toast.LENGTH_LONG).show();
+                }
             }else {
-                Toast.makeText(this, "Nakresli les s " + amountOfComponent + " komponentami", Toast.LENGTH_LONG).show();
+                for (int i = 0; i < 2; i++){
+                    Toast.makeText(this, "Nakresli les s " + amountOfComponent + " komponentami", Toast.LENGTH_LONG).show();
+                }
             }
         }
     }
@@ -196,9 +202,13 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
         amountOfComponent = ran.nextInt(3);
         if (amountOfComponent == 0) amountOfComponent++;
         if (amountOfComponent == 1 ){
-            Toast.makeText(this, "Nakresli les s jednou komponentou", Toast.LENGTH_LONG).show();
+            for (int i = 0; i < 2; i++){
+                Toast.makeText(this, "Nakresli les s jednou komponentou", Toast.LENGTH_LONG).show();
+            }
         }else {
-            Toast.makeText(this, "Nakresli les s " + amountOfComponent + " komponentami", Toast.LENGTH_LONG).show();
+            for (int i = 0; i < 2; i++){
+                Toast.makeText(this, "Nakresli les s " + amountOfComponent + " komponentami", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -228,11 +238,15 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
     public void secondaryTableLayoutSelectedChange(int number) {
         switch (number) {
             case 0:
-                Toast.makeText(this, "Teď si ukážeme strom", Toast.LENGTH_LONG).show();
+                for (int i = 0; i < 2; i++){
+                    Toast.makeText(this, "Teď si ukážeme strom", Toast.LENGTH_LONG).show();
+                }
                 eightActivityFragment.changeGraph("tree");
                 break;
             case 1:
-                Toast.makeText(this, "Teď si ukážeme les", Toast.LENGTH_LONG).show();
+                for (int i = 0; i < 2; i++){
+                    Toast.makeText(this, "Teď si ukážeme les", Toast.LENGTH_LONG).show();
+                }
                 eightActivityFragment.changeGraph("forrest");
                 break;
         }

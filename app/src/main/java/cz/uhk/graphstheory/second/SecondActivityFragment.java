@@ -15,8 +15,6 @@ import cz.uhk.graphstheory.util.SpecificGraphGenerator;
 
 public class SecondActivityFragment extends AbstractFragment {
 
-    private boolean disableListener = false;
-
     private int width;
     private int height;
 
@@ -36,13 +34,14 @@ public class SecondActivityFragment extends AbstractFragment {
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        setShouldPreserveMap(false); // nebude ukládat vygenerovaný graf při překliku na další tab
         super.onViewCreated(view, savedInstanceState);
         generatedMapViewModel = getGeneratedMapViewModel();
 
         view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                if (!disableListener) {
+                if (isDisabledListener()) {
                     width = view.getMeasuredWidth();
                     height = view.getMeasuredHeight();
                     if (width != 0) {
@@ -59,7 +58,7 @@ public class SecondActivityFragment extends AbstractFragment {
                                 break;
                         }
                     }
-                    disableListener = true;
+                    setDisableListener(true);
                 }
             }
         });
@@ -79,7 +78,7 @@ public class SecondActivityFragment extends AbstractFragment {
 
     public void changeGraph(String type) {
         this.type = type; //toto se prohodi pri nacteni
-        disableListener = false;
+        setDisableListener(false);
         switch (type) {
             case "artikulace":
                 createArticulation();

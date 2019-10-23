@@ -83,7 +83,9 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
                 drawingFragment.changeDrawingMethod("clear");
                 createDialog();
             } else {
-                Toast.makeText(ThirdActivity.this, "To není správně, změň graf a zkus to znovu", Toast.LENGTH_LONG).show();
+                for (int i = 0; i < 2; i++){
+                    Toast.makeText(ThirdActivity.this, "To není správně, změň graf a zkus to znovu", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -118,7 +120,9 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
     protected void changeToDrawingFragment() {
         super.changeToDrawingFragment();
         if (isAttached) drawingFragment.changeDrawingMethod("path");
-        Toast.makeText(this, "Nakresli doplněk grafu", Toast.LENGTH_LONG).show();
+        for (int i = 0; i < 2; i++){
+            Toast.makeText(this, "Nakresli doplněk grafu", Toast.LENGTH_LONG).show();
+        }
 
         //zmeni text bottomNavigationView
         Menu menu = bottomNavigationView.getMenu();
@@ -135,7 +139,9 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
     @Override
     protected void changeToEducationFragment() {
         super.changeToEducationFragment();
-        Toast.makeText(this, "Červenou čarou je vidět ukázka doplňku grafu", Toast.LENGTH_LONG).show();
+        for (int i = 0; i < 2; i++){
+            Toast.makeText(this, "Červenou čarou je vidět ukázka doplňku grafu", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

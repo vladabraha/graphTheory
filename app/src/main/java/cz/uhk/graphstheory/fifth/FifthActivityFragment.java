@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import cz.uhk.graphstheory.abstraction.AbstractFragment;
 import cz.uhk.graphstheory.model.Coordinate;
@@ -18,11 +17,8 @@ import cz.uhk.graphstheory.util.GraphGenerator;
 
 public class FifthActivityFragment extends AbstractFragment {
 
-    private boolean disableListener = false;
-
     private int width;
     private int height;
-
 
     private static final int MAXIMUM_AMOUNT_OF_NODES = 12;
     private static final int MINIMUM_AMOUNT_OF_NODES = 5;
@@ -40,7 +36,7 @@ public class FifthActivityFragment extends AbstractFragment {
         view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                if (!disableListener) {
+                if (isDisabledListener()) {
                     width = view.getMeasuredWidth();
                     height = view.getMeasuredHeight();
                     if (width != 0) {
@@ -74,7 +70,7 @@ public class FifthActivityFragment extends AbstractFragment {
                         Map mapToSet = new Map(bipartite, nodesToSet);
                         getGraphGeneratedView().setMap(mapToSet);
                     }
-                    disableListener = true;
+                    setDisableListener(true);
                 }
             }
         });

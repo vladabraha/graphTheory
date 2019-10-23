@@ -146,6 +146,7 @@ public abstract class AbstractActivity extends AbstractAppCompactActivity implem
             }, 5000);
 
         } else if (fragmentManager.getFragments().contains(educationFragment)) {
+
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.remove(educationFragment);
             fragmentTransaction.remove(secondaryLayoutFragment);

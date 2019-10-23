@@ -209,10 +209,14 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
         super.changeToEducationFragment();
         switch (getDisplayedActivity()) {
             case "euleruv":
-                Toast.makeText(this, "Teď si ukážeme euleruv tah v grafu", Toast.LENGTH_LONG).show();
+                for (int i = 0; i < 2; i++){
+                    Toast.makeText(this, "Teď si ukážeme euleruv tah v grafu", Toast.LENGTH_LONG).show();
+                }
                 break;
             case "hamiltonovsky":
-                Toast.makeText(this, "Teď si ukážeme hamiltonovskou kruznici v grafu", Toast.LENGTH_LONG).show();
+                for (int i = 0; i < 2; i++){
+                    Toast.makeText(this, "Teď si ukážeme hamiltonovskou kruznici v grafu", Toast.LENGTH_LONG).show();
+                }
                 break;
         }
     }
@@ -227,9 +231,13 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         int displayedActivity = sharedPref.getInt("displayedActivity-sixth", 0);
         if (displayedActivity == 0) {
-            Toast.makeText(this, "Vyznač v grafu hamiltonovskou kružnici", Toast.LENGTH_LONG).show();
+            for (int i = 0; i < 2; i++){
+                Toast.makeText(this, "Vyznač v grafu hamiltonovskou kružnici", Toast.LENGTH_LONG).show();
+            }
         } else {
-            Toast.makeText(this, "Vyznač v grafu eulerův tah, postupně jak jde za sebou", Toast.LENGTH_LONG).show();
+            for (int i = 0; i < 2; i++){
+                Toast.makeText(this, "Vyznač v grafu eulerův tah, postupně jak jde za sebou", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -311,11 +319,15 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
     public void secondaryTableLayoutSelectedChange(int number) {
         switch (number) {
             case 0:
-                Toast.makeText(this, "Teď si ukážeme hamiltonovskou kružnici v grafu", Toast.LENGTH_LONG).show();
+                for (int i = 0; i < 2; i++){
+                    Toast.makeText(this, "Teď si ukážeme hamiltonovskou kružnici v grafu", Toast.LENGTH_LONG).show();
+                }
                 sixthActivityFragment.changeGraph("hamiltonovsky");
                 break;
             case 1:
-                Toast.makeText(this, "Teď si ukážeme eulerův tah v grafu", Toast.LENGTH_LONG).show();
+                for (int i = 0; i < 2; i++){
+                    Toast.makeText(this, "Teď si ukážeme eulerův tah v grafu", Toast.LENGTH_LONG).show();
+                }
                 sixthActivityFragment.changeGraph("euleruv");
                 break;
         }

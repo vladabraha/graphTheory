@@ -28,7 +28,7 @@ public class FourthActivityFragment extends AbstractFragment {
     private Map firstMapToSet;
     private boolean setFirst;
     private Map secondMapToSet;
-    private boolean shouldStop, disableListener = false;
+    private boolean shouldStop = false;
     private GraphGeneratedView graphGeneratedView;
     public int BRUSH_SIZE;
 
@@ -46,7 +46,7 @@ public class FourthActivityFragment extends AbstractFragment {
         view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                if (!disableListener) {
+                if (isDisabledListener()) {
                     width = view.getMeasuredWidth();
                     height = view.getMeasuredHeight();
                     if (width != 0) {
@@ -102,7 +102,7 @@ public class FourthActivityFragment extends AbstractFragment {
                         graphGeneratedView.setMap(firstMapToSet);
 
                     }
-                    disableListener = true;
+                    setDisableListener(true);
                 }
             }
         });

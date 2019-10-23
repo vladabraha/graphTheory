@@ -121,14 +121,18 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
                 case 1:
                     boolean isValid = GraphChecker.checkIfGraphIsBipartite(drawingFragment.getUserGraph());
                     if (isValid) {
-                        Toast.makeText(FifthActivity.this, "výborně, můžeš zkusit další, nebo jít dál", Toast.LENGTH_LONG).show();
+                        for (int i = 0; i < 2; i++){
+                            Toast.makeText(FifthActivity.this, "výborně, můžeš zkusit další, nebo jít dál", Toast.LENGTH_LONG).show();
+                        }
                         String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
                         assert userName != null;
                         databaseConnector.recordUserPoints(userName, "fifth-second");
                         drawingFragment.changeDrawingMethod("clear"); //toto vymaže, co uživatel nakreslil, aby nebouchal jenom check, check...
                         changeActivity();
                     } else {
-                        Toast.makeText(FifthActivity.this, "bohužel, to není správně", Toast.LENGTH_LONG).show();
+                        for (int i = 0; i < 2; i++){
+                            Toast.makeText(FifthActivity.this, "bohužel, to není správně", Toast.LENGTH_LONG).show();
+                        }
                     }
                     break;
             }
@@ -176,7 +180,9 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
     }
 
     private void showMessage(String text) {
-        Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+        for (int i = 0; i < 2; i++){
+            Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -210,7 +216,9 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
     @Override
     protected void changeToEducationFragment() {
         super.changeToEducationFragment();
-        Toast.makeText(this, "Poskládej si graf, abys viděl bipartitní graf", Toast.LENGTH_LONG).show();
+        for (int i = 0; i < 2; i++){
+            Toast.makeText(this, "Poskládej si graf, abys viděl bipartitní graf", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -218,10 +226,14 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
         super.changeToDrawingFragment();
         switch (getCurrentActivity()){
             case 0:
-                Toast.makeText(this, "Rozhodni, zda se se jedná o vygenerovaný bipartitní graf", Toast.LENGTH_LONG).show();
+                for (int i = 0; i < 2; i++){
+                    Toast.makeText(this, "Rozhodni, zda se se jedná o vygenerovaný bipartitní graf", Toast.LENGTH_LONG).show();
+                }
                 break;
             case 1 :
-                Toast.makeText(this, "Nakresli bipartitní graf", Toast.LENGTH_LONG).show();
+                for (int i = 0; i < 2; i++){
+                    Toast.makeText(this, "Nakresli bipartitní graf", Toast.LENGTH_LONG).show();
+                }
                 break;
         }
 

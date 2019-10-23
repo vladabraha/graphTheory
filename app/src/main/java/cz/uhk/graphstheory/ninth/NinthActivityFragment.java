@@ -17,8 +17,6 @@ import cz.uhk.graphstheory.util.GraphGenerator;
 
 public class NinthActivityFragment extends AbstractFragment {
 
-    private boolean disableListener = false;
-
     private int width;
     private int height;
 
@@ -38,14 +36,14 @@ public class NinthActivityFragment extends AbstractFragment {
         view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                if (!disableListener) {
+                if (isDisabledListener()) {
                     width = view.getMeasuredWidth();
                     height = view.getMeasuredHeight();
                     if (width != 0) {
                         getGraphGeneratedView().setMap(generateSpanningTree());
 
                     }
-                    disableListener = true;
+                    setDisableListener(true);
                 }
             }
         });

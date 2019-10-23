@@ -98,10 +98,14 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
                                 createDialog();
                                 break;
                             case "false":
-                                Toast.makeText(SecondActivity.this, "Jejda, špatně, mkrni na to ještě jednou. Ujisti se také, že je graf spojitý", Toast.LENGTH_LONG).show();
+                                for (int i = 0; i < 2; i++) {
+                                    Toast.makeText(SecondActivity.this, "Jejda, špatně, mkrni na to ještě jednou. Ujisti se také, že je graf spojitý", Toast.LENGTH_LONG).show();
+                                }
                                 break;
                             case "chybi ohraniceni cervenou carou":
-                                Toast.makeText(SecondActivity.this, "Zapomněl jsi označit most červenou čarou", Toast.LENGTH_LONG).show();
+                                for (int i = 0; i < 2; i++) {
+                                    Toast.makeText(SecondActivity.this, "Zapomněl jsi označit most červenou čarou", Toast.LENGTH_LONG).show();
+                                }
                                 break;
                         }
                         break;
@@ -118,10 +122,14 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
                                 createDialog();
                                 break;
                             case "false":
-                                Toast.makeText(SecondActivity.this, "Jejda, špatně, mkrni na to ještě jednou. Ujisti se také, že je graf spojitý", Toast.LENGTH_LONG).show();
+                                for (int i = 0; i < 2; i++){
+                                    Toast.makeText(SecondActivity.this, "Jejda, špatně, mkrni na to ještě jednou. Ujisti se také, že je graf spojitý", Toast.LENGTH_LONG).show();
+                                }
                                 break;
                             case "chyba v poctu cervenych bodu":
-                                Toast.makeText(SecondActivity.this, "Špatně jsi označil artikulaci, má být označena 1 červeným bodem", Toast.LENGTH_LONG).show();
+                                for (int i = 0; i < 2; i++){
+                                    Toast.makeText(SecondActivity.this, "Špatně jsi označil artikulaci, má být označena 1 červeným bodem", Toast.LENGTH_LONG).show();
+                                }
                                 break;
                         }
                         break;
@@ -224,7 +232,9 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
     @Override
     protected void changeToEducationFragment() {
         super.changeToEducationFragment();
-        Toast.makeText(this, "Teď si ukážeme most v grafu", Toast.LENGTH_LONG).show();
+        for (int i = 0; i < 2; i++) {
+            Toast.makeText(this, "Teď si ukážeme most v grafu", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -248,9 +258,13 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         int displayedActivity = sharedPref.getInt("displayedActivity-second", 0);
         if (displayedActivity == 0) {
-            Toast.makeText(this, "Vyznač v grafu most (červenou čarou)", Toast.LENGTH_LONG).show();
+            for (int i = 0; i < 2; i++) {
+                Toast.makeText(this, "Vyznač v grafu most (červenou čarou)", Toast.LENGTH_LONG).show();
+            }
         } else {
-            Toast.makeText(this, "Vyznač v grafu artikulaci (klepnutím na uzel)", Toast.LENGTH_LONG).show();
+            for (int i = 0; i < 2; i++) {
+                Toast.makeText(this, "Vyznač v grafu artikulaci (klepnutím na uzel)", Toast.LENGTH_LONG).show();
+            }
         }
         return displayedActivity;
     }
@@ -349,11 +363,15 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
     public void secondaryTableLayoutSelectedChange(int number) {
         switch (number) {
             case 0:
-                Toast.makeText(this, "Teď si ukážeme most v grafu", Toast.LENGTH_LONG).show();
+                for (int i = 0; i < 2; i++) {
+                    Toast.makeText(this, "Teď si ukážeme most v grafu", Toast.LENGTH_LONG).show();
+                }
                 secondActivityFragment.changeGraph("most");
                 break;
             case 1:
-                Toast.makeText(this, "Teď si ukážeme artikulaci v grafu", Toast.LENGTH_LONG).show();
+                for (int i = 0; i < 2; i++) {
+                    Toast.makeText(this, "Teď si ukážeme artikulaci v grafu", Toast.LENGTH_LONG).show();
+                }
                 secondActivityFragment.changeGraph("artikulace");
                 break;
         }

@@ -157,13 +157,17 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
     @Override
     protected void changeToEducationFragment() {
         super.changeToEducationFragment();
-        Toast.makeText(this, "Ukázka izomorfních grafů", Toast.LENGTH_LONG).show();
+        for (int i = 0; i < 2; i++){
+            Toast.makeText(this, "Ukázka izomorfních grafů", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
     protected void changeToDrawingFragment() {
         super.changeToDrawingFragment();
-        Toast.makeText(this, "Rozhodni, zdali se jedna o izomorfni grafy", Toast.LENGTH_LONG).show();
+        for (int i = 0; i < 2; i++){
+            Toast.makeText(this, "Rozhodni, zdali se jedna o izomorfni grafy", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -318,7 +322,9 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
     }
 
     private void showMessage(String text) {
-        Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+        for (int i = 0; i < 2; i++){
+            Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

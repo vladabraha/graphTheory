@@ -84,13 +84,19 @@ public class NinthActivity extends AbstractActivity implements TabLayoutFragment
                     createDialog();
                     break;
                 case "false":
-                    Toast.makeText(NinthActivity.this, "bohužel, to není správně, oprav se a zkus to znovu", Toast.LENGTH_LONG).show();
+                    for (int i = 0; i < 2; i++){
+                        Toast.makeText(NinthActivity.this, "bohužel, to není správně, oprav se a zkus to znovu", Toast.LENGTH_LONG).show();
+                    }
                     break;
                 case "graf":
-                    Toast.makeText(NinthActivity.this, "graf je jiný, než byl vygenerován, doplň graf do původní podoby, nebo si nech vygenerovat nový", Toast.LENGTH_LONG).show();
+                    for (int i = 0; i < 2; i++){
+                        Toast.makeText(NinthActivity.this, "graf je jiný, než byl vygenerován, doplň graf do původní podoby, nebo si nech vygenerovat nový", Toast.LENGTH_LONG).show();
+                    }
                     break;
                 case "cesta":
-                    Toast.makeText(NinthActivity.this, "kostra je vedená minimálně v jednom úseku přes neexistující hranu v původním grafu", Toast.LENGTH_LONG).show();
+                    for (int i = 0; i < 2; i++){
+                        Toast.makeText(NinthActivity.this, "kostra je vedená minimálně v jednom úseku přes neexistující hranu v původním grafu", Toast.LENGTH_LONG).show();
+                    }
                     break;
             }
         });
@@ -151,7 +157,9 @@ public class NinthActivity extends AbstractActivity implements TabLayoutFragment
     @Override
     protected void changeToEducationFragment() {
         super.changeToEducationFragment();
-        Toast.makeText(this, "Kostra grafu je v grafu zvýrazněna červenou čarou", Toast.LENGTH_LONG).show();
+        for (int i = 0; i < 2; i++){
+            Toast.makeText(this, "Kostra grafu je v grafu zvýrazněna červenou čarou", Toast.LENGTH_LONG).show();
+        }
 
     }
 
@@ -192,14 +200,18 @@ public class NinthActivity extends AbstractActivity implements TabLayoutFragment
     @Override
     public void onNegativeButtonClick() {
         generateNewSpanningTree(height, width);
-        Toast.makeText(this, "Nakresli v zadaném grafu kostru ", Toast.LENGTH_LONG).show();
+        for (int i = 0; i < 2; i++){
+            Toast.makeText(this, "Nakresli v zadaném grafu kostru ", Toast.LENGTH_LONG).show();
+        }
     }
 
 
     @Override
     protected void changeToDrawingFragment() {
         super.changeToDrawingFragment();
-        Toast.makeText(this, "Nakresli v zadaném grafu kostru ", Toast.LENGTH_LONG).show();
+        for (int i = 0; i < 2; i++){
+            Toast.makeText(this, "Nakresli v zadaném grafu kostru ", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

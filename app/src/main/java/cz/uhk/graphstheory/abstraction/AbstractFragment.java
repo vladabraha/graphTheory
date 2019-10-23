@@ -23,6 +23,11 @@ public abstract class AbstractFragment extends Fragment {
 
     private GraphGeneratedView graphGeneratedView;
     private GeneratedMapViewModel generatedMapViewModel;
+    private boolean shouldPreserveMap = true;
+
+
+
+    private boolean disableListener = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,7 +50,7 @@ public abstract class AbstractFragment extends Fragment {
         DisplayMetrics metrics = new DisplayMetrics();
         Objects.requireNonNull(getActivity()).getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
         graphGeneratedView.init(metrics);
-        if (generatedMapViewModel.getMap() != null) {
+        if (generatedMapViewModel.getMap() != null && shouldPreserveMap) {
             graphGeneratedView.setMap(generatedMapViewModel.getMap());
         }
 
@@ -80,5 +85,20 @@ public abstract class AbstractFragment extends Fragment {
         return generatedMapViewModel;
     }
 
+    public void setGeneratedMapViewModel(GeneratedMapViewModel generatedMapViewModel) {
+        this.generatedMapViewModel = generatedMapViewModel;
+    }
 
+    public void setShouldPreserveMap(boolean shouldPreserveMap) {
+        disableListener = true;
+        this.shouldPreserveMap = shouldPreserveMap;
+    }
+
+    public void setDisableListener(boolean disableListener) {
+        this.disableListener = disableListener;
+    }
+
+    public boolean isDisabledListener() {
+        return disableListener;
+    }
 }
