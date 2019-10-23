@@ -53,7 +53,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
     String type;
     int height, width;
 
-    boolean userFinishedPreviousTask;
+    boolean userFinishedPreviousTask, viewCreated;
 
     DatabaseConnector databaseConnector;
 
@@ -224,6 +224,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
     @Override
     protected void changeToEducationFragment() {
         super.changeToEducationFragment();
+        if (viewCreated) secondActivityFragment.changeGraph("most");
         Toast.makeText(this, "Teď si ukážeme most v grafu", Toast.LENGTH_LONG).show();
     }
 
@@ -316,6 +317,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
             map.setRedCircles(new ArrayList<>());
         }
         drawingFragment.setUserGraph(map);
+        viewCreated = true;
     }
 
     @Override

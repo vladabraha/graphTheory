@@ -39,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.password);
         nickNameEditText = findViewById(R.id.nickname);
 
-       databaseConnector = new DatabaseConnector();
+        databaseConnector = new DatabaseConnector();
 
         loginButton.setOnClickListener((View v) -> {
             String email = emailEditText.getText().toString();
@@ -66,20 +66,29 @@ public class LoginActivity extends AppCompatActivity {
             String nickName = nickNameEditText.getText().toString();
             String email = emailEditText.getText().toString();
 
-            if (password.length() < 6) {
-                Toast.makeText(LoginActivity.this, "Heslo musí mít alespoň 6 znaků", Toast.LENGTH_SHORT).show();
-            } else if(!databaseConnector.emailAvailable(nickName)) {
-                Toast.makeText(LoginActivity.this, "Tato přezdívka je již zabraná", Toast.LENGTH_SHORT).show();
-            }else if (!email.contains("@") || !email.contains(".")){
-                Toast.makeText(LoginActivity.this, "Zadaný email není ve validním formátu", Toast.LENGTH_SHORT).show();
-            } else {
+            if (isAccountValid(password, nickName, email)) {
                 Intent fractionIntent = new Intent(this, FractionActivity.class);
                 startActivityForResult(fractionIntent, 1);
             }
         });
     }
 
-    private void registerUser(String email,String password, String selectedTeam) {
+    private boolean isAccountValid(String password, String nickName, String email) {
+        if (password.length() < 6) {
+            Toast.makeText(LoginActivity.this, "Heslo musí mít alespoň 6 znaků", Toast.LENGTH_SHORT).show();
+        } else if (!databaseConnector.emailAvailable(nickName)) {
+            Toast.makeText(LoginActivity.this, "Tato přezdívka je již zabraná", Toast.LENGTH_SHORT).show();
+        } else if (!email.contains("@") || !email.contains(".")) {
+            Toast.makeText(LoginActivity.this, "Zadaný email není ve validním formátu", Toast.LENGTH_SHORT).show();
+        } else if (email.length() > 25 && nickName.length() > 25) {
+            Toast.makeText(LoginActivity.this, "Zadaný email, nebo přezdívka má moc znaků", Toast.LENGTH_SHORT).show();
+        } else {
+            return true;
+        }
+        return false;
+    }
+
+    private void registerUser(String email, String password, String selectedTeam) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
@@ -98,7 +107,7 @@ public class LoginActivity extends AppCompatActivity {
     private void createUserAndStartActivity(String selectedTeam) {
         FirebaseUser user = mAuth.getCurrentUser();
 
-        databaseConnector.createUserAccount(Objects.requireNonNull(user).getUid(),nickNameEditText.getText().toString(), Objects.requireNonNull(user.getEmail()),  selectedTeam);
+        databaseConnector.createUserAccount(Objects.requireNonNull(user).getUid(), nickNameEditText.getText().toString(), Objects.requireNonNull(user.getEmail()), selectedTeam);
 
         Intent mainIntent = new Intent(this, GraphGeneratorActivity.class);
         startActivity(mainIntent);
@@ -117,7 +126,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
             if (resultCode == Activity.RESULT_OK) {
                 String email = emailEditText.getText().toString();
@@ -130,7 +139,7 @@ public class LoginActivity extends AppCompatActivity {
                 //Write your code if there's no result
                 Toast.makeText(LoginActivity.this, "Registrace byla zrušena", Toast.LENGTH_SHORT).show();
             }
-        }else {
+        } else {
             finish();
         }
     }

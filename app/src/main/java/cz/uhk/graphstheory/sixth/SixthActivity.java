@@ -48,6 +48,7 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
     private DrawingFragmentListener drawingFragmentListener;
     String type;
     int height, width;
+    private boolean isViewCreated;
 
     DatabaseConnector databaseConnector;
 
@@ -215,6 +216,7 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
                 Toast.makeText(this, "Teď si ukážeme hamiltonovskou kruznici v grafu", Toast.LENGTH_LONG).show();
                 break;
         }
+        if (isViewCreated) sixthActivityFragment.changeGraph("hamiltonovsky");
     }
 
     @Override
@@ -272,6 +274,7 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
         Menu menu = bottomNavigationView.getMenu();
         menu.getItem(2).setTitle("označ");
         drawingFragment.changeDrawingMethod("path");
+        isViewCreated = true;
     }
 
     private void setGraphAccordingCurrentActivity(int width, int height) {

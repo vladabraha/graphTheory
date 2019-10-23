@@ -59,6 +59,7 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
     private DatabaseConnector databaseConnector;
     TextView navigationDrawerName, navigationDrawerEmail;
     int height, width, length;
+    boolean isViewCreated = false;
 
 
     @Override
@@ -361,6 +362,7 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
                 menu.getItem(2).setTitle("kružnice");
                 break;
         }
+        if (isViewCreated) setMapToDrawingFragment(width, height);
     }
 
 
@@ -418,6 +420,11 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
     public void sentMetrics(int width, int height) {
         this.width = width;
         this.height = height;
+        setMapToDrawingFragment(width, height);
+        isViewCreated = true;
+    }
+
+    private void setMapToDrawingFragment(int width, int height) {
         int amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
         Map map = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
         drawingFragment.setUserGraph(map);
