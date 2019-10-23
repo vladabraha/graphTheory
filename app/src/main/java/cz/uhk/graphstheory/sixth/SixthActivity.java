@@ -184,7 +184,7 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
     protected ArrayList<String> getTabNames() {
         ArrayList<String> tabNames = new ArrayList<>();
         tabNames.add("Hamiltonovská kružnice");
-        tabNames.add("Euleruv tah");
+        tabNames.add("Eulerův tah");
         return tabNames;
     }
 

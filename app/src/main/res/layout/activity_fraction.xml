@@ -13,22 +13,19 @@
 
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="125dp"
-        android:layout_height="33dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="128dp"
-        android:layout_marginBottom="8dp"
+        android:layout_width="129dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="144dp"
         android:text="@string/chooseYourTeam"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.042" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/editTeamName"
-        android:layout_width="156dp"
-        android:layout_height="50dp"
+        android:layout_width="151dp"
+        android:layout_height="41dp"
         android:layout_marginTop="136dp"
         android:hint="@string/insert_team_name"
         android:inputType="text"
@@ -43,16 +40,13 @@
         android:id="@+id/btnEnterTeam"
         android:layout_width="318dp"
         android:layout_height="49dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="316dp"
+        android:layout_marginTop="296dp"
         android:text="@string/enter_team"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.389"
+        app:layout_constraintHorizontal_bias="0.462"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fractionChooserDescription" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/fractionChooserDescription"

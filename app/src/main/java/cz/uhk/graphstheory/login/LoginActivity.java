@@ -23,9 +23,7 @@ import cz.uhk.graphstheory.first.GraphGeneratorActivity;
 public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private EditText usernameEditText;
-    private EditText passwordEditText;
-    private EditText nickNameEditText;
+    private EditText emailEditText, passwordEditText, nickNameEditText;
     private DatabaseConnector databaseConnector;
 
 
@@ -37,14 +35,14 @@ public class LoginActivity extends AppCompatActivity {
         final Button loginButton = findViewById(R.id.login);
         final Button signUpButton = findViewById(R.id.sign_up);
 
-        usernameEditText = findViewById(R.id.username);
+        emailEditText = findViewById(R.id.email);
         passwordEditText = findViewById(R.id.password);
         nickNameEditText = findViewById(R.id.nickname);
 
        databaseConnector = new DatabaseConnector();
 
         loginButton.setOnClickListener((View v) -> {
-            String email = usernameEditText.getText().toString();
+            String email = emailEditText.getText().toString();
             String password = passwordEditText.getText().toString();
 
             mAuth.signInWithEmailAndPassword(email, password)
@@ -66,11 +64,14 @@ public class LoginActivity extends AppCompatActivity {
         signUpButton.setOnClickListener((View v) -> {
             String password = passwordEditText.getText().toString();
             String nickName = nickNameEditText.getText().toString();
+            String email = emailEditText.getText().toString();
 
             if (password.length() < 6) {
                 Toast.makeText(LoginActivity.this, "Heslo musí mít alespoň 6 znaků", Toast.LENGTH_SHORT).show();
-            } else if(!databaseConnector.emailAvailable(nickName)){
+            } else if(!databaseConnector.emailAvailable(nickName)) {
                 Toast.makeText(LoginActivity.this, "Tato přezdívka je již zabraná", Toast.LENGTH_SHORT).show();
+            }else if (!email.contains("@") || !email.contains(".")){
+                Toast.makeText(LoginActivity.this, "Zadaný email není ve validním formátu", Toast.LENGTH_SHORT).show();
             } else {
                 Intent fractionIntent = new Intent(this, FractionActivity.class);
                 startActivityForResult(fractionIntent, 1);
@@ -119,7 +120,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if (requestCode == 1) {
             if (resultCode == Activity.RESULT_OK) {
-                String email = usernameEditText.getText().toString();
+                String email = emailEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
                 String selectedTeam = data.getStringExtra("team");
                 registerUser(email, password, selectedTeam);
@@ -127,7 +128,7 @@ public class LoginActivity extends AppCompatActivity {
 
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
-                Toast.makeText(LoginActivity.this, "Registraction canceled", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "Registrace byla zrušena", Toast.LENGTH_SHORT).show();
             }
         }else {
             finish();

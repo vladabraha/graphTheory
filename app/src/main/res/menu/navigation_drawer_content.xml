@@ -48,7 +48,7 @@
                     <group android:checkableBehavior="single">
                         <item
                             android:id="@+id/nav_statistic"
-                            android:icon="@drawable/ic_menu_manage"
+                            android:icon="@drawable/ic_menu_statistics"
                             android:title="@string/action_statistic" />
                     </group>
                 </menu>
