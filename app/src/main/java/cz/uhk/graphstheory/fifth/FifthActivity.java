@@ -4,11 +4,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
@@ -85,11 +83,10 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
                         public void onClick(DialogInterface dialog, int id) {
                             //Action for "Delete".
                             if (isGraphBipartite) {
-                                showMessage("ano, máš pravdu!");
                                 String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
                                 assert userName != null;
-                                databaseConnector.recordUserPoints(userName, "fifth-first");
-                                changeActivity();
+                                showMessage("Získáno " + databaseConnector.recordUserPoints(userName, "fifth-first") + " bodů");
+                                createDialog();
                             } else {
                                 showMessage("bohužel, právě naopak");
                                 setContentAccordingCurrentActivity();
@@ -104,8 +101,8 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
                                         showMessage("ano, máš pravdu!");
                                         String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
                                         assert userName != null;
-                                        databaseConnector.recordUserPoints(userName, "fourth-first");
-                                        changeActivity();
+                                        showMessage("Získáno " + databaseConnector.recordUserPoints(userName, "fifth-first") + " bodů");
+                                        createDialog();
                                     } else {
                                         showMessage("bohužel, právě naopak");
                                         setContentAccordingCurrentActivity();
@@ -121,12 +118,10 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
                 case 1:
                     boolean isValid = GraphChecker.checkIfGraphIsBipartite(drawingFragment.getUserGraph());
                     if (isValid) {
-                        Toast.makeText(FifthActivity.this, "výborně, můžeš zkusit další, nebo jít dál", Toast.LENGTH_LONG).show();
                         String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
                         assert userName != null;
-                        databaseConnector.recordUserPoints(userName, "fifth-second");
-                        drawingFragment.changeDrawingMethod("clear"); //toto vymaže, co uživatel nakreslil, aby nebouchal jenom check, check...
-                        changeActivity();
+                        showMessage("Získáno " + databaseConnector.recordUserPoints(userName, "fifth-second") + " bodů");
+                        createDialog();
                     } else {
                         Toast.makeText(FifthActivity.this, "bohužel, to není správně", Toast.LENGTH_LONG).show();
                     }
@@ -146,31 +141,25 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
         navigationView.setCheckedItem(R.id.nav_fifth); //tady treba hodit, co se ma zvyraznit
 
         bottomNavigationView = findViewById(R.id.graph_generator_navigation);
-        bottomNavigationView.setSelectedItemId(R.id.circle);
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.circle:
-                        drawingFragment.changeDrawingMethod("circle");
-                        return true;
-                    case R.id.line:
-                        drawingFragment.changeDrawingMethod("line");
-                        return true;
-                    case R.id.path:
-                        drawingFragment.changeDrawingMethod("path");
-                        return true;
-                    case R.id.delete:
-                        drawingFragment.changeDrawingMethod("remove");
-                        return true;
-                    case R.id.clear:
-                        drawingFragment.changeDrawingMethod("clear");
-                        bottomNavigationView.setSelectedItemId(R.id.circle);
-                        drawingFragment.changeDrawingMethod("circle");
-                        return false; // return true if you want the item to be displayed as the selected item
-                    default:
-                        return false;
-                }
+        bottomNavigationView.setOnNavigationItemSelectedListener(menuItem -> {
+            switch (menuItem.getItemId()) {
+                case R.id.circle:
+                    drawingFragment.changeDrawingMethod("circle");
+                    return true;
+                case R.id.circle_move:
+                    drawingFragment.changeDrawingMethod("circle_move");
+                    return true;
+                case R.id.line:
+                    drawingFragment.changeDrawingMethod("line");
+                    return true;
+                case R.id.path:
+                    drawingFragment.changeDrawingMethod("path");
+                    return true;
+                case R.id.delete:
+                    drawingFragment.changeDrawingMethod("remove");
+                    return true;
+                default:
+                    return false;// return true if you want the item to be displayed as the selected item
             }
         });
     }
@@ -216,6 +205,10 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
     @Override
     protected void changeToDrawingFragment() {
         super.changeToDrawingFragment();
+        showTextAccordingCurrentActivity();
+    }
+
+    private void showTextAccordingCurrentActivity() {
         switch (getCurrentActivity()){
             case 0:
                 Toast.makeText(this, "Rozhodni, zda se se jedná o vygenerovaný bipartitní graf", Toast.LENGTH_LONG).show();
@@ -224,7 +217,6 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
                 Toast.makeText(this, "Nakresli bipartitní graf", Toast.LENGTH_LONG).show();
                 break;
         }
-
     }
 
     @Override
@@ -242,6 +234,16 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
         this.width = width;
         this.height = height;
         setContentAccordingCurrentActivity();
+
+        switch (getCurrentActivity()) {
+            case 0:
+                drawingFragment.changeDrawingMethod("circle_move");
+                bottomNavigationView.setSelectedItemId(R.id.circle_move);
+                break;
+            case 1:
+
+                break;
+        }
     }
 
     @Override
@@ -250,6 +252,7 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
     }
 
     private void setContentAccordingCurrentActivity(){
+        showTextAccordingCurrentActivity();
         switch (getCurrentActivity()){
             case 0:
                 Random random = new Random();
@@ -264,8 +267,10 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
                 }
                 break;
             case 1:
-                Map mapToSet = SpecificGraphGenerator.generateGraphSimilarToBipartiteGraph(height, width, 15);
-                drawingFragment.setUserGraph(mapToSet);
+                //vymaže graf z view a nechá ho prázdný
+                drawingFragment.changeDrawingMethod("clear");
+                drawingFragment.changeDrawingMethod("circle");
+                bottomNavigationView.setSelectedItemId(R.id.circle);
                 break;
         }
     }
@@ -282,7 +287,7 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
         }
 
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putInt("displayedActivity", displayedActivity);
+        editor.putInt("displayedActivity-fifth", displayedActivity);
         editor.apply();
 
        setContentAccordingCurrentActivity();
@@ -296,5 +301,15 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
     private int getCurrentActivity() {
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         return sharedPref.getInt("displayedActivity-fifth", 0);
+    }
+
+    @Override
+    public void onPositiveButtonClick() {
+        changeActivity();
+    }
+
+    @Override
+    public void onNegativeButtonClick() {
+        setContentAccordingCurrentActivity();
     }
 }

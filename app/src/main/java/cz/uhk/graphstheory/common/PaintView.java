@@ -54,10 +54,7 @@ public class PaintView extends View {
     private ArrayList<Coordinate> allLineList = new ArrayList<>(); //seznam všech vytvořených line, ktere propojuji kruhy
     private ArrayList<Coordinate> redLineList = new ArrayList<>(); //seznam vytvořené cesty
     private ArrayList<Coordinate> redCirclesCoordinates = new ArrayList<>(); //seznam cervenych vrcholu, napr. pro artikulaci
-    private boolean circle = true;
-    private boolean line = false;
-    private boolean remove = false;
-    private boolean path = false;
+    private boolean circle, line, move, remove, path = false;
     private boolean isCircleDragged = false;
     PaintView.CommunicationInterface mListener;
 
@@ -109,6 +106,15 @@ public class PaintView extends View {
         line = false;
         remove = false;
         path = false;
+        move = false;
+    }
+
+    public void circleMove() {
+        circle = false;
+        move = true;
+        line = false;
+        remove = false;
+        path = false;
     }
 
     public void line() {
@@ -116,6 +122,7 @@ public class PaintView extends View {
         line = true;
         remove = false;
         path = false;
+        move = false;
     }
 
     public void remove() {
@@ -123,6 +130,7 @@ public class PaintView extends View {
         line = false;
         remove = true;
         path = false;
+        move = false;
     }
 
     public void path() {
@@ -130,6 +138,7 @@ public class PaintView extends View {
         line = false;
         remove = false;
         path = true;
+        move = false;
     }
 
     /**
@@ -193,7 +202,7 @@ public class PaintView extends View {
             }
         }
 
-        if (redCirclesCoordinates != null && redCirclesCoordinates.size() > 0){
+        if (redCirclesCoordinates != null && redCirclesCoordinates.size() > 0) {
             for (Coordinate coordinate : redCirclesCoordinates) {
                 mPaint.setColor(RED_COLOR);
                 mPaint.setStrokeWidth(BRUSH_SIZE);
@@ -246,32 +255,36 @@ public class PaintView extends View {
     }
 
     private void touchStartCircle(float x, float y) {
-        for (Coordinate coordinate : circleCoordinates) {
-            if (checkIsInCircle(coordinate.x, coordinate.y, x, y)) {
-                isCircleDragged = true;
-                firstCoordinate = coordinate;
-                break;
+        if (move) {
+            for (Coordinate coordinate : circleCoordinates) {
+                if (checkIsInCircle(coordinate.x, coordinate.y, x, y)) {
+                    isCircleDragged = true;
+                    firstCoordinate = coordinate;
+                    break;
+                }
+            }
+            for (Coordinate coordinate : redCirclesCoordinates) {
+                if (checkIsInCircle(coordinate.x, coordinate.y, x, y)) {
+                    isCircleDragged = true;
+                    firstCoordinate = coordinate;
+                    break;
+                }
             }
         }
-        for (Coordinate coordinate : redCirclesCoordinates) {
-            if (checkIsInCircle(coordinate.x, coordinate.y, x, y)) {
-                isCircleDragged = true;
-                firstCoordinate = coordinate;
-                break;
+        if (circle) {
+            //pokud neni klepnuto na žádný kruh, vytvoří se nový
+            if (!isCircleDragged) {
+                circleCoordinates.add(new Coordinate(x, y));
             }
-        }
-        //pokud neni klepnuto na žádný kruh, vytvoří se nový
-        if (!isCircleDragged) {
-            circleCoordinates.add(new Coordinate(x, y));
         }
     }
 
 
     private void circleDragged(float x, float y) {
         boolean redCircle = false;
-        if (circleCoordinates.stream().anyMatch(c -> c.equal(firstCoordinate))){
+        if (circleCoordinates.stream().anyMatch(c -> c.equal(firstCoordinate))) {
             circleCoordinates.remove(firstCoordinate);
-        }else {
+        } else {
             redCircle = true;
             redCirclesCoordinates.remove(firstCoordinate);
         }
@@ -290,9 +303,9 @@ public class PaintView extends View {
             }
         }
         firstCoordinate = new Coordinate(x, y);
-        if (!redCircle){
+        if (!redCircle) {
             circleCoordinates.add(firstCoordinate);
-        }else {
+        } else {
             redCirclesCoordinates.add(firstCoordinate);
         }
     }
@@ -402,7 +415,7 @@ public class PaintView extends View {
                 lineCoordinates.clear();
 
                 if (line || path) touchStart(x, y);
-                if (circle) touchStartCircle(x, y);
+                if (circle || move) touchStartCircle(x, y);
                 invalidate();
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -419,7 +432,7 @@ public class PaintView extends View {
                     isCircleDragged = false; //aby to neposouvalo v dalším tahu kruhy
                 if (remove) removeObject(x, y);
                 invalidate();
-                if (mListener != null )mListener.sentTouchUpCoordinates(new Coordinate(x,y));
+                if (mListener != null) mListener.sentTouchUpCoordinates(new Coordinate(x, y));
                 break;
         }
         return true;
@@ -439,7 +452,7 @@ public class PaintView extends View {
         }
 
         ArrayList<CustomLine> path = new ArrayList<>();
-        for (int x = 0; x < redLineList.size(); x++){
+        for (int x = 0; x < redLineList.size(); x++) {
             if (x % 2 != 0) {
                 CustomLine line = new CustomLine(redLineList.get(x - 1), redLineList.get(x));
                 path.add(line);

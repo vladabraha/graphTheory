@@ -3,11 +3,9 @@ package cz.uhk.graphstheory.ninth;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
@@ -107,25 +105,25 @@ public class NinthActivity extends AbstractActivity implements TabLayoutFragment
 
         bottomNavigationView = findViewById(R.id.graph_generator_navigation);
         bottomNavigationView.setSelectedItemId(R.id.circle);
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.circle:
-                        drawingFragment.changeDrawingMethod("circle");
-                        return true;
-                    case R.id.line:
-                        drawingFragment.changeDrawingMethod("line");
-                        return true;
-                    case R.id.path:
-                        drawingFragment.changeDrawingMethod("path");
-                        return true;
-                    case R.id.delete:
-                        drawingFragment.changeDrawingMethod("remove");
-                        return true;
-                    default:
-                        return false;
-                }
+        bottomNavigationView.setOnNavigationItemSelectedListener(menuItem -> {
+            switch (menuItem.getItemId()) {
+                case R.id.circle:
+                    drawingFragment.changeDrawingMethod("circle");
+                    return true;
+                case R.id.circle_move:
+                    drawingFragment.changeDrawingMethod("circle_move");
+                    return true;
+                case R.id.line:
+                    drawingFragment.changeDrawingMethod("line");
+                    return true;
+                case R.id.path:
+                    drawingFragment.changeDrawingMethod("path");
+                    return true;
+                case R.id.delete:
+                    drawingFragment.changeDrawingMethod("remove");
+                    return true;
+                default:
+                    return false;// return true if you want the item to be displayed as the selected item
             }
         });
     }
@@ -210,8 +208,7 @@ public class NinthActivity extends AbstractActivity implements TabLayoutFragment
         generateNewSpanningTree(height, width);
 
         Menu menu = bottomNavigationView.getMenu();
-        menu.getItem(2).setTitle("kostra");
-        menu.getItem(4).setTitle("");
+        menu.getItem(3).setTitle("kostra");
     }
 
     private void generateNewSpanningTree(int height, int width) {

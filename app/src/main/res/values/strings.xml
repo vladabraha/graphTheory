@@ -10,11 +10,12 @@
     <string name="action_statistic">Statistiky</string>
 
     <!--bottom navigation menu-->
-    <string name="node">vrchol</string>
+    <string name="node">přidat vrchol</string>
     <string name="clear_paint_view">vyčistit</string>
     <string name="delete_one_object">smazat objekt</string>
     <string name="line">hrana</string>
-    <string name="path">cesta</string>
+    <string name="path">označ</string>
+    <string name="node_move">posuň vrchol</string>
 
     <!--vyjížděcí menu-->
     <string name="menu_first">Cesta, tah, kružnice</string>
@@ -112,6 +113,7 @@
     <string name="you_nickname">vaše jméno</string>
     <string name="insert_team_name">vlož název týmu</string>
     <string name="text_description_fraction_chooser">Pro vstup do konkrétního týmu je třeba zadat jeho přesný název</string>
+
 
     <string-array name="team_chooser">
         <item>Modrý tým</item>

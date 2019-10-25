@@ -53,7 +53,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
     String type;
     int height, width;
 
-    boolean userFinishedPreviousTask, viewCreated;
+    boolean userFinishedPreviousTask, viewCreated = false;
 
     DatabaseConnector databaseConnector;
 
@@ -235,8 +235,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
         int displayedActivity = showToastMessageAccordingCurrentActivity();
         //zmeni text bottomNavigationView
         Menu menu = bottomNavigationView.getMenu();
-        menu.getItem(2).setTitle("označ");
-        menu.getItem(4).setTitle("");
+        menu.getItem(3).setTitle("označ");
 
         //pokud uzivatel splnil predchozi ukol, tak se mu nasetuje novej graf, do kteryho muze kreslit (generuje se podle ukazky, ale bez cerveny cary
         if (userFinishedPreviousTask) {
@@ -317,7 +316,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
             map.setRedCircles(new ArrayList<>());
         }
         drawingFragment.setUserGraph(map);
-        viewCreated = true;
+
     }
 
     @Override

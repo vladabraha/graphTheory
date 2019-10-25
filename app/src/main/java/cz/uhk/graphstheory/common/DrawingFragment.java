@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import cz.uhk.graphstheory.R;
-import cz.uhk.graphstheory.TabActivity;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
 import cz.uhk.graphstheory.model.Coordinate;
 import cz.uhk.graphstheory.model.DrawMapViewModel;
@@ -32,7 +31,7 @@ import cz.uhk.graphstheory.model.Map;
 // * Use the {@link DrawingFragment#newInstance} factory method to
 // * create an instance of this fragment.
 // */
-public class DrawingFragment extends Fragment implements TabActivity.OnFragmentInteractionListener, DrawingFragmentListener, PaintView.CommunicationInterface {
+public class DrawingFragment extends Fragment implements DrawingFragmentListener, PaintView.CommunicationInterface {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 //    private static final String ARG_PARAM1 = "param1";
@@ -130,11 +129,13 @@ public class DrawingFragment extends Fragment implements TabActivity.OnFragmentI
         drawMapViewModel.setMap(map);
     }
 
-    @Override
     public void changeDrawingMethod(String method) {
         switch (method) {
             case "line":
                 paintView.line();
+                break;
+            case "circle_move":
+                paintView.circleMove();
                 break;
             case "path":
                 paintView.path();

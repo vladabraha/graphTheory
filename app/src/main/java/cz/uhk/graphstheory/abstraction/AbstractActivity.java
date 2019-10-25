@@ -35,7 +35,6 @@ public abstract class AbstractActivity extends AbstractAppCompactActivity implem
     private BottomNavigationView bottomNavigationView;
     private Fragment educationFragment;
     private FloatingActionButton floatingActionButton;
-    private NavigationView navigationView;
     private FirebaseAuth mAuth;
     private DatabaseConnector databaseConnector;
     private TabLayoutFragment tabLayoutFragment;
@@ -47,6 +46,7 @@ public abstract class AbstractActivity extends AbstractAppCompactActivity implem
 
         setContentView(R.layout.activity_graph_generator);
         floatingActionButton = findViewById(R.id.floating_action_button_generate_graph);
+        bottomNavigationView = findViewById(R.id.graph_generator_navigation);
 
         databaseConnector = new DatabaseConnector();
 
@@ -92,26 +92,6 @@ public abstract class AbstractActivity extends AbstractAppCompactActivity implem
         return super.onCreateOptionsMenu(menu);
     }
 
-
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()) {
-//            case R.id.circle:
-//                drawingFragment.changeDrawingMethod("circle");
-//                return true;
-//            case R.id.line:
-//                drawingFragment.changeDrawingMethod("line");
-//                return true;
-//            case R.id.delete:
-//                drawingFragment.changeDrawingMethod("remove");
-//                return true;
-//            case R.id.clear:
-//                drawingFragment.changeDrawingMethod("clear");
-//                return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
-
-
     public void tableLayoutSelectedChange(int number) {
         switch (number) {
             case 0:
@@ -125,7 +105,6 @@ public abstract class AbstractActivity extends AbstractAppCompactActivity implem
                 break;
         }
     }
-
 
     protected void changeToDrawingFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -211,56 +190,13 @@ public abstract class AbstractActivity extends AbstractAppCompactActivity implem
 
     }
 
-
-//    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-//        // Handle navigation view item clicks here.
-//        int id = menuItem.getItemId();
-//        //zabrani znovu spusteni pustene aktivity
-//        int sessionId = getIntent().getIntExtra("SESSION_ID", 0);
-//
-//        if (id == R.id.paths) {
-//            if (sessionId != 1) {
-//                Intent newActivityIntent = new Intent(this, GraphGeneratorActivity.class);
-//                newActivityIntent.putExtra("SESSION_ID", 1);
-//                finish();
-//                startActivity(newActivityIntent);
-//            }
-//        } else if (id == R.id.dalsi) {
-//            if (sessionId != 2) {
-//                Intent newActivityIntent = new Intent(this, SecondActivity.class);
-//                newActivityIntent.putExtra("SESSION_ID", 2);
-//                finish();
-//                startActivity(newActivityIntent);
-//            }
-//        } else if (id == R.id.nav_third) {
-//            if (sessionId != 3) {
-//                Intent newActivityIntent = new Intent(this, ThirdActivity.class);
-//                newActivityIntent.putExtra("SESSION_ID", 3);
-//                finish();
-//                startActivity(newActivityIntent);
-//            }
-//        }
-//        else if (id == R.id.nav_statistic) {
-//            if (sessionId != 99) {
-//                Intent newActivityIntent = new Intent(this, StatisticsActivity.class);
-//                newActivityIntent.putExtra("SESSION_ID", 99);
-//                finish();
-//                startActivity(newActivityIntent);
-//            }
-//        }
-//
-//        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-//        drawer.closeDrawer(GravityCompat.START);
-//        return true;
-//    }
-
     public void createDialog() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setCancelable(false);
         dialog.setTitle("");
         dialog.setMessage("Máš to správně! Chceš si to zkusit ještě jednou, nebo jít na další?");
-        dialog.setPositiveButton("Další", (dialog1, id) -> onPositiveButtonClick())
-                .setNegativeButton("Znovu ", (dialog12, which) -> onNegativeButtonClick());
+        dialog.setPositiveButton("Další aktivita", (dialog1, id) -> onPositiveButtonClick())
+                .setNegativeButton("Znovu procvičit", (dialog12, which) -> onNegativeButtonClick());
 
         final AlertDialog alert = dialog.create();
         alert.show();

@@ -122,8 +122,7 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
 
         //zmeni text bottomNavigationView
         Menu menu = bottomNavigationView.getMenu();
-        menu.getItem(2).setTitle("doplněk");
-        menu.getItem(4).setTitle("");
+        menu.getItem(3).setTitle("doplněk");
     }
 
     @Override

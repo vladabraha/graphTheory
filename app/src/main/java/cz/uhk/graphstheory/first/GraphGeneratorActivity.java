@@ -1,63 +1,50 @@
 package cz.uhk.graphstheory.first;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
 
 import cz.uhk.graphstheory.R;
-import cz.uhk.graphstheory.abstraction.AbstractAppCompactActivity;
+import cz.uhk.graphstheory.abstraction.AbstractActivity;
 import cz.uhk.graphstheory.common.DrawingFragment;
-import cz.uhk.graphstheory.common.SecondaryTabLayoutFragment;
 import cz.uhk.graphstheory.common.SecondaryTabLayoutFragment.SecondaryTableLayoutCommunicationInterface;
 import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
 import cz.uhk.graphstheory.model.Map;
-import cz.uhk.graphstheory.model.User;
 import cz.uhk.graphstheory.util.GraphChecker;
 import cz.uhk.graphstheory.util.GraphGenerator;
 
-public class GraphGeneratorActivity extends AbstractAppCompactActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, NavigationView.OnNavigationItemSelectedListener, DrawingFragment.CommunicationInterface, SecondaryTableLayoutCommunicationInterface {
+public class GraphGeneratorActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, DrawingFragment.CommunicationInterface, SecondaryTableLayoutCommunicationInterface {
 
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
     private BottomNavigationView bottomNavigationView;
     private GenerateGraphFragment generateGraphFragment;
     private FloatingActionButton floatingActionButton;
-    private TabLayoutFragment tabLayoutFragment;
-    private SecondaryTabLayoutFragment secondaryLayoutFragment;
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private DrawingFragmentListener drawingFragmentListener;
 
-    private DatabaseConnector databaseConnector;
-    TextView navigationDrawerName, navigationDrawerEmail;
     int height, width, length;
     boolean isViewCreated = false;
 
@@ -66,32 +53,19 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_graph_generator);
-
-        floatingActionButton = findViewById(R.id.floating_action_button_generate_graph);
-        databaseConnector = new DatabaseConnector();
+        DatabaseConnector databaseConnector = new DatabaseConnector();
 
         //for navigation drawer
         Toolbar toolbar = findViewById(R.id.graph_generator_toolbar);
         setSupportActionBar(toolbar);
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        //get instance of abstraction object
+        textFragment = getTextFragment();
+        drawingFragment = getDrawingFragment();
+        bottomNavigationView = getBottomNavigationView();
+        floatingActionButton = getFloatingActionButton();
 
-        drawingFragment = new DrawingFragment();
-        textFragment = new TextFragment();
-        generateGraphFragment = new GenerateGraphFragment();
         drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
-        tabLayoutFragment = new TabLayoutFragment();
-        ArrayList<String> tabNames = new ArrayList<>();
-        tabNames.add("Cesta");
-        tabNames.add("Tah");
-        tabNames.add("Kužnice");
-        tabNames.add("Sled");
-        secondaryLayoutFragment = new SecondaryTabLayoutFragment(tabNames);
-        fragmentTransaction.add(R.id.generator_activity_group, tabLayoutFragment);
-        fragmentTransaction.add(R.id.generator_activity_group, textFragment);
-        fragmentTransaction.commit();
 
         textFragment.setEducationText(R.string.first_activity_text);
 
@@ -160,6 +134,9 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
                 case R.id.circle:
                     drawingFragment.changeDrawingMethod("circle");
                     return true;
+                case R.id.circle_move:
+                    drawingFragment.changeDrawingMethod("circle_move");
+                    return true;
                 case R.id.line:
                     drawingFragment.changeDrawingMethod("line");
                     return true;
@@ -169,71 +146,21 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
                 case R.id.delete:
                     drawingFragment.changeDrawingMethod("remove");
                     return true;
-                case R.id.clear:
-                    drawingFragment.changeDrawingMethod("clear");
-                    bottomNavigationView.setSelectedItemId(R.id.circle);
-                    drawingFragment.changeDrawingMethod("circle");
-                    return false; // return true if you want the item to be displayed as the selected item
                 default:
-                    return false;
+                    return false;// return true if you want the item to be displayed as the selected item
             }
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        //set current user to navigation drawer
-        navigationDrawerName = findViewById(R.id.navigation_header_name);
-        navigationDrawerEmail = findViewById(R.id.navigation_header_email);
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            navigationDrawerEmail.setText(currentUser.getEmail());
-            User user = databaseConnector.findUser(Objects.requireNonNull(currentUser.getEmail()));
-            if (user != null) {
-                navigationDrawerName.setText(user.getNickName());
-            }
-        }
-
-        return super.onCreateOptionsMenu(menu);
-    }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.circle:
-                drawingFragment.changeDrawingMethod("circle");
-                return true;
-            case R.id.line:
-                drawingFragment.changeDrawingMethod("line");
-                return true;
-            case R.id.delete:
-                drawingFragment.changeDrawingMethod("remove");
-                return true;
-            case R.id.clear:
-                drawingFragment.changeDrawingMethod("clear");
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void tableLayoutSelectedChange(int number) {
-        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-        int displayedActivity = sharedPref.getInt("displayedActivity", 0);
-        switch (number) {
-            case 0:
-                changeToTextFragment();
-                break;
-            case 1:
-                changeToEducationFragment();
-                Toast.makeText(this, "Nyní si ukážeme v zadaném grafu cestu", Toast.LENGTH_LONG).show();
-                break;
-            case 2:
-                changeToDrawingFragment();
-                showProperToastMessage(displayedActivity);
-                break;
-        }
+    protected ArrayList<String> getTabNames() {
+        ArrayList<String> tabNames = new ArrayList<>();
+        tabNames.add("Cesta");
+        tabNames.add("Tah");
+        tabNames.add("Kužnice");
+        tabNames.add("Sled");
+        return tabNames;
     }
 
     private void showProperToastMessage(int displayedActivity) {
@@ -266,87 +193,18 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
         }
     }
 
-    private void changeToDrawingFragment() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-
-        if (fragmentManager.getFragments().contains(textFragment)) {
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.remove(textFragment);
-            fragmentTransaction.remove(secondaryLayoutFragment);
-            fragmentTransaction.add(R.id.generator_activity_group, drawingFragment);
-            fragmentTransaction.commit();
-            bottomNavigationView.setVisibility(View.VISIBLE);
-
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    floatingActionButton.show();
-                }
-            }, 5000);
-
-        } else if (fragmentManager.getFragments().contains(generateGraphFragment)) {
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.remove(generateGraphFragment);
-            fragmentTransaction.remove(secondaryLayoutFragment);
-            fragmentTransaction.add(R.id.generator_activity_group, drawingFragment);
-            fragmentTransaction.commit();
-            bottomNavigationView.setVisibility(View.VISIBLE);
-
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    floatingActionButton.show();
-                }
-            }, 5000);
-
-        }
-
+    @Override
+    protected void changeToDrawingFragment() {
+        super.changeToDrawingFragment();
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        int displayedActivity = sharedPref.getInt("displayedActivity", 0);
+        showProperToastMessage(displayedActivity);
     }
 
-    private void changeToTextFragment() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
+    @Override
+    protected void changeToEducationFragment() {
+        super.changeToEducationFragment();
 
-        //zkontroluje, že už tam neni drawing fragment a kdyžtak tam hodi text fragment
-        if (fragmentManager.getFragments().contains(generateGraphFragment)) {
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.remove(generateGraphFragment);
-            fragmentTransaction.remove(secondaryLayoutFragment);
-            fragmentTransaction.add(R.id.generator_activity_group, textFragment);
-            fragmentTransaction.commit();
-            bottomNavigationView.setVisibility(View.GONE);
-            floatingActionButton.hide();
-        } else if (fragmentManager.getFragments().contains(drawingFragment)) {
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.remove(drawingFragment);
-            fragmentTransaction.remove(secondaryLayoutFragment);
-            fragmentTransaction.add(R.id.generator_activity_group, textFragment);
-            fragmentTransaction.commit();
-            bottomNavigationView.setVisibility(View.GONE);
-            floatingActionButton.hide();
-        }
-        textFragment.setEducationText(R.string.first_activity_text);
-    }
-
-    private void changeToEducationFragment() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        //kontrola, ze se to nezavola 2x a nehodi to chybu
-        if (fragmentManager.getFragments().contains(textFragment)) {
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.remove(textFragment);
-            fragmentTransaction.add(R.id.generator_activity_group, secondaryLayoutFragment);
-            fragmentTransaction.add(R.id.generator_activity_group, generateGraphFragment);
-            fragmentTransaction.commit();
-            bottomNavigationView.setVisibility(View.GONE);
-            floatingActionButton.hide();
-        } else if (fragmentManager.getFragments().contains(drawingFragment)) {
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.remove(drawingFragment);
-            fragmentTransaction.add(R.id.generator_activity_group, secondaryLayoutFragment);
-            fragmentTransaction.add(R.id.generator_activity_group, generateGraphFragment);
-            fragmentTransaction.commit();
-            bottomNavigationView.setVisibility(View.GONE);
-            floatingActionButton.hide();
-        }
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         int displayedActivity = sharedPref.getInt("displayedActivity", 0);
         //zmeni text bottomNavigationView
@@ -363,6 +221,7 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
                 break;
         }
         if (isViewCreated) setMapToDrawingFragment(width, height);
+        Toast.makeText(this, "Nyní si ukážeme v zadaném grafu cestu", Toast.LENGTH_LONG).show();
     }
 
 
@@ -392,28 +251,32 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
 
     }
 
-    private void createDialog() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setCancelable(false);
-        dialog.setTitle("");
-        dialog.setMessage("Máš to správně! Chceš si to zkusit ještě jednou, nebo jít na další?");
-        dialog.setPositiveButton("Další", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                changeActivity();
-            }
-        })
-                .setNegativeButton("Znovu ", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        int amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
-                        Map map = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
-                        drawingFragment.setUserGraph(map);
-                    }
-                });
+    @Override
+    public void onPositiveButtonClick() {
+        changeActivity();
+    }
 
-        final AlertDialog alert = dialog.create();
-        alert.show();
+    @Override
+    public void onNegativeButtonClick() {
+        int amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
+        Map map = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
+        drawingFragment.setUserGraph(map);
+    }
+
+    @Override
+    protected void showBottomNavigationView() {
+        bottomNavigationView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    protected void hideBottomNavigationView() {
+        bottomNavigationView.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected Fragment getGraphFragment() {
+        generateGraphFragment =  new GenerateGraphFragment();
+        return generateGraphFragment;
     }
 
     @Override
@@ -435,16 +298,16 @@ public class GraphGeneratorActivity extends AbstractAppCompactActivity implement
 
         switch (displayedActivity) {
             case 0:
-                menu.getItem(2).setTitle("cesta");
+                menu.getItem(3).setTitle("cesta");
                 break;
             case 1:
-                menu.getItem(2).setTitle("tah");
+                menu.getItem(3).setTitle("tah");
                 break;
             case 2:
-                menu.getItem(2).setTitle("kužnice");
+                menu.getItem(3).setTitle("kužnice");
                 break;
             case 3:
-                menu.getItem(2).setTitle("sled");
+                menu.getItem(3).setTitle("sled");
                 break;
         }
     }
