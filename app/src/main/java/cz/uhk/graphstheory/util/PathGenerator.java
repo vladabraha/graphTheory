@@ -14,6 +14,7 @@ public class PathGenerator {
      * @param map mapa
      * @return list primek, kterymi prochazi cesta
      */
+    //todo seřadit, aby uzly šly za sebou
     public static ArrayList<Coordinate> generatePath(Map map) {
         int numberOfNodes = map.getCircles().size();
         int pathLength = (int) Math.round(Math.random() * numberOfNodes);
@@ -55,12 +56,15 @@ public class PathGenerator {
 
         ArrayList<Coordinate> tah = new ArrayList<>();
 
+        int randomNode = 0;
+        int randomNode2 = 0;
         for (int i = 0; i < randomNumberOfRedLines; i++){
             boolean find = false;
+            boolean isAvailable = true;
             do{
-                boolean isAvailable = true;
-                int randomNode = (int) (numberOfNodes * Math.random());
-                int randomNode2 = (int) (numberOfNodes * Math.random());
+                if (isAvailable) randomNode2 = randomNode;
+                isAvailable = true;
+                randomNode = (int) (numberOfNodes * Math.random());
                 for (CustomLine customLine : customLines){
                     if (customLine.isPointInStartOrEndOfLine(nodes.get(randomNode)) && customLine.isPointInStartOrEndOfLine(nodes.get(randomNode2))) {
                         isAvailable = false;

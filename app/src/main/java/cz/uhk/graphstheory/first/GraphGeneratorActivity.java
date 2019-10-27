@@ -29,7 +29,6 @@ import cz.uhk.graphstheory.common.SecondaryTabLayoutFragment.SecondaryTableLayou
 import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
-import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
 import cz.uhk.graphstheory.model.Map;
 import cz.uhk.graphstheory.util.GraphChecker;
 import cz.uhk.graphstheory.util.GraphGenerator;
@@ -40,10 +39,8 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
     private TextFragment textFragment;
     private BottomNavigationView bottomNavigationView;
     private GenerateGraphFragment generateGraphFragment;
-    private FloatingActionButton floatingActionButton;
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private DrawingFragmentListener drawingFragmentListener;
 
     int height, width, length;
     boolean isViewCreated = false;
@@ -63,9 +60,7 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
         textFragment = getTextFragment();
         drawingFragment = getDrawingFragment();
         bottomNavigationView = getBottomNavigationView();
-        floatingActionButton = getFloatingActionButton();
-
-        drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
+        FloatingActionButton floatingActionButton = getFloatingActionButton();
 
         textFragment.setEducationText(R.string.first_activity_text);
 
@@ -128,7 +123,7 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
         navigationView.setCheckedItem(R.id.nav_first); //tady treba hodit, co se ma zvyraznit
 
         bottomNavigationView = findViewById(R.id.graph_generator_navigation);
-        bottomNavigationView.setSelectedItemId(R.id.circle);
+        bottomNavigationView.setSelectedItemId(R.id.path);
         bottomNavigationView.setOnNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 case R.id.circle:
@@ -152,7 +147,6 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
         });
     }
 
-
     @Override
     protected ArrayList<String> getTabNames() {
         ArrayList<String> tabNames = new ArrayList<>();
@@ -172,7 +166,7 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
                 Toast.makeText(this, "Nakresli tah v grafu, případně si graf uprav", Toast.LENGTH_LONG).show();
                 break;
             case 2:
-                Toast.makeText(this, "Nakresli kružnici v grafu, případně si graf uprav", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Nakresli kružnici v grafu, případně si graf uprav. Nezapoměň, že kružnice musí končit v bodě, ze kterého vychází", Toast.LENGTH_LONG).show();
                 break;
             case 3:
                 Random ran = new Random();
@@ -181,7 +175,6 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
                 break;
         }
     }
-
 
     @Override
     public void onBackPressed() {
@@ -199,31 +192,36 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         int displayedActivity = sharedPref.getInt("displayedActivity", 0);
         showProperToastMessage(displayedActivity);
+
+        if (isViewCreated) {
+            setProperTitleToBottomNavigationMenu(displayedActivity);
+            drawingFragment.changeDrawingMethod("path");
+            bottomNavigationView.setSelectedItemId(R.id.path);
+        }
+    }
+
+    private void setProperTitleToBottomNavigationMenu(int displayedActivity) {
+        //zmeni text bottomNavigationView
+        Menu menu = bottomNavigationView.getMenu();
+        switch (displayedActivity) {
+            case 0:
+                menu.getItem(3).setTitle("cesta");
+                break;
+            case 1:
+                menu.getItem(3).setTitle("tah");
+                break;
+            case 2:
+                menu.getItem(3).setTitle("kružnice");
+                break;
+        }
     }
 
     @Override
     protected void changeToEducationFragment() {
         super.changeToEducationFragment();
-
-        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-        int displayedActivity = sharedPref.getInt("displayedActivity", 0);
-        //zmeni text bottomNavigationView
-        Menu menu = bottomNavigationView.getMenu();
-        switch (displayedActivity) {
-            case 0:
-                menu.getItem(2).setTitle("cesta");
-                break;
-            case 1:
-                menu.getItem(2).setTitle("tah");
-                break;
-            case 2:
-                menu.getItem(2).setTitle("kružnice");
-                break;
-        }
         if (isViewCreated) setMapToDrawingFragment(width, height);
         Toast.makeText(this, "Nyní si ukážeme v zadaném grafu cestu", Toast.LENGTH_LONG).show();
     }
-
 
     private void changeActivity() {
         //do shared preferences si ukladame posledni otevrenou aktivitu, abychom se mohli tocit do kolecka a neotevirali pripadne porad stejnou aktivitu
@@ -248,7 +246,7 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
         Map map = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
         drawingFragment.setUserGraph(map);
         showProperToastMessage(displayedActivity);
-
+        setProperTitleToBottomNavigationMenu(displayedActivity);
     }
 
     @Override
@@ -275,7 +273,7 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
 
     @Override
     protected Fragment getGraphFragment() {
-        generateGraphFragment =  new GenerateGraphFragment();
+        generateGraphFragment = new GenerateGraphFragment();
         return generateGraphFragment;
     }
 
@@ -310,6 +308,7 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
                 menu.getItem(3).setTitle("sled");
                 break;
         }
+        bottomNavigationView.setSelectedItemId(R.id.path);
     }
 
     @Override

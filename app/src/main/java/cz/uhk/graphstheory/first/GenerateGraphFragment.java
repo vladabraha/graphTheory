@@ -1,6 +1,7 @@
 package cz.uhk.graphstheory.first;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
@@ -43,7 +44,8 @@ public class GenerateGraphFragment extends AbstractFragment {
                     height = view.getMeasuredHeight();
                     if (width != 0) {
                         int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
-                        if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES) amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
+                        if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES)
+                            amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
                         int BRUSH_SIZE = getGraphGeneratedView().getBrushSize();
                         Map mapToSet = GraphGenerator.generateMap(height, width, BRUSH_SIZE, amountOfEdges);
                         getGraphGeneratedView().setMap(mapToSet);
@@ -55,8 +57,8 @@ public class GenerateGraphFragment extends AbstractFragment {
         });
 
         //typ "cervene cary", ktera se nad grafem vykresli
-        if (!type.isEmpty()){
-            switch (type){
+        if (!type.isEmpty()) {
+            switch (type) {
                 case "cesta":
                     getGraphGeneratedView().setRedLineList(PathGenerator.generatePath(getGraphGeneratedView().getMap()));
                     getGraphGeneratedView().invalidate();
@@ -77,30 +79,56 @@ public class GenerateGraphFragment extends AbstractFragment {
     //zmeni typ vykresleni, predava se jako parametr, protoze nejde volat metodu na view, ktere neni jeste vytvoreno
 
     /**
-     *
      * @param type of generated graph
      * @return size of line if needed
      */
 
     public int changeEducationGraph(String type) {
-       this.type = type;
-        switch (type){
-            case "cesta":
-                getGraphGeneratedView().setRedLineList(PathGenerator.generatePath(getGraphGeneratedView().getMap()));
-                getGraphGeneratedView().invalidate();
-                return 0;
-            case "tah":
-                getGraphGeneratedView().setRedLineList(PathGenerator.generateTrail(getGraphGeneratedView().getMap()));
-                getGraphGeneratedView().invalidate();
-                return 0;
-            case "kruznice":
-                ArrayList<Coordinate> coordinates = PathGenerator.generateCycle(getGraphGeneratedView().getMap());
-                int length = Math.round(coordinates.size() / 2);
-                getGraphGeneratedView().setRedLineList(coordinates);
-                getGraphGeneratedView().invalidate();
-                return length;
+        this.type = type;
+        ArrayList<Coordinate> redLines = null;
+        Map map = null;
+        if (!type.isEmpty()) {
+            map = getGraphGeneratedView().getMap();
+            switch (type) {
+                case "cesta":
+                    redLines = PathGenerator.generatePath(getGraphGeneratedView().getMap());
+                    getGraphGeneratedView().setRedLineList(redLines);
+                    getGraphGeneratedView().invalidate();
+                    break;
+                case "tah":
+                    redLines = PathGenerator.generateTrail(getGraphGeneratedView().getMap());
+                    getGraphGeneratedView().setRedLineList(redLines);
+                    getGraphGeneratedView().invalidate();
+                    break;
+
+
+                case "kruznice":
+                    ArrayList<Coordinate> coordinates = PathGenerator.generateCycle(getGraphGeneratedView().getMap());
+                    int length = Math.round(coordinates.size() / 2);
+                    getGraphGeneratedView().setRedLineList(coordinates);
+                    getGraphGeneratedView().invalidate();
+                    return length;
+            }
+            if (redLines != null) {
+                ArrayList<String> chars = new ArrayList<>();
+                ArrayList<Coordinate> nodes = map.getCircles();
+                for (Coordinate redCoordinate : redLines) {
+                    for (int i = 0; i < nodes.size(); i++) {
+                        if (nodes.get(i).equal(redCoordinate)) {
+                            String value = "B";
+                            int charValue = value.charAt(0);
+                            for (int j = 0; j < i; j++){
+                                charValue++;
+                            }
+                            String letter = String.valueOf((char)charValue);
+                            //todo seradit uzly tak, aby sly za sebou
+                            chars.add(letter + ", ");
+                        }
+                    }
+                }
+                Log.d("chars", chars.toString());
+            }
         }
         return 0;
     }
-
 }
