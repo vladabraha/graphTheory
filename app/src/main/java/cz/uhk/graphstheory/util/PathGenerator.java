@@ -2,6 +2,7 @@ package cz.uhk.graphstheory.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import cz.uhk.graphstheory.model.Coordinate;
 import cz.uhk.graphstheory.model.CustomLine;
@@ -50,7 +51,8 @@ public class PathGenerator {
     public static ArrayList<Coordinate> generateTrail(Map map){
         ArrayList<Coordinate> nodes = map.getCircles();
         int numberOfNodes = map.getCircles().size();
-        int randomNumberOfRedLines = (int) ((((numberOfNodes * (numberOfNodes - 1)) /2 )-1) * Math.random());
+        Random ran = new Random();
+        int randomNumberOfRedLines = ran.nextInt(((numberOfNodes * (numberOfNodes - 1)) / 2));
         if (randomNumberOfRedLines < 2) randomNumberOfRedLines = 2;
         ArrayList<CustomLine> customLines = new ArrayList<>();
 
@@ -64,10 +66,16 @@ public class PathGenerator {
             do{
                 if (isAvailable) randomNode2 = randomNode;
                 isAvailable = true;
-                randomNode = (int) (numberOfNodes * Math.random());
+
+                do {
+                    randomNode = (int) (numberOfNodes * Math.random());
+                }while (randomNode == randomNode2);
+
+
                 for (CustomLine customLine : customLines){
                     if (customLine.isPointInStartOrEndOfLine(nodes.get(randomNode)) && customLine.isPointInStartOrEndOfLine(nodes.get(randomNode2))) {
                         isAvailable = false;
+                        break;
                     }
                 }
                 if (isAvailable){

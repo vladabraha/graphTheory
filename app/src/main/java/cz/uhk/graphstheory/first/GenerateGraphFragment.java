@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import cz.uhk.graphstheory.abstraction.AbstractFragment;
 import cz.uhk.graphstheory.model.Coordinate;
@@ -117,18 +118,41 @@ public class GenerateGraphFragment extends AbstractFragment {
                         if (nodes.get(i).equal(redCoordinate)) {
                             String value = "B";
                             int charValue = value.charAt(0);
-                            for (int j = 0; j < i; j++){
+                            for (int j = 0; j < i; j++) {
                                 charValue++;
                             }
-                            String letter = String.valueOf((char)charValue);
+                            String letter = String.valueOf((char) charValue);
                             //todo seradit uzly tak, aby sly za sebou
-                            chars.add(letter + ", ");
+                            chars.add(letter);
                         }
                     }
                 }
                 Log.d("chars", chars.toString());
+                arrangeChars(chars);
+                Log.d("chars", chars.toString());
             }
         }
         return 0;
+    }
+
+    //projdu pole, na každém lichém prvku se podívám jestli lichý a lichý minus jedna prvek není obsažen v následujícíh 2 indexech
+    //pokud ano, porovnám a mrknu, jestli stejná písmena jsou vedle sebe, pokuc ne, prohodím
+    private ArrayList<String> arrangeChars(ArrayList<String> chars) {
+        for (int i = 0; i < chars.size() - 1; i++) {
+            if (i > 0 && i % 2 != 0) {
+                //pokud sedi n-1 index s nasledujícím - prohodím n - 1 se současným
+                if (chars.get(i - 1).equals(chars.get(i + 1))) {
+                    Collections.swap(chars, i - 1, i);
+                    //pokud sedí současný s n + 2 prohodím následující 2 indexy
+                } else if (chars.get(i).equals(chars.get(i + 2))) {
+                    Collections.swap(chars, i + 1, i + 2);
+                    //pokud sedí n - 1 s n + 2 prohodím jak n - 1 s n tak n + 1 s n + 2
+                } else if (chars.get(i - 1).equals(chars.get(i + 2))) {
+                    Collections.swap(chars, i - 1, i);
+                    Collections.swap(chars, i + 1, i + 2);
+                }
+            }
+        }
+        return chars;
     }
 }
