@@ -66,6 +66,8 @@ public class PathGenerator {
         for (int i = 0; i < randomNumberOfRedLines; i++) {
             boolean find = false;
             boolean isAvailable = true;
+            //pokud cyklus doběhne do bodu, ze kterého už není dostupná cesta ven, cyklus skončí
+            int run = 0;
             do {
                 if (isAvailable) randomNode2 = randomNode;
                 isAvailable = true;
@@ -87,7 +89,8 @@ public class PathGenerator {
                     tah.add(nodes.get(randomNode));
                     tah.add(nodes.get(randomNode2));
                 }
-            } while (!find);
+                run++;
+            } while (!find && run < 500);
         }
         return tah;
     }

@@ -1,5 +1,6 @@
 package cz.uhk.graphstheory.first;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -30,6 +31,8 @@ public class GenerateGraphFragment extends AbstractFragment {
     private static final int MAXIMUM_AMOUNT_OF_NODES = 7;
     private static final int MINIMUM_AMOUNT_OF_NODES = 5;
 
+    private FirstFragmentCommunicationInterface firstFragmentCommunicationInterface;
+
     public GenerateGraphFragment() {
         // Required empty public constructor
     }
@@ -50,7 +53,11 @@ public class GenerateGraphFragment extends AbstractFragment {
                         int BRUSH_SIZE = getGraphGeneratedView().getBrushSize();
                         Map mapToSet = GraphGenerator.generateMap(height, width, BRUSH_SIZE, amountOfEdges);
                         getGraphGeneratedView().setMap(mapToSet);
-                        getGraphGeneratedView().setRedLineList(PathGenerator.generatePath(getGraphGeneratedView().getMap()));
+
+                        Map map = getGraphGeneratedView().getMap();
+                        ArrayList<Coordinate> redLines = PathGenerator.generatePath(map);
+                        getGraphGeneratedView().setRedLineList(redLines);
+                        firstFragmentCommunicationInterface.passArrayOfNodes(getNodeChars(redLines, map).toString());
                     }
                     disableListener = true;
                 }
@@ -59,37 +66,39 @@ public class GenerateGraphFragment extends AbstractFragment {
 
         //typ "cervene cary", ktera se nad grafem vykresli
         if (!type.isEmpty()) {
-            switch (type) {
-                case "cesta":
-                    getGraphGeneratedView().setRedLineList(PathGenerator.generatePath(getGraphGeneratedView().getMap()));
-                    getGraphGeneratedView().invalidate();
-                    break;
-                case "tah":
-                    getGraphGeneratedView().setRedLineList(PathGenerator.generateTrail(getGraphGeneratedView().getMap()));
-                    getGraphGeneratedView().invalidate();
-                    break;
-                case "kruznice":
-                    getGraphGeneratedView().setRedLineList(PathGenerator.generateCycle(getGraphGeneratedView().getMap()));
-                    getGraphGeneratedView().invalidate();
-                    break;
-            }
+            ArrayList<Coordinate> redLines;
+            Map map = getGraphGeneratedView().getMap();
+
+            redLines = PathGenerator.generatePath(map);
+            getGraphGeneratedView().setRedLineList(redLines);
+            getGraphGeneratedView().invalidate();
+            firstFragmentCommunicationInterface.passArrayOfNodes(getNodeChars(redLines, map).toString());
         }
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
-    //zmeni typ vykresleni, predava se jako parametr, protoze nejde volat metodu na view, ktere neni jeste vytvoreno
+        try {
+            firstFragmentCommunicationInterface = (GenerateGraphFragment.FirstFragmentCommunicationInterface) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement FirstFragmentCommunicationInterface");
+        }
+    }
+
 
     /**
      * @param type of generated graph
      * @return size of line if needed
      */
 
+    //zmeni typ vykresleni, predava se jako parametr, protoze nejde volat metodu na view, ktere neni jeste vytvoreno
     public String changeEducationGraph(String type) {
         this.type = type;
         ArrayList<Coordinate> redLines;
-        Map map;
         if (!type.isEmpty()) {
-            map = getGraphGeneratedView().getMap();
+            Map map = getGraphGeneratedView().getMap();
             switch (type) {
                 case "cesta":
                     redLines = PathGenerator.generatePath(getGraphGeneratedView().getMap());
@@ -156,5 +165,9 @@ public class GenerateGraphFragment extends AbstractFragment {
             }
         }
         return chars;
+    }
+
+    public interface FirstFragmentCommunicationInterface {
+        public void passArrayOfNodes(String text);
     }
 }

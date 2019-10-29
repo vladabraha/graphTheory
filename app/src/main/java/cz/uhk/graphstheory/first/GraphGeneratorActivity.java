@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -33,7 +34,8 @@ import cz.uhk.graphstheory.model.Map;
 import cz.uhk.graphstheory.util.GraphChecker;
 import cz.uhk.graphstheory.util.GraphGenerator;
 
-public class GraphGeneratorActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface, DrawingFragment.CommunicationInterface, SecondaryTableLayoutCommunicationInterface {
+public class GraphGeneratorActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface,
+        DrawingFragment.CommunicationInterface, SecondaryTableLayoutCommunicationInterface, GenerateGraphFragment.FirstFragmentCommunicationInterface {
 
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
@@ -43,7 +45,8 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     int height, width, length;
-    boolean isViewCreated = false;
+    boolean isPathGenerated, isViewCreated = false;
+    String textToShow;
 
 
     @Override
@@ -198,6 +201,13 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
             drawingFragment.changeDrawingMethod("path");
             bottomNavigationView.setSelectedItemId(R.id.path);
         }
+        isPathGenerated = false;
+    }
+
+    @Override
+    protected void changeToTextFragment(){
+        super.changeToTextFragment();
+        isPathGenerated = false;
     }
 
     private void setProperTitleToBottomNavigationMenu(int displayedActivity) {
@@ -220,7 +230,8 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
     protected void changeToEducationFragment() {
         super.changeToEducationFragment();
         if (isViewCreated) setMapToDrawingFragment(width, height);
-        Toast.makeText(this, "Nyní si ukážeme v zadaném grafu cestu", Toast.LENGTH_LONG).show();
+        if (isPathGenerated)
+            Toast.makeText(this, "Nyní si ukážeme v zadaném grafu cestu přes vrcholy " + textToShow, Toast.LENGTH_LONG).show();
     }
 
     private void changeActivity() {
@@ -317,10 +328,12 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
         switch (number) {
             case 0:
                 text = generateGraphFragment.changeEducationGraph("cesta");
+                text = convertNameOfLinesToNodes(text);
                 Toast.makeText(this, "Nyní si ukážeme v zadaném grafu cestu přes vrcholy " + text, Toast.LENGTH_LONG).show();
                 break;
             case 1:
-                text =  generateGraphFragment.changeEducationGraph("tah");
+                text = generateGraphFragment.changeEducationGraph("tah");
+                text = convertNameOfLinesToNodes(text);
                 Toast.makeText(this, "Nyní si ukážeme v zadaném grafu tah přes vrcholy " + text, Toast.LENGTH_LONG).show();
                 break;
             case 2:
@@ -332,5 +345,35 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
                 Toast.makeText(this, "Nyní si ukážeme v zadaném grafu sled délky " + text, Toast.LENGTH_LONG).show();
                 break;
         }
+    }
+
+    @Override
+    public void passArrayOfNodes(String text) {
+        textToShow = convertNameOfLinesToNodes(text);
+
+        if (!isPathGenerated)
+            Toast.makeText(this, "Nyní si ukážeme v zadaném grafu cestu přes vrcholy " + textToShow, Toast.LENGTH_LONG).show();
+        isPathGenerated = true;
+    }
+
+    @NonNull
+    private String convertNameOfLinesToNodes(String text) {
+        //odstraní zbytečný znaky
+        text = text.replaceAll(", ", "");
+        text = text.substring(1, text.length() - 1);
+        //vymažeme každý druhý písmeno, který tam je zbytečně
+        StringBuilder str = new StringBuilder(text);
+        for (int i = text.length() - 2; i != 0; i--) {
+            if (i > 0 && i % 2 != 0) {
+                str.deleteCharAt(i);
+            }
+        }
+
+        //přidání čárek mezi písmena
+        int length = str.length();
+        for (int i = length - 1; i != 0; i--) {
+            str.insert(i, "-");
+        }
+        return str.toString();
     }
 }
