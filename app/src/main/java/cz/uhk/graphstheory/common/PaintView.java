@@ -211,6 +211,36 @@ public class PaintView extends View {
             }
         }
 
+        String value = "A";
+        int charValue = value.charAt(0);
+        if (circleCoordinates.size() > 0) {
+            for (Coordinate coordinate : circleCoordinates) {
+                mPaint.setColor(DEFAULT_COLOR);
+                mPaint.setStrokeWidth(BRUSH_SIZE);
+                mPaint.setStyle(Paint.Style.FILL);
+                mCanvas.drawCircle(coordinate.x, coordinate.y, BRUSH_SIZE + 30, mPaint);
+
+                mPaint.setColor(Color.WHITE);
+                mPaint.setTextSize(80);
+                charValue++;
+                String nextChar = String.valueOf( (char) charValue);
+                mCanvas.drawText(nextChar, coordinate.x - (BRUSH_SIZE * 2 ), coordinate.y + (BRUSH_SIZE * 2), mPaint);
+            }
+        }
+
+        if (redCirclesCoordinates != null && redCirclesCoordinates.size() > 0){
+            for (Coordinate coordinate : redCirclesCoordinates) {
+                mPaint.setColor(RED_COLOR);
+                mPaint.setStrokeWidth(BRUSH_SIZE);
+                mPaint.setStyle(Paint.Style.FILL);
+                mCanvas.drawCircle(coordinate.x, coordinate.y, BRUSH_SIZE + 30, mPaint);
+
+                mPaint.setColor(Color.BLACK);
+                mPaint.setTextSize(80);
+                mCanvas.drawText("A", coordinate.x - (BRUSH_SIZE * 2 ), coordinate.y + (BRUSH_SIZE * 2), mPaint);
+            }
+        }
+
         canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
         canvas.restore();
 

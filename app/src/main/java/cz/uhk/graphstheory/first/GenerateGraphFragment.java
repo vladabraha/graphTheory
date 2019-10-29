@@ -1,6 +1,7 @@
 package cz.uhk.graphstheory.first;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
@@ -8,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import cz.uhk.graphstheory.abstraction.AbstractFragment;
 import cz.uhk.graphstheory.model.Coordinate;
@@ -43,7 +45,8 @@ public class GenerateGraphFragment extends AbstractFragment {
                     height = view.getMeasuredHeight();
                     if (width != 0) {
                         int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
-                        if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES) amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
+                        if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES)
+                            amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
                         int BRUSH_SIZE = getGraphGeneratedView().getBrushSize();
                         Map mapToSet = GraphGenerator.generateMap(height, width, BRUSH_SIZE, amountOfEdges);
                         getGraphGeneratedView().setMap(mapToSet);
@@ -55,8 +58,8 @@ public class GenerateGraphFragment extends AbstractFragment {
         });
 
         //typ "cervene cary", ktera se nad grafem vykresli
-        if (!type.isEmpty()){
-            switch (type){
+        if (!type.isEmpty()) {
+            switch (type) {
                 case "cesta":
                     getGraphGeneratedView().setRedLineList(PathGenerator.generatePath(getGraphGeneratedView().getMap()));
                     getGraphGeneratedView().invalidate();
@@ -77,30 +80,81 @@ public class GenerateGraphFragment extends AbstractFragment {
     //zmeni typ vykresleni, predava se jako parametr, protoze nejde volat metodu na view, ktere neni jeste vytvoreno
 
     /**
-     *
      * @param type of generated graph
      * @return size of line if needed
      */
 
-    public int changeEducationGraph(String type) {
-       this.type = type;
-        switch (type){
-            case "cesta":
-                getGraphGeneratedView().setRedLineList(PathGenerator.generatePath(getGraphGeneratedView().getMap()));
-                getGraphGeneratedView().invalidate();
-                return 0;
-            case "tah":
-                getGraphGeneratedView().setRedLineList(PathGenerator.generateTrail(getGraphGeneratedView().getMap()));
-                getGraphGeneratedView().invalidate();
-                return 0;
-            case "kruznice":
-                ArrayList<Coordinate> coordinates = PathGenerator.generateCycle(getGraphGeneratedView().getMap());
-                int length = Math.round(coordinates.size() / 2);
-                getGraphGeneratedView().setRedLineList(coordinates);
-                getGraphGeneratedView().invalidate();
-                return length;
+    public String changeEducationGraph(String type) {
+        this.type = type;
+        ArrayList<Coordinate> redLines;
+        Map map;
+        if (!type.isEmpty()) {
+            map = getGraphGeneratedView().getMap();
+            switch (type) {
+                case "cesta":
+                    redLines = PathGenerator.generatePath(getGraphGeneratedView().getMap());
+                    getGraphGeneratedView().setRedLineList(redLines);
+                    getGraphGeneratedView().invalidate();
+                    return getNodeChars(redLines, map).toString();
+                case "tah":
+                    redLines = PathGenerator.generateTrail(getGraphGeneratedView().getMap());
+                    getGraphGeneratedView().setRedLineList(redLines);
+                    getGraphGeneratedView().invalidate();
+                    return getNodeChars(redLines, map).toString();
+
+                case "kruznice":
+                    ArrayList<Coordinate> coordinates = PathGenerator.generateCycle(getGraphGeneratedView().getMap());
+                    int length = Math.round(coordinates.size() / 2);
+                    getGraphGeneratedView().setRedLineList(coordinates);
+                    getGraphGeneratedView().invalidate();
+                    return String.valueOf(length);
+            }
         }
-        return 0;
+        return "";
     }
 
+    private ArrayList<String> getNodeChars(ArrayList<Coordinate> redLines, Map map) {
+        ArrayList<String> chars = new ArrayList<>();
+        if (redLines != null) {
+            ArrayList<Coordinate> nodes = map.getCircles();
+            for (Coordinate redCoordinate : redLines) {
+                for (int i = 0; i < nodes.size(); i++) {
+                    if (nodes.get(i).equal(redCoordinate)) {
+                        String value = "B";
+                        int charValue = value.charAt(0);
+                        for (int j = 0; j < i; j++) {
+                            charValue++;
+                        }
+                        String letter = String.valueOf((char) charValue);
+                        chars.add(letter);
+                    }
+                }
+            }
+            Log.d("chars", chars.toString());
+            arrangeChars(chars);
+            Log.d("chars", chars.toString());
+        }
+        return chars;
+    }
+
+    //projdu pole, na každém lichém prvku se podívám jestli lichý a lichý minus jedna prvek není obsažen v následujícíh 2 indexech
+    //pokud ano, porovnám a mrknu, jestli stejná písmena jsou vedle sebe, pokuc ne, prohodím
+    private ArrayList<String> arrangeChars(ArrayList<String> chars) {
+        for (int i = 0; i < chars.size() - 1; i++) {
+            if (i > 0 && i % 2 != 0) {
+                //pokud sedi n-1 index s nasledujícím - prohodím n - 1 se současným
+                if (chars.get(i - 1).equals(chars.get(i + 1))) {
+                    Collections.swap(chars, i - 1, i);
+                    //pokud sedí současný s n + 2 prohodím následující 2 indexy
+                } else if (chars.get(i).equals(chars.get(i + 2))) {
+                    Collections.swap(chars, i + 1, i + 2);
+                    //pokud sedí n - 1 s n + 2 prohodím jak n - 1 s n tak n + 1 s n + 2
+                } else if (chars.get(i - 1).equals(chars.get(i + 2))) {
+                    Collections.swap(chars, i - 1, i);
+                    Collections.swap(chars, i + 1, i + 2);
+                }
+            }
+        }
+        return chars;
+    }
 }
