@@ -84,10 +84,10 @@ public class GenerateGraphFragment extends AbstractFragment {
      * @return size of line if needed
      */
 
-    public int changeEducationGraph(String type) {
+    public String changeEducationGraph(String type) {
         this.type = type;
-        ArrayList<Coordinate> redLines = null;
-        Map map = null;
+        ArrayList<Coordinate> redLines;
+        Map map;
         if (!type.isEmpty()) {
             map = getGraphGeneratedView().getMap();
             switch (type) {
@@ -95,44 +95,46 @@ public class GenerateGraphFragment extends AbstractFragment {
                     redLines = PathGenerator.generatePath(getGraphGeneratedView().getMap());
                     getGraphGeneratedView().setRedLineList(redLines);
                     getGraphGeneratedView().invalidate();
-                    break;
+                    return getNodeChars(redLines, map).toString();
                 case "tah":
                     redLines = PathGenerator.generateTrail(getGraphGeneratedView().getMap());
                     getGraphGeneratedView().setRedLineList(redLines);
                     getGraphGeneratedView().invalidate();
-                    break;
-
+                    return getNodeChars(redLines, map).toString();
 
                 case "kruznice":
                     ArrayList<Coordinate> coordinates = PathGenerator.generateCycle(getGraphGeneratedView().getMap());
                     int length = Math.round(coordinates.size() / 2);
                     getGraphGeneratedView().setRedLineList(coordinates);
                     getGraphGeneratedView().invalidate();
-                    return length;
-            }
-            if (redLines != null) {
-                ArrayList<String> chars = new ArrayList<>();
-                ArrayList<Coordinate> nodes = map.getCircles();
-                for (Coordinate redCoordinate : redLines) {
-                    for (int i = 0; i < nodes.size(); i++) {
-                        if (nodes.get(i).equal(redCoordinate)) {
-                            String value = "B";
-                            int charValue = value.charAt(0);
-                            for (int j = 0; j < i; j++) {
-                                charValue++;
-                            }
-                            String letter = String.valueOf((char) charValue);
-                            //todo seradit uzly tak, aby sly za sebou
-                            chars.add(letter);
-                        }
-                    }
-                }
-                Log.d("chars", chars.toString());
-                arrangeChars(chars);
-                Log.d("chars", chars.toString());
+                    return String.valueOf(length);
             }
         }
-        return 0;
+        return "";
+    }
+
+    private ArrayList<String> getNodeChars(ArrayList<Coordinate> redLines, Map map) {
+        ArrayList<String> chars = new ArrayList<>();
+        if (redLines != null) {
+            ArrayList<Coordinate> nodes = map.getCircles();
+            for (Coordinate redCoordinate : redLines) {
+                for (int i = 0; i < nodes.size(); i++) {
+                    if (nodes.get(i).equal(redCoordinate)) {
+                        String value = "B";
+                        int charValue = value.charAt(0);
+                        for (int j = 0; j < i; j++) {
+                            charValue++;
+                        }
+                        String letter = String.valueOf((char) charValue);
+                        chars.add(letter);
+                    }
+                }
+            }
+            Log.d("chars", chars.toString());
+            arrangeChars(chars);
+            Log.d("chars", chars.toString());
+        }
+        return chars;
     }
 
     //projdu pole, na každém lichém prvku se podívám jestli lichý a lichý minus jedna prvek není obsažen v následujícíh 2 indexech

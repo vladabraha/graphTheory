@@ -12,14 +12,15 @@ public class PathGenerator {
 
     /**
      * z predane mapy vrati nahodne vytvorenou cestu (kazdy vrchol max. jednou)
+     *
      * @param map mapa
      * @return list primek, kterymi prochazi cesta
      */
-    //todo seřadit, aby uzly šly za sebou
     public static ArrayList<Coordinate> generatePath(Map map) {
         int numberOfNodes = map.getCircles().size();
         int pathLength = (int) Math.round(Math.random() * numberOfNodes);
-        if (pathLength < ((map.getCircles().size() / 2) + 1)) pathLength = (map.getCircles().size() / 2) + 1;
+        if (pathLength < ((map.getCircles().size() / 2) + 1))
+            pathLength = (map.getCircles().size() / 2) + 1;
 
         List<Integer> usedIndexes = new ArrayList<>(pathLength);
         for (int i = 0; i < pathLength; i++) {
@@ -45,46 +46,48 @@ public class PathGenerator {
 
     /**
      * z predane mapy vrati nahodne vytvoren tah (kazdy hrana max. jednou)
+     *
      * @param map mapa
      * @return list primek, kterymi prochazi tah
      */
-    public static ArrayList<Coordinate> generateTrail(Map map){
+    public static ArrayList<Coordinate> generateTrail(Map map) {
         ArrayList<Coordinate> nodes = map.getCircles();
         int numberOfNodes = map.getCircles().size();
-        Random ran = new Random();
-        int randomNumberOfRedLines = ran.nextInt(((numberOfNodes * (numberOfNodes - 1)) / 2));
-        if (randomNumberOfRedLines < 2) randomNumberOfRedLines = 2;
-        ArrayList<CustomLine> customLines = new ArrayList<>();
 
+        Random ran = new Random();
+        int randomNumberOfRedLines = ran.nextInt(((numberOfNodes * (numberOfNodes - 1)) / 2)); //definice úplného grafu
+        if (randomNumberOfRedLines < 2) randomNumberOfRedLines = 2;
+
+        ArrayList<CustomLine> customLines = new ArrayList<>();
         ArrayList<Coordinate> tah = new ArrayList<>();
 
         int randomNode = 0;
         int randomNode2 = 0;
-        for (int i = 0; i < randomNumberOfRedLines; i++){
+        for (int i = 0; i < randomNumberOfRedLines; i++) {
             boolean find = false;
             boolean isAvailable = true;
-            do{
+            do {
                 if (isAvailable) randomNode2 = randomNode;
                 isAvailable = true;
 
+                //najdi index, který není stejný
                 do {
                     randomNode = (int) (numberOfNodes * Math.random());
-                }while (randomNode == randomNode2);
+                } while (randomNode == randomNode2);
 
-
-                for (CustomLine customLine : customLines){
+                for (CustomLine customLine : customLines) {
                     if (customLine.isPointInStartOrEndOfLine(nodes.get(randomNode)) && customLine.isPointInStartOrEndOfLine(nodes.get(randomNode2))) {
                         isAvailable = false;
                         break;
                     }
                 }
-                if (isAvailable){
+                if (isAvailable) {
                     find = true;
                     customLines.add(new CustomLine(nodes.get(randomNode), nodes.get(randomNode2)));
                     tah.add(nodes.get(randomNode));
                     tah.add(nodes.get(randomNode2));
                 }
-            } while(!find);
+            } while (!find);
         }
         return tah;
     }
@@ -93,11 +96,11 @@ public class PathGenerator {
         ArrayList<Coordinate> path;
         do {
             path = generatePath(map);
-        }while (path.size() < (map.getCircles().size() - 1));
+        } while (path.size() < (map.getCircles().size() - 1));
 
         path.add(path.get(path.size() - 1));
         path.add(path.get(0));
-       return path;
+        return path;
     }
 
     public static Map createComplementToGraph(Map firstMap) {
@@ -152,16 +155,16 @@ public class PathGenerator {
 
         for (int i = 0; i < nodesToSet.size(); i++) {
             CustomLine line;
-            CustomLine redline;
+            CustomLine redLine;
             if (i < nodesToSet.size() - 1) {
                 line = new CustomLine(nodesToSet.get(i), nodesToSet.get(i + 1));
-                redline = new CustomLine(nodesToSet.get(i), nodesToSet.get(i + 1));
+                redLine = new CustomLine(nodesToSet.get(i), nodesToSet.get(i + 1));
             } else {
                 line = new CustomLine(nodesToSet.get(i), nodesToSet.get(0));
-                redline = new CustomLine(nodesToSet.get(i), nodesToSet.get(0));
+                redLine = new CustomLine(nodesToSet.get(i), nodesToSet.get(0));
             }
             lines.add(line);
-            hamiltonRedLines.add(redline);
+            hamiltonRedLines.add(redLine);
         }
 
         for (int j = 0; j < hamiltonRedLines.size(); j++) {
@@ -184,14 +187,14 @@ public class PathGenerator {
         ArrayList<CustomLine> lines = new ArrayList<>();
         ArrayList<CustomLine> redLines = new ArrayList<>();
 
-        for (int i = 0; i < nodesToSet.size(); i++){
-            if (i < nodesToSet.size() - 1){
-                lines.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(i+1)));
-            }else {
+        for (int i = 0; i < nodesToSet.size(); i++) {
+            if (i < nodesToSet.size() - 1) {
+                lines.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(i + 1)));
+            } else {
                 lines.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(2)));
             }
         }
-        if ( nodesToSet.size() > 4){
+        if (nodesToSet.size() > 4) {
             lines.add(new CustomLine(nodesToSet.get(0), nodesToSet.get(2)));
             lines.add(new CustomLine(nodesToSet.get(2), nodesToSet.get(4)));
             lines.add(new CustomLine(nodesToSet.get(4), nodesToSet.get(1)));

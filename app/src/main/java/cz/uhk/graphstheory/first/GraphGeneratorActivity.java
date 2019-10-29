@@ -313,23 +313,23 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
 
     @Override
     public void secondaryTableLayoutSelectedChange(int number) {
-        int length;
+        String text;
         switch (number) {
             case 0:
-                generateGraphFragment.changeEducationGraph("cesta");
-                Toast.makeText(this, "Nyní si ukážeme v zadaném grafu cestu", Toast.LENGTH_LONG).show();
+                text = generateGraphFragment.changeEducationGraph("cesta");
+                Toast.makeText(this, "Nyní si ukážeme v zadaném grafu cestu přes vrcholy " + text, Toast.LENGTH_LONG).show();
                 break;
             case 1:
-                generateGraphFragment.changeEducationGraph("tah");
-                Toast.makeText(this, "Nyní si ukážeme v zadaném grafu tah", Toast.LENGTH_LONG).show();
+                text =  generateGraphFragment.changeEducationGraph("tah");
+                Toast.makeText(this, "Nyní si ukážeme v zadaném grafu tah přes vrcholy " + text, Toast.LENGTH_LONG).show();
                 break;
             case 2:
-                length = generateGraphFragment.changeEducationGraph("kruznice");
-                Toast.makeText(this, "Nyní si ukážeme v zadaném grafu kružnici delky " + length, Toast.LENGTH_LONG).show();
+                text = generateGraphFragment.changeEducationGraph("kruznice");
+                Toast.makeText(this, "Nyní si ukážeme v zadaném grafu kružnici delky " + text, Toast.LENGTH_LONG).show();
                 break;
             case 3:
-                length = generateGraphFragment.changeEducationGraph("kruznice");
-                Toast.makeText(this, "Nyní si ukážeme v zadaném grafu sled délky " + length, Toast.LENGTH_LONG).show();
+                text = generateGraphFragment.changeEducationGraph("kruznice");
+                Toast.makeText(this, "Nyní si ukážeme v zadaném grafu sled délky " + text, Toast.LENGTH_LONG).show();
                 break;
         }
     }
