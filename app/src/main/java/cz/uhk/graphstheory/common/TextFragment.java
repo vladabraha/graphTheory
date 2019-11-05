@@ -1,18 +1,17 @@
 package cz.uhk.graphstheory.common;
 
-import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 import java.util.Objects;
 
 import cz.uhk.graphstheory.R;
+import katex.hourglass.in.mathlib.MathView;
 
 
 public class TextFragment extends Fragment {
@@ -68,8 +67,9 @@ public class TextFragment extends Fragment {
     public void onStart() {
         super.onStart();
         if (textToDisplay != R.string.example_text){
-            TextView educationDescription = Objects.requireNonNull(getView()).findViewById(R.id.textView_education_description);
-            educationDescription.setText(textToDisplay);
+            MathView educationDescription = Objects.requireNonNull(getView()).findViewById(R.id.textView_education_description);
+            String text = getResources().getString(textToDisplay);
+            educationDescription.setDisplayText(text);
         }
     }
 

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:auto="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/SCROLLER_ID"
     android:layout_width="fill_parent"
@@ -8,11 +10,22 @@
     android:scrollbars="vertical"
     tools:context=".common.TextFragment">
 
-    <TextView
+
+    <katex.hourglass.in.mathlib.MathView
         android:id="@+id/textView_education_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:text="@string/example_text" />
+        auto:setTextSize="10sp"
+        auto:setClickable="false"
+        auto:setText="When \\(a \\ne 0\\), there are two solutions to \\(ax^2 + bx + c = 0\\)
+        and they are $$x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}.$$
+      Sled - konečná posloupnost \\(S = (v_0, e_1, v_1, e_2,…, v_{k-1}, e_k, v_k)\\), přičemž pro všechny i = 1,…,k je e(vi-1,vi ) (uzavřený sled je takový, kde vi = vk, otevřený sled je takový kde vi != vk).
+        Ve sledu se hrany a vrcholy můžou opakovat.
+        Tah je taký sled, v kterém se žádná hrana nevyskytuje dvakrát, (uzavřený i otevřený).
+        Otevřený tah ve kterém jsou všechny vrcholy navzájem různé, se nazývá cesta.
+        Uzavřená cesta se nazývá kružnice.
+        Délka sledu, tahu, cesty a kružnice = počet hran!!!
+"/>
+
 
 </ScrollView>
