@@ -35,7 +35,7 @@
         <p> $\\mathbf{Tah}$ je taký sled, v kterém se žádná hrana nevyskytuje dvakrát, (uzavřený i otevřený).</p>
         <p> $\\mathbf{Otevřený \\, tah}$ ve kterém jsou všechny vrcholy navzájem různé, se nazývá cesta. </p>
         <p> $\\mathbf{Uzavřená \\, cesta}$ se nazývá kružnice. </p>
-        $$\\color{red}{Délka \\, sledu, \\, tahu, \\, cesty \\, a \\, kružnice \\, =  \\, počet \\, hran!!!}$$
+        $\\color{red}{Délka \\, sledu, \\, tahu, \\, cesty \\, a \\, kružnice}$ $\\color{red}{ =  \\, počet \\, hran!!!}$
         ]]>
     </string>
 
@@ -49,7 +49,7 @@
     <string name="third_activity_text">
         <![CDATA[
             <p> Graf $\\overline G = (V, \\overline E)$ je <b>doplněk grafu</b> G = (V,E), když hrana {$v_i, v_j$ } $\\in  \\overline E$ tehdy a jenom tehdy, když {$v_i, v_j$ } $\\in E$. Jinými slovy, dva vrcholy $v_i , v_j$ jsou sousední v $\\overline G$ právě tehdy, když nejsou sousední v $G$. </p>
-            $$\\color{blue}{Poznámka: \\, můžeme \\, se \\, setkat \\, i \\,  s \\, označením \\, -G=(V, -E)}$$
+            $\\color{blue}{Poznámka: \\, můžeme \\, se \\, setkat \\, i}$ $\\color{blue}{s \\, označením \\, -G=(V, -E)}$
          ]]>
     </string>
 
