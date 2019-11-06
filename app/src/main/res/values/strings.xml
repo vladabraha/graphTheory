@@ -35,7 +35,7 @@
         <p> $\\mathbf{Tah}$ je taký sled, v kterém se žádná hrana nevyskytuje dvakrát, (uzavřený i otevřený).</p>
         <p> $\\mathbf{Otevřený \\, tah}$ ve kterém jsou všechny vrcholy navzájem různé, se nazývá cesta. </p>
         <p> $\\mathbf{Uzavřená \\, cesta}$ se nazývá kružnice. </p>
-        Délka sledu, tahu, cesty a kružnice = počet hran!!!
+        $$\\color{red}{Délka \\, sledu, \\, tahu, \\, cesty \\, a \\, kružnice \\, =  \\, počet \\, hran!!!}$$
         ]]>
     </string>
 
@@ -49,14 +49,14 @@
     <string name="third_activity_text">
         <![CDATA[
             <p> Graf $\\overline G = (V, \\overline E)$ je <b>doplněk grafu</b> G = (V,E), když hrana {$v_i, v_j$ } $\\in  \\overline E$ tehdy a jenom tehdy, když {$v_i, v_j$ } $\\in E$. Jinými slovy, dva vrcholy $v_i , v_j$ jsou sousední v $\\overline G$ právě tehdy, když nejsou sousední v $G$. </p>
-            <font fgcolor="#ff6890a5">Poznámka: můžeme se setkat i s označením -G=(V, -E)</font>
+            $$\\color{blue}{Poznámka: \\, můžeme \\, se \\, setkat \\, i \\,  s \\, označením \\, -G=(V, -E)}$$
          ]]>
     </string>
 
     <string name="fourth_activity_text">
         <![CDATA[
-            <p>Dva grafy $G = (V,E)$ a $G\' = (V\',E\')$ nazveme <font fgcolor=\'red\'>izomorfní</font>, když existuje jednoznačné zobrazení $f : V -> V\'$ takové, že platí ${x, y} \\in E$ právě tehdy, když {$f (x), f ( y)$} $\\in E\'$. </p>
-            <p>Zobrazení $f$ hovoříme <font fgcolor=\'red\'>izomorfizmus</font> grafů $G$ a $G´$. </p>
+            <p>Dva grafy $G = (V,E)$ a $G\' = (V\',E\')$ nazveme $\\color{red}{izomorfní}$, když existuje jednoznačné zobrazení $f : V -> V\'$ takové, že platí ${x, y} \\in E$ právě tehdy, když {$f (x), f ( y)$} $\\in E\'$. </p>
+            <p>Zobrazení $f$ hovoříme $\\color{red}{izomorfizmus}$ grafů $G$ a $G´$. </p>
             Fakt, že $G \\, a \\, G´$ jsou izomorfní, zapisujeme $G \\cong G\'$ .
         ]]>
     </string>
@@ -79,22 +79,22 @@
 
     <string name="seventh_activity_text">
            <![CDATA[
-            <p><font fgcolor=\'blue\'>$\\mathbf{Skóre \\, grafu}$ = grafová posloupnost</font> <br>
+            <p>$\\color{blue}{\\mathbf{Skóre \\, grafu} = grafová posloupnost}$ <br>
             Nechť $G = (V, E)$ je graf s n vrcholy $v_1, v_2, … v_n$. <br>
-            <font fgcolor=\'red\'><b>Skóre grafu</b></font> G je posloupnost $(deg_G(v_1), deg_G(v_2), …, deg_G(v_n))$.</p>
+            <b>$\\color{red}{Skóre \\, grafu}$</b> G je posloupnost $(deg_G(v_1), deg_G(v_2), …, deg_G(v_n))$.</p>
            ]]>
     </string>
 
     <string name="eighth_activity_text">
          <![CDATA[
-            <p><font fgcolor=\'blue\'>$\\mathbf{Strom}$</font> je souvislý graf, neobsahující kružnici </p>
-            <p><font fgcolor=\'blue\'>$\\mathbf{Les}$</font> je acyklický graf (graf, který neobsahuje kružnici).</p>
+            <p>$\\color{blue}{\\mathbf{Strom}}$ je souvislý graf, neobsahující kružnici </p>
+            <p>$\\color{blue}{\\mathbf{Les}}$ je acyklický graf (graf, který neobsahuje kružnici).</p>
         ]]>
     </string>
 
     <string name="ninth_activity_text">
         <![CDATA[
-            <font fgcolor=\'blue\'>$\\mathbf{Kostra \\, grafu}$</font> $G=(V,E)$ je strom $T=(V,E´)$, který obsahuje všechny vrcholy grafu a $E´ \\subseteq E$, tj. acyklický a souvislý faktor grafu $G$.
+            $\\color{blue}{\\mathbf{Kostra \\, grafu}}$ $G=(V,E)$ je strom $T=(V,E´)$, který obsahuje všechny vrcholy grafu a $E´ \\subseteq E$, tj. acyklický a souvislý faktor grafu $G$.
         ]]>
     </string>
 
