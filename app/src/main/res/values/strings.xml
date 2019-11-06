@@ -48,14 +48,14 @@
 
     <string name="third_activity_text">
         <![CDATA[
-            <p> Graf $\\overline G = (V, \\overline E)$ je <b>doplněk grafu</b> G = (V,E), když hrana {$v_i, v_j$ } $\\in  \\overline E$ tehdy a jenom tehdy, když {$v_i, v_j$ } $\\in E$. Jinými slovy, dva vrcholy $v_i , v_j$ jsou sousední v $\\overline G$ právě tehdy, když nejsou sousední v $G$. </p>
+            <p> Graf $\\overline G = (V, \\overline E)$ je <b>doplněk grafu</b> $G = (V,E)$, když hrana {$v_i, v_j$ } $\\in  \\overline E$ tehdy a jenom tehdy, když {$v_i, v_j$ } $\\in E$. Jinými slovy, dva vrcholy $v_i , v_j$ jsou sousední v $\\overline G$ právě tehdy, když nejsou sousední v $G$. </p>
             $\\color{blue}{Poznámka: \\, můžeme \\, se \\, setkat \\, i}$ $\\color{blue}{s \\, označením \\, -G=(V, -E)}$
          ]]>
     </string>
 
     <string name="fourth_activity_text">
         <![CDATA[
-            <p>Dva grafy $G = (V,E)$ a $G\' = (V\',E\')$ nazveme $\\color{red}{izomorfní}$, když existuje jednoznačné zobrazení $f : V -> V\'$ takové, že platí ${x, y} \\in E$ právě tehdy, když {$f (x), f ( y)$} $\\in E\'$. </p>
+            <p>Dva grafy $G = (V,E)$ a $G\' = (V\',E\')$ nazveme $\\color{red}{izomorfní}$, když existuje jednoznačné zobrazení $f : V \\rightarrow V\'$ takové, že platí ${x, y} \\in E$ právě tehdy, když {$f (x), f ( y)$} $\\in E\'$. </p>
             <p>Zobrazení $f$ hovoříme $\\color{red}{izomorfizmus}$ grafů $G$ a $G´$. </p>
             Fakt, že $G \\, a \\, G´$ jsou izomorfní, zapisujeme $G \\cong G\'$ .
         ]]>
@@ -63,13 +63,13 @@
 
     <string name="fifth_activity_text">
         <![CDATA[
-            $\\mathbf{Úplným \\, bipartitním \\, grafem}$ Kr,s nazýváme bipartitní graf, kde $|V1| = r$, $|V2| = s$, a ve kterém je hranou spojen každý z r vrcholů množiny $V_1$ s každým z s vrcholů množiny $V_2$.
+            $\\mathbf{Úplným \\, bipartitním \\, grafem}$ Kr,s nazýváme bipartitní graf, kde $|V_1| = r$, $|V_2| = s$, a ve kterém je hranou spojen každý z $r$ vrcholů množiny $V_1$ s každým z s vrcholů množiny $V_2$.
          ]]>
     </string>
 
     <string name="sixth_activity_text">
         <![CDATA[
-            <p>$\\mathbf{Eulerovský \\, tah}$ v grafu $G $je otevřený nebo uzavřený tah, který obsahuje všechny hrany grafu $G$. <br>
+            <p>$\\mathbf{Eulerovský \\, tah}$ v grafu $G$ je otevřený nebo uzavřený tah, který obsahuje všechny hrany grafu $G$. <br>
             $\\mathbf{Eulerovský \\, graf}$ je souvislý graf, ve kterém existuje eulerovský tah.</p>
 
             <p>$\\mathbf{Hamiltonovská \\, kružnice}$ v grafu $G$ je kružnice obsahující všechny vrcholy grafu $G$. <br>
@@ -79,7 +79,7 @@
 
     <string name="seventh_activity_text">
            <![CDATA[
-            <p>$\\color{blue}{\\mathbf{Skóre \\, grafu} = grafová posloupnost}$ <br>
+            <p>$\\color{blue}{\\mathbf{Skóre \\, grafu} = grafová \\, posloupnost}$ <br>
             Nechť $G = (V, E)$ je graf s n vrcholy $v_1, v_2, … v_n$. <br>
             <b>$\\color{red}{Skóre \\, grafu}$</b> G je posloupnost $(deg_G(v_1), deg_G(v_2), …, deg_G(v_n))$.</p>
            ]]>
