@@ -25,6 +25,7 @@ public class GraphGenerator {
      */
     public static Map generateMap(int height, int width, int BRUSH_SIZE, int amountOfNodes) {
         ArrayList<Coordinate> circles = generateNodes(height - BRUSH_SIZE, width - BRUSH_SIZE, BRUSH_SIZE, amountOfNodes);
+        //todo přehodit liny na kostru a zjistit, jeslti je graf spojitý
         ArrayList<CustomLine> customLines = generateRandomEdges(circles);
         return new Map(customLines, circles);
     }
