@@ -316,6 +316,8 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
             map.setRedCircles(new ArrayList<>());
         }
         drawingFragment.setUserGraph(map);
+        bottomNavigationView.setSelectedItemId(R.id.path);
+        drawingFragment.changeDrawingMethod("path");
 
     }
 

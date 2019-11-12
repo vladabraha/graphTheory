@@ -160,7 +160,9 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
         return tabNames;
     }
 
-    private void showProperToastMessage(int displayedActivity) {
+    private void showProperToastMessage() {
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        int displayedActivity = sharedPref.getInt("displayedActivity", 0);
         switch (displayedActivity) {
             case 0:
                 Toast.makeText(this, "Nakresli cestu v grafu, případně si graf uprav", Toast.LENGTH_LONG).show();
@@ -194,12 +196,14 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
         super.changeToDrawingFragment();
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         int displayedActivity = sharedPref.getInt("displayedActivity", 0);
-        showProperToastMessage(displayedActivity);
+        showProperToastMessage();
 
         if (isViewCreated) {
             setProperTitleToBottomNavigationMenu(displayedActivity);
-            drawingFragment.changeDrawingMethod("path");
-            bottomNavigationView.setSelectedItemId(R.id.path);
+            int size = bottomNavigationView.getMenu().size();
+            for (int i = 0; i < size; i++) {
+                bottomNavigationView.getMenu().getItem(i).setCheckable(false);
+            }
         }
         isPathGenerated = false;
     }
@@ -222,6 +226,9 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
                 break;
             case 2:
                 menu.getItem(3).setTitle("kružnice");
+                break;
+            case 3:
+                menu.getItem(3).setTitle("sled");
                 break;
         }
     }
@@ -256,7 +263,7 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
         int amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
         Map map = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
         drawingFragment.setUserGraph(map);
-        showProperToastMessage(displayedActivity);
+        showProperToastMessage();
         setProperTitleToBottomNavigationMenu(displayedActivity);
     }
 
@@ -270,6 +277,7 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
         int amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
         Map map = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
         drawingFragment.setUserGraph(map);
+        showProperToastMessage();
     }
 
     @Override

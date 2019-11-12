@@ -29,7 +29,6 @@ import cz.uhk.graphstheory.common.SecondaryTabLayoutFragment;
 import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
-import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
 import cz.uhk.graphstheory.model.Coordinate;
 import cz.uhk.graphstheory.model.CustomLine;
 import cz.uhk.graphstheory.model.Map;
@@ -41,17 +40,15 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
     private BottomNavigationView bottomNavigationView;
-    private Fragment educationGraphFragment;
     private FloatingActionButton floatingActionButton;
 
     private FourthActivityFragment fourthActivityFragment;
 
-    private DrawingFragmentListener drawingFragmentListener;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     int height;
     int width;
-    boolean isGraphSame, firstGraph;
+    boolean isGraphSame;
     Map firstMap, secondMap;
 
     @Override
@@ -67,11 +64,8 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
         //get instance of abstraction object
         textFragment = getTextFragment();
         drawingFragment = getDrawingFragment();
-        educationGraphFragment = getGenerateGraphFragment();
         bottomNavigationView = getBottomNavigationView();
         floatingActionButton = getFloatingActionButton();
-
-        drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         floatingActionButton.setOnClickListener(v -> {
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
             dialog.setCancelable(false);
@@ -114,8 +108,6 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
 
             final AlertDialog alert = dialog.create();
             alert.show();
-//                DatabaseConnector databaseConnector = new DatabaseConnector();
-//                databaseConnector.writeFirstActivityValue("test");
         });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

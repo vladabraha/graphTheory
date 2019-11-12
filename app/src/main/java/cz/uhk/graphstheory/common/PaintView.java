@@ -34,7 +34,6 @@ public class PaintView extends View {
     private static final float TOUCH_TOLERANCE_FINGER_MOVE = 5; //tolerance posunutí prstu při změně
     private static final float TOUCH_TOLERANCE_FINGER_TAPPED = 15; //tolerance posunutí prstu při změně
     private float previousXCoordinate, previousYCoordinate;
-    //    private Path mPath;
     private Paint mPaint;
     private ArrayList<FingerPath> fingerPaths = new ArrayList<>();
     //    private int currentColor;
@@ -74,9 +73,9 @@ public class PaintView extends View {
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
-//        mPaint.setXfermode(null);
         mPaint.setAlpha(0xff);
 
+//        mPaint.setXfermode(null);
 //        mEmboss = new EmbossMaskFilter(new float[] {1, 1, 1}, 0.4f, 6, 3.5f);
 //        mBlur = new BlurMaskFilter(5, BlurMaskFilter.Blur.NORMAL);
     }
@@ -156,7 +155,6 @@ public class PaintView extends View {
 //        for (FingerPath fingerPath : fingerPaths) {
 //            mPaint.setColor(fingerPath.color);
 //            mPaint.setStrokeWidth(fingerPath.strokeWidth);
-//
 //            mCanvas.drawPath(fingerPath.getPath(), mPaint);
 //        }
 
@@ -285,6 +283,7 @@ public class PaintView extends View {
     }
 
     private void touchStartCircle(float x, float y) {
+        //pokud je režim posouvani, mrkni na vsechny uzly, jestli zrovna neklikas na nejaky z nich
         if (move) {
             for (Coordinate coordinate : circleCoordinates) {
                 if (checkIsInCircle(coordinate.x, coordinate.y, x, y)) {
@@ -311,11 +310,12 @@ public class PaintView extends View {
 
 
     private void circleDragged(float x, float y) {
-        boolean redCircle = false;
+        //pokud posouvame uzly, tak se podivej, jestli posouvame cervenym, nebo normalnim uzlem a podle toho vymaz prislusnou pozici starsiho uzlu
+        boolean movingWithRedCircle = false;
         if (circleCoordinates.stream().anyMatch(c -> c.equal(firstCoordinate))) {
             circleCoordinates.remove(firstCoordinate);
         } else {
-            redCircle = true;
+            movingWithRedCircle = true;
             redCirclesCoordinates.remove(firstCoordinate);
         }
         for (Coordinate coordinate : allLineList) {
@@ -332,8 +332,9 @@ public class PaintView extends View {
                 coordinate.y = y;
             }
         }
+        //podle toho jeslti jsme posouvali cervenym uzlem, nebo normalnim uzlem, tak pridej novou pozici uzlu do seznamu
         firstCoordinate = new Coordinate(x, y);
-        if (!redCircle) {
+        if (!movingWithRedCircle) {
             circleCoordinates.add(firstCoordinate);
         } else {
             redCirclesCoordinates.add(firstCoordinate);
@@ -458,8 +459,7 @@ public class PaintView extends View {
                     touchUp(x, y);
                     touchMove(x, y);
                 }
-                if (isCircleDragged)
-                    isCircleDragged = false; //aby to neposouvalo v dalším tahu kruhy
+                if (isCircleDragged) isCircleDragged = false; //aby to neposouvalo v dalším tahu kruhy
                 if (remove) removeObject(x, y);
                 invalidate();
                 if (mListener != null) mListener.sentTouchUpCoordinates(new Coordinate(x, y));
@@ -498,6 +498,8 @@ public class PaintView extends View {
         allLineList.clear();
         redLineList.clear();
 
+        if (map.getCircles().isEmpty()) circleCoordinates.clear();
+        if (map.getCircles().isEmpty()) redCirclesCoordinates.clear();
         circleCoordinates = map.getCircles();
         redCirclesCoordinates = map.getRedCircles();
         if (!circleCoordinates.isEmpty() || !allLineList.isEmpty() || !redCirclesCoordinates.isEmpty()) {

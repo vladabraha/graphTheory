@@ -28,7 +28,6 @@ import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
 import cz.uhk.graphstheory.fourth.FourthActivity;
-import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
 import cz.uhk.graphstheory.model.CustomLine;
 import cz.uhk.graphstheory.model.Map;
 import cz.uhk.graphstheory.util.GraphConverter;
@@ -40,11 +39,8 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
     private BottomNavigationView bottomNavigationView;
-    private Fragment educationGraphFragment;
     private FloatingActionButton floatingActionButton;
 
-    private TabLayoutFragment tabLayoutFragment;
-    private DrawingFragmentListener drawingFragmentListener;
     DatabaseConnector databaseConnector;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     ThirdActivityFragment thirdActivityFragment;
@@ -66,14 +62,11 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
         //get instance of abstraction object
         textFragment = getTextFragment();
         drawingFragment = getDrawingFragment();
-        educationGraphFragment = getGenerateGraphFragment();
         bottomNavigationView = getBottomNavigationView();
         floatingActionButton = getFloatingActionButton();
-        tabLayoutFragment = getTabLayoutFragment();
 
         textFragment.setEducationText(R.string.third_activity_text);
 
-        drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         floatingActionButton.setOnClickListener(v -> {
             if (checkIfGraphIsComplementGraph(drawingFragment.getUserGraph())) {
                 String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
@@ -139,7 +132,7 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
 
     @Override
     protected void showBottomNavigationView() {
-        bottomNavigationView.setVisibility(View.VISIBLE);
+        bottomNavigationView.setVisibility(View.INVISIBLE);
     }
 
     @Override

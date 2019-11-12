@@ -33,7 +33,7 @@ public class SixthActivityFragment extends AbstractFragment implements GraphGene
 
     private Map hamiltonMap, eulerMap, previousMapToUpdate, mapAnimated;
 
-    boolean hamilton, euler;
+    private boolean hamilton, euler;
 
     public SixthActivityFragment() {
         // Required empty public constructor
@@ -100,6 +100,7 @@ public class SixthActivityFragment extends AbstractFragment implements GraphGene
     //vezmu vždycky aktualizovaný graf o uživatelovi pohyby
     //z minulého grafu spočítám počet červených čar a z nového grafu nakopíruju stejný počet o jeden zvětšený (pokud předtím neměli stejný počet, to pak vezmu jenom první)
     private void createMapAnimation() {
+        sentUpdatedMap(getGraphGeneratedView().getMap()); //před každým updatem animace si stáhnu aktuální rozmístění prvků ve view
         int amountOfRedLines;
         int amountOfShowedLines;
         switch (type) {
@@ -227,11 +228,9 @@ public class SixthActivityFragment extends AbstractFragment implements GraphGene
         if (previousMapToUpdate == null) return;
 
         ArrayList<CustomLine> lines = map.getCustomLines();
-//        ArrayList<CustomLine> redLines = map.getRedLineList();
         ArrayList<Coordinate> circles = map.getCircles();
 
         ArrayList<CustomLine> previousLines = previousMapToUpdate.getCustomLines();
-//        ArrayList<CustomLine> previousRedLines = previousMapToUpdate.getRedLineList();
         ArrayList<Coordinate> previousCircles = previousMapToUpdate.getCircles();
 
 

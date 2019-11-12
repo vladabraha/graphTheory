@@ -64,9 +64,13 @@ public class GraphChecker {
         if (redLineList.size() < 2) return false;
         CustomLine startingLine = redLineList.get(0);
         CustomLine lastLine = redLineList.get(redLineList.size() - 1);
-        if (startingLine.getFrom().equal(lastLine.getTo())) {
+        if(startingLine.getFrom().equal(lastLine.getTo())) {
             return true;
-        } else return startingLine.getFrom().equal(lastLine.getFrom());
+        }else if (startingLine.getFrom().equal(lastLine.getFrom())){
+            return true;
+        }else if (startingLine.getTo().equal(lastLine.getTo())){
+            return true;
+        }else return startingLine.getTo().equal(lastLine.getFrom());
     }
 
     //todo rozpozna, jestli jsou 2 grafy od sebe rozdeleny, pripadne smazat

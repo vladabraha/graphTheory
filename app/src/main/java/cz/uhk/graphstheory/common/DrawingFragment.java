@@ -40,7 +40,7 @@ public class DrawingFragment extends Fragment implements DrawingFragmentListener
     private PaintView paintView;
     private DrawMapViewModel drawMapViewModel;
     private DisplayMetrics metrics;
-    CommunicationInterface mListener;
+    private CommunicationInterface mListener;
     private int width, height;
     private static int BRUSH_SIZE;
 
@@ -179,7 +179,7 @@ public class DrawingFragment extends Fragment implements DrawingFragmentListener
     public void sentTouchUpCoordinates(Coordinate coordinate) {
         if (shouldBeNodeColorSwitched){
             Map map = paintView.getMap();
-            boolean found = false, redNode = false;
+            boolean found = false, nodeToSwitchIsRed = false;
             Coordinate nodeToSwitch = null;
             ArrayList<Coordinate> redCircles = map.getRedCircles();
             ArrayList<Coordinate> circles = map.getCircles();
@@ -187,7 +187,7 @@ public class DrawingFragment extends Fragment implements DrawingFragmentListener
             for (Coordinate nodeCoordinate : circles){
                 if (checkIsInCircle(nodeCoordinate.x, nodeCoordinate.y, coordinate.x, coordinate.y)){
                     found = true;
-                    redNode = false;
+                    nodeToSwitchIsRed = false;
                     nodeToSwitch = nodeCoordinate;
                     break;
                 }
@@ -196,17 +196,22 @@ public class DrawingFragment extends Fragment implements DrawingFragmentListener
                 for (Coordinate redNodeCoordinate : redCircles){
                     if (checkIsInCircle(redNodeCoordinate.x, redNodeCoordinate.y, coordinate.x, coordinate.y)){
                         found = true;
-                        redNode = true;
+                        nodeToSwitchIsRed = true;
                         nodeToSwitch = redNodeCoordinate;
                         break;
                     }
                 }
             }
+            //pokud si kliknul na uzel, tak mu prohod barvu
             if (found){
-                if (redNode){
+                if (nodeToSwitchIsRed){
                     circles.add(nodeToSwitch);
                     redCircles.remove(Objects.requireNonNull(nodeToSwitch));
                 }else {
+                    //přehoď všechny červeny uzly na normální
+                    circles.addAll(redCircles);
+                    redCircles.clear(); //to avoid ConcurrentModificationException
+                    //a teď samotné prohození
                     redCircles.add(nodeToSwitch);
                     circles.remove(Objects.requireNonNull(nodeToSwitch));
                 }
