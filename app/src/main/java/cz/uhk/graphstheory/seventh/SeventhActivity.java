@@ -195,6 +195,7 @@ public class SeventhActivity extends AbstractActivity implements TabLayoutFragme
         for (Integer score : graphScore) {
             text.append(score.toString()).append(", ");
         }
+        text.deleteCharAt(text.length() - 1);
         Toast.makeText(this, "Nakresli graf s tímto skórem " + text, Toast.LENGTH_LONG).show();
     }
 

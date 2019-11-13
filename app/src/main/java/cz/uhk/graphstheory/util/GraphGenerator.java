@@ -175,7 +175,7 @@ public class GraphGenerator {
         return edges;
     }
 
-    public static ArrayList<Coordinate> generateNodes(int height, int width, int BRUSH_SIZE, int amountOfNodes) {
+    public static ArrayList<Coordinate> generateNodes(int height, int width, int BRUSH_SIZE, int maximumAmountOfNodes) {
         ArrayList<Coordinate> coordinateArrayList = new ArrayList<>();
         int foundedNodes = 0;
         int run = 0;
@@ -223,8 +223,8 @@ public class GraphGenerator {
                 coordinateArrayList.add(newCoordinate);
                 foundedNodes++;
             }
-            if (foundedNodes == amountOfNodes) shouldRun = false;
-            if (run > (amountOfNodes * amountOfNodes * 500)) shouldRun = false;
+            if (foundedNodes == maximumAmountOfNodes) shouldRun = false;
+            if (run > (maximumAmountOfNodes * maximumAmountOfNodes * 500)) shouldRun = false;
 
         } while (shouldRun);
         return coordinateArrayList;
