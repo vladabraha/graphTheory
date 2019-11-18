@@ -12,7 +12,7 @@ import cz.uhk.graphstheory.model.Map;
 
 public class GraphChecker {
 
-    public static boolean checkIfGraphContainsCesta(Map map) {
+    public static boolean checkIfGraphContainsPath(Map map) {
         if (map != null) {
 
             //mrknu, že každý bod je v seznamu maximálně 2x

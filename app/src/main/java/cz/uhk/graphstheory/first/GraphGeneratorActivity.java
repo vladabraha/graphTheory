@@ -73,7 +73,7 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
             boolean isValid = false;
             switch (displayedActivity) {
                 case 0:
-                    isValid = GraphChecker.checkIfGraphContainsCesta(drawingFragment.getUserGraph());
+                    isValid = GraphChecker.checkIfGraphContainsPath(drawingFragment.getUserGraph());
                     break;
                 case 1:
                     isValid = GraphChecker.checkIfGraphContainsTah(drawingFragment.getUserGraph());
