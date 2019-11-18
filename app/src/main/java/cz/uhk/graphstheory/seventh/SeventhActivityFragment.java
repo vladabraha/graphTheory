@@ -56,16 +56,8 @@ public class SeventhActivityFragment extends AbstractFragment {
                         ArrayList<Coordinate> nodes = mapToSet.getCircles();
                         ArrayList<CustomLine> lines = mapToSet.getCustomLines();
 
-                        ArrayList<Integer> graphScore = new ArrayList<>();
-                        for (Coordinate coordinate : nodes){
-                            int score = 0;
-                            for (CustomLine customLine : lines){
-                                if (customLine.isPointInStartOrEndOfLine(coordinate)) score++;
-                            }
-                            graphScore.add(score);
-                        }
+                        ArrayList<Integer> graphScore = computeGraphScore(nodes, lines);
 
-                        graphScore.sort((o1, o2) -> o2-o1);
                         seventhFragmentActivityCommunicationInterface.onScoreComputed(graphScore);
                         getGraphGeneratedView().setMap(mapToSet);
 
@@ -75,6 +67,23 @@ public class SeventhActivityFragment extends AbstractFragment {
             }
         });
     }
+
+    @NonNull
+    public static ArrayList<Integer> computeGraphScore(ArrayList<Coordinate> nodes, ArrayList<CustomLine> lines) {
+        ArrayList<Integer> graphScore = new ArrayList<>();
+        for (Coordinate coordinate : nodes){
+            int score = 0;
+            for (CustomLine customLine : lines){
+                if (customLine.isPointInStartOrEndOfLine(coordinate)) score++;
+            }
+            graphScore.add(score);
+        }
+
+        graphScore.sort((o1, o2) -> o2-o1);
+        return graphScore;
+    }
+
+
 
     @Override
     public void onAttach(Context context) {

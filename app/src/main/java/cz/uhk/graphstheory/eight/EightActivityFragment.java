@@ -57,10 +57,9 @@ public class EightActivityFragment extends AbstractFragment {
     //nejnižsí souřadnici si zajistím tak, že budu mít array list serazenej pomoci comparatoru
     //plus tam 3 od konce trochu náhodně pospojuju, aby to nějak vypadalo
     @SuppressWarnings("unchecked")
-    public Map generateTree() {
+    public static Map generateTree(int BRUSH_SIZE, int height,int width) {
         int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
         if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES) amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
-        int BRUSH_SIZE = getGraphGeneratedView().getBrushSize();
         ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfEdges);
         Collections.sort(nodesToSet);
 
@@ -80,11 +79,10 @@ public class EightActivityFragment extends AbstractFragment {
     //myšlenka - vezmu alg. na generovani stromu, a použiju ho 2 - a mám 2 samostatny stromy -> les
     //ještě tomu dám poloviční šířku viewportu, takže k tý druhý půlce přičtu polovinu viewportu a zobrazí se mi to hezky na půlku
     @SuppressWarnings("unchecked")
-    public Map generateForrest() {
+    public static Map generateForrest(int BRUSH_SIZE, int height,int width) {
 
         int amountOfNodes = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
         if (amountOfNodes < MINIMUM_AMOUNT_OF_NODES) amountOfNodes = MINIMUM_AMOUNT_OF_NODES;
-        int BRUSH_SIZE = getGraphGeneratedView().getBrushSize();
         ArrayList<Coordinate> firstNodesToSet = GraphGenerator.generateNodes(height, (width / 2), BRUSH_SIZE, amountOfNodes);
         Collections.sort(firstNodesToSet);
 
@@ -122,21 +120,20 @@ public class EightActivityFragment extends AbstractFragment {
 
         customLines.addAll(secondCustomLines);
         firstNodesToSet.addAll(secondNodesToSet);
-        Map map = new Map(customLines, firstNodesToSet);
 
-        return map;
+        return new Map(customLines, firstNodesToSet);
     }
 
     public void changeGraph(String mode) {
         switch (mode) {
             case "tree":
-                getGraphGeneratedView().setMap(generateTree());
+                getGraphGeneratedView().setMap(generateTree(getGraphGeneratedView().getBrushSize(), height, width));
                 break;
             case "forrest":
-                getGraphGeneratedView().setMap(generateForrest());
+                getGraphGeneratedView().setMap(generateForrest(getGraphGeneratedView().getBrushSize(), height, width));
                 break;
             default:
-                getGraphGeneratedView().setMap(generateTree());
+                getGraphGeneratedView().setMap(generateTree(getGraphGeneratedView().getBrushSize(), height, width));
                 break;
         }
     }

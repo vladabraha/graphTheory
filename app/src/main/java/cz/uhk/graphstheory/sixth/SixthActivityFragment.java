@@ -63,8 +63,8 @@ public class SixthActivityFragment extends AbstractFragment implements GraphGene
                     int BRUSH_SIZE = getGraphGeneratedView().getBrushSize();
                     ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfEdges);
 
-                    createEulerMap(nodesToSet);
-                    createHamiltonMap(nodesToSet);
+                    eulerMap = createEulerMap(nodesToSet);
+                    hamiltonMap = createHamiltonMap(nodesToSet);
                     if (width != 0) {
                         switch (type) {
                             case "euleruv":
@@ -152,7 +152,7 @@ public class SixthActivityFragment extends AbstractFragment implements GraphGene
         new Handler().postDelayed(this::createMapAnimation, 3000);
     }
 
-    private void createEulerMap(ArrayList<Coordinate> nodesToSet) {
+    public static Map createEulerMap(ArrayList<Coordinate> nodesToSet) {
         ArrayList<CustomLine> lines = new ArrayList<>();
         ArrayList<CustomLine> redLines = new ArrayList<>();
 
@@ -165,11 +165,11 @@ public class SixthActivityFragment extends AbstractFragment implements GraphGene
                 redLines.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(2)));
             }
         }
-        eulerMap = new Map(lines, nodesToSet, redLines);
+        return new Map(lines, nodesToSet, redLines);
     }
 
     //myšlenka, projedu postupne vrcholy a propojim je jak jdou za sebou a kdyz tam ještě nemaj normální caru z generatoru, tak ho tam taky pridam
-    private void createHamiltonMap(ArrayList<Coordinate> nodesToSet) {
+    public static Map createHamiltonMap(ArrayList<Coordinate> nodesToSet) {
         ArrayList<CustomLine> lines = new ArrayList<>();
         ArrayList<CustomLine> redLines = new ArrayList<>();
         ArrayList<CustomLine> preGeneratedLines = GraphGenerator.generateRandomEdges(nodesToSet);
@@ -195,7 +195,7 @@ public class SixthActivityFragment extends AbstractFragment implements GraphGene
             }
         }
 
-        hamiltonMap = new Map(preGeneratedLines, nodesToSet, redLines);
+        return new Map(preGeneratedLines, nodesToSet, redLines);
     }
 
     public void changeGraph(String type) {
