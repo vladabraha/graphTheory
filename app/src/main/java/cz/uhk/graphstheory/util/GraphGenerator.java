@@ -27,10 +27,8 @@ public class GraphGenerator {
         ArrayList<Coordinate> circles = generateNodes(height - BRUSH_SIZE, width - BRUSH_SIZE, BRUSH_SIZE, amountOfNodes);
         ArrayList<CustomLine> customLines;
         Map map;
-        do {
-            customLines = generateRandomEdges(circles);
-            map = new Map(customLines, circles);
-        } while (GraphChecker.checkIfGraphHasCertainAmountOfComponent(map, 1));
+        customLines = generateRandomEdges(circles);
+        map = new Map(customLines, circles);
         return map;
     }
 
@@ -43,7 +41,8 @@ public class GraphGenerator {
     public static ArrayList<CustomLine> generateRandomEdges(ArrayList<Coordinate> circlesPoints) {
         int amountOfNodes = circlesPoints.size();
         int maximumOfEdges = (amountOfNodes * (amountOfNodes - 1)) / 2; //viz. definice uplneho grafu
-        if (amountOfNodes > 3) maximumOfEdges = maximumOfEdges - 1; //maximum je třeba zmenšit o jedna, aby byly vidět alg., které se na graf aplikují
+        if (amountOfNodes > 3)
+            maximumOfEdges = maximumOfEdges - 1; //maximum je třeba zmenšit o jedna, aby byly vidět alg., které se na graf aplikují
         int amountOfEdges = (int) Math.round(Math.random() * maximumOfEdges); //nahodny pocet hran
         if (amountOfEdges < maximumOfEdges) amountOfEdges++;
 
@@ -193,9 +192,9 @@ public class GraphGenerator {
             float xBorder = 210; //o kolik se snizi viewport - musi byt vetsi číslo, než xcoodrinate, jinak vyleti prvek z obrazu)
             float yBorder = 210;
             float xCoordinate = (float) (Math.random() * (width - xBorder));
-            xCoordinate+= 150;
+            xCoordinate += 150;
             float yCoordinate = (float) (Math.random() * (height - yBorder));
-            yCoordinate+= 60;
+            yCoordinate += 60;
 
             //pokud vyjde male cislo, pripocitame souradnice, aby nelezely na okraji obrazovky
             if (xCoordinate < BRUSH_SIZE) xCoordinate += BRUSH_SIZE;

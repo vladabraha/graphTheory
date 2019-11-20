@@ -42,7 +42,8 @@ public class NinthActivityFragment extends AbstractFragment {
                     width = view.getMeasuredWidth();
                     height = view.getMeasuredHeight();
                     if (width != 0) {
-                        getGraphGeneratedView().setMap(generateSpanningTree());
+                        int BRUSH_SIZE = getGraphGeneratedView().getBrushSize();
+                        getGraphGeneratedView().setMap(generateSpanningTree(BRUSH_SIZE, height, width));
 
                     }
                     disableListener = true;
@@ -55,10 +56,9 @@ public class NinthActivityFragment extends AbstractFragment {
     //myšlenka - projdu uzly, vezmu ten co má nejnižší y souřadnici a postupně ho budu propojovat dál s nodama, který leží níž
     //nejnižsí souřadnici si zajistím tak, že budu mít array list serazenej pomoci comparatoru
     //plus tam 3 od konce trochu náhodně pospojuju, aby to nějak vypadalo
-    private Map generateSpanningTree() {
+    public static Map generateSpanningTree(int BRUSH_SIZE, int height, int width ) {
         int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
         if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES) amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
-        int BRUSH_SIZE = getGraphGeneratedView().getBrushSize();
         ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfEdges);
 //        Collections.sort(nodesToSet);
 
@@ -74,6 +74,11 @@ public class NinthActivityFragment extends AbstractFragment {
         }
         //k vytvořené kostře přidám náhodně najaké hrany
         ArrayList<CustomLine> edges = GraphGenerator.generateRandomEdges(nodesToSet);
+        for (CustomLine redLine : redLinesList){
+            if (edges.stream().noneMatch(m -> m.isLineSame(redLine))){
+                edges.add(redLine);
+            }
+        }
         return new Map(edges, nodesToSet, redLinesList);
     }
 

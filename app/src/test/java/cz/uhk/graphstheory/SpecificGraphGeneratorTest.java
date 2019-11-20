@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import cz.uhk.graphstheory.eight.EightActivityFragment;
 import cz.uhk.graphstheory.model.Coordinate;
 import cz.uhk.graphstheory.model.Map;
+import cz.uhk.graphstheory.ninth.NinthActivityFragment;
 import cz.uhk.graphstheory.seventh.SeventhActivityFragment;
 import cz.uhk.graphstheory.sixth.SixthActivityFragment;
 import cz.uhk.graphstheory.third.ThirdActivityFragment;
@@ -98,5 +99,17 @@ public class SpecificGraphGeneratorTest {
 
         Assert.assertTrue("Les se nevygeneroval se 2 komponentami", isForrestValid);
         Assert.assertTrue("Strom se nevygeneroval s 1 komponentou", isTreeValid);
+    }
+
+    @Test
+    public void ninthActivityTest(){
+
+        Map userMap = NinthActivityFragment.generateSpanningTree(BRUSH_SIZE, HEIGHT, WIDTH);
+        Map generatedMap = new Map(userMap);
+        generatedMap.setRedLineList(new ArrayList<>());
+        String isValid = GraphChecker.checkIfGraphIsSpanningTree(userMap, generatedMap);
+
+        Assert.assertEquals("Kostra grafu se vygenerovala špatně", "true", isValid);
+
     }
 }
