@@ -3,6 +3,7 @@ package cz.uhk.graphstheory.abstraction;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -14,6 +15,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -200,6 +202,18 @@ public abstract class AbstractActivity extends AbstractAppCompactActivity implem
 
         final AlertDialog alert = dialog.create();
         alert.show();
+    }
+
+    protected void showSnackBar(String snackTitle) {
+        View view = findViewById(R.id.frame_layout);
+        Snackbar snackbar = Snackbar.make(view, snackTitle, Snackbar.LENGTH_INDEFINITE);
+        snackbar.setAction("OK", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                snackbar.dismiss();
+            }
+        });
+        snackbar.show();
     }
 
     public void onPositiveButtonClick(){

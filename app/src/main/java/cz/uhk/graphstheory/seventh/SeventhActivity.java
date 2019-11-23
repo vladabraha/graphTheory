@@ -139,7 +139,7 @@ public class SeventhActivity extends AbstractActivity implements TabLayoutFragme
     protected void changeToEducationFragment() {
         super.changeToEducationFragment();
         if (scoreText != null && scoreText.length() != 0) {
-            Toast.makeText(this, scoreText, Toast.LENGTH_LONG).show();
+            showSnackBar(scoreText.toString());
         }
     }
 
@@ -182,7 +182,7 @@ public class SeventhActivity extends AbstractActivity implements TabLayoutFragme
         for (Integer score : graphScore) {
             text.append(score.toString()).append(", ");
         }
-        Toast.makeText(this, "Nakresli graf s tímto skórem " + text, Toast.LENGTH_LONG).show();
+        showSnackBar( "Nakresli graf s tímto skórem " + text);
     }
 
     @Override
@@ -196,7 +196,7 @@ public class SeventhActivity extends AbstractActivity implements TabLayoutFragme
             text.append(score.toString()).append(", ");
         }
         text.deleteCharAt(text.length() - 1);
-        Toast.makeText(this, "Nakresli graf s tímto skórem " + text, Toast.LENGTH_LONG).show();
+        showSnackBar( "Nakresli graf s tímto skórem " + text);
     }
 
     @Override
@@ -227,7 +227,7 @@ public class SeventhActivity extends AbstractActivity implements TabLayoutFragme
         for (Integer integer : graphScore) {
             scoreText.append(integer).append(" ");
         }
-        Toast.makeText(this, scoreText, Toast.LENGTH_LONG).show();
+        showSnackBar(scoreText.toString());
     }
 
     @Override

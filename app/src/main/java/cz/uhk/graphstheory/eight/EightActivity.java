@@ -139,6 +139,12 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
     }
 
     @Override
+    protected void changeToEducationFragment() {
+        super.changeToEducationFragment();
+        showSnackBar( "Teď si ukážeme strom");
+    }
+
+    @Override
     protected void showBottomNavigationView() {
         bottomNavigationView.setVisibility(View.VISIBLE);
     }
@@ -182,9 +188,9 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
             generateNewMessageWithNewAmountOfComponent();
         }else {
             if (amountOfComponent == 1 ){
-                Toast.makeText(this, "Nakresli les s jednou komponentou", Toast.LENGTH_LONG).show();
+                showSnackBar( "Nakresli les s jednou komponentou");
             }else {
-                Toast.makeText(this, "Nakresli les s " + amountOfComponent + " komponentami", Toast.LENGTH_LONG).show();
+                showSnackBar( "Nakresli les s " + amountOfComponent + " komponentami");
             }
         }
     }
@@ -194,9 +200,9 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
         amountOfComponent = ran.nextInt(3);
         if (amountOfComponent == 0) amountOfComponent++;
         if (amountOfComponent == 1 ){
-            Toast.makeText(this, "Nakresli les s jednou komponentou", Toast.LENGTH_LONG).show();
+            showSnackBar( "Nakresli les s jednou komponentou");
         }else {
-            Toast.makeText(this, "Nakresli les s " + amountOfComponent + " komponentami", Toast.LENGTH_LONG).show();
+            showSnackBar( "Nakresli les s " + amountOfComponent + " komponentami");
         }
     }
 
@@ -227,11 +233,11 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
     public void secondaryTableLayoutSelectedChange(int number) {
         switch (number) {
             case 0:
-                Toast.makeText(this, "Teď si ukážeme strom", Toast.LENGTH_LONG).show();
+                showSnackBar( "Teď si ukážeme strom");
                 eightActivityFragment.changeGraph("tree");
                 break;
             case 1:
-                Toast.makeText(this, "Teď si ukážeme les", Toast.LENGTH_LONG).show();
+                showSnackBar( "Teď si ukážeme les");
                 eightActivityFragment.changeGraph("forrest");
                 break;
         }

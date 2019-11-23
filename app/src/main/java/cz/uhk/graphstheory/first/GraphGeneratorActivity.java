@@ -68,6 +68,8 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
 
         textFragment.setEducationText(R.string.first_activity_text);
 
+
+
         floatingActionButton.setOnClickListener(v -> {
             SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
             int displayedActivity = sharedPref.getInt("displayedActivity", 0);
@@ -166,18 +168,18 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
         int displayedActivity = sharedPref.getInt("displayedActivity", 0);
         switch (displayedActivity) {
             case 0:
-                Toast.makeText(this, "Nakresli cestu v grafu, případně si graf uprav", Toast.LENGTH_LONG).show();
+                showSnackBar( "Nakresli cestu v grafu, případně si graf uprav");
                 break;
             case 1:
-                Toast.makeText(this, "Nakresli tah v grafu, případně si graf uprav", Toast.LENGTH_LONG).show();
+                showSnackBar( "Nakresli tah v grafu, případně si graf uprav");
                 break;
             case 2:
-                Toast.makeText(this, "Nakresli kružnici v grafu, případně si graf uprav. Nezapoměň, že kružnice musí končit v bodě, ze kterého vychází", Toast.LENGTH_LONG).show();
+                showSnackBar( "Nakresli kružnici v grafu, případně si graf uprav. Nezapoměň, že kružnice musí končit v bodě, ze kterého vychází");
                 break;
             case 3:
                 Random ran = new Random();
                 length = ran.nextInt(7);
-                Toast.makeText(this, "Nakresli sled délky " + length + " , případně si graf uprav", Toast.LENGTH_LONG).show();
+                showSnackBar( "Nakresli sled délky " + length + " , případně si graf uprav");
                 break;
         }
     }
@@ -239,7 +241,7 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
         super.changeToEducationFragment();
         if (isViewCreated) setMapToDrawingFragment(width, height);
         if (isPathGenerated)
-            Toast.makeText(this, "Nyní si ukážeme v zadaném grafu cestu přes vrcholy " + textToShow, Toast.LENGTH_LONG).show();
+            showSnackBar("Nyní si ukážeme v zadaném grafu cestu přes vrcholy ");
     }
 
     private void changeActivity() {
@@ -338,20 +340,20 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
             case 0:
                 text = generateGraphFragment.changeEducationGraph("cesta");
                 text = convertNameOfLinesToNodes(text);
-                Toast.makeText(this, "Nyní si ukážeme v zadaném grafu cestu přes vrcholy " + text, Toast.LENGTH_LONG).show();
+                showSnackBar("Nyní si ukážeme v zadaném grafu cestu přes vrcholy " + text);
                 break;
             case 1:
                 text = generateGraphFragment.changeEducationGraph("tah");
                 text = convertNameOfLinesToNodes(text);
-                Toast.makeText(this, "Nyní si ukážeme v zadaném grafu tah přes vrcholy " + text, Toast.LENGTH_LONG).show();
+                showSnackBar("Nyní si ukážeme v zadaném grafu tah přes vrcholy " + text);
                 break;
             case 2:
                 text = generateGraphFragment.changeEducationGraph("kruznice");
-                Toast.makeText(this, "Nyní si ukážeme v zadaném grafu kružnici delky " + text, Toast.LENGTH_LONG).show();
+                showSnackBar("Nyní si ukážeme v zadaném grafu kružnici delky " + text);
                 break;
             case 3:
                 text = generateGraphFragment.changeEducationGraph("kruznice");
-                Toast.makeText(this, "Nyní si ukážeme v zadaném grafu sled délky " + text, Toast.LENGTH_LONG).show();
+                showSnackBar("Nyní si ukážeme v zadaném grafu sled délky " + text);
                 break;
         }
     }
@@ -361,7 +363,7 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
         textToShow = convertNameOfLinesToNodes(text);
 
         if (!isPathGenerated)
-            Toast.makeText(this, "Nyní si ukážeme v zadaném grafu cestu přes vrcholy " + textToShow, Toast.LENGTH_LONG).show();
+            showSnackBar( "Nyní si ukážeme v zadaném grafu cestu přes vrcholy " + textToShow);
         isPathGenerated = true;
     }
 

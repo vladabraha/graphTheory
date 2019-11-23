@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
@@ -149,13 +148,13 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
     @Override
     protected void changeToEducationFragment() {
         super.changeToEducationFragment();
-        Toast.makeText(this, "Ukázka izomorfních grafů", Toast.LENGTH_LONG).show();
+        showSnackBar( "Ukázka izomorfních grafů");
     }
 
     @Override
     protected void changeToDrawingFragment() {
         super.changeToDrawingFragment();
-        Toast.makeText(this, "Rozhodni, zdali se jedna o izomorfni grafy", Toast.LENGTH_LONG).show();
+        showSnackBar( "Rozhodni, zdali se jedna o izomorfni grafy");
     }
 
     @Override
@@ -310,7 +309,7 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
     }
 
     private void showMessage(String text) {
-        Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+        showSnackBar(text);
     }
 
     @Override

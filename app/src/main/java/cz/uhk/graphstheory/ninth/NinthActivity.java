@@ -149,8 +149,7 @@ public class NinthActivity extends AbstractActivity implements TabLayoutFragment
     @Override
     protected void changeToEducationFragment() {
         super.changeToEducationFragment();
-        Toast.makeText(this, "Kostra grafu je v grafu zvýrazněna červenou čarou", Toast.LENGTH_LONG).show();
-
+        showSnackBar( "Kostra grafu je v grafu zvýrazněna červenou čarou");
     }
 
     @Override
@@ -190,14 +189,14 @@ public class NinthActivity extends AbstractActivity implements TabLayoutFragment
     @Override
     public void onNegativeButtonClick() {
         generateNewSpanningTree(height, width);
-        Toast.makeText(this, "Nakresli v zadaném grafu kostru ", Toast.LENGTH_LONG).show();
+        showSnackBar( "Nakresli v zadaném grafu kostru ");
     }
 
 
     @Override
     protected void changeToDrawingFragment() {
         super.changeToDrawingFragment();
-        Toast.makeText(this, "Nakresli v zadaném grafu kostru ", Toast.LENGTH_LONG).show();
+        showSnackBar( "Nakresli v zadaném grafu kostru ");
     }
 
     @Override

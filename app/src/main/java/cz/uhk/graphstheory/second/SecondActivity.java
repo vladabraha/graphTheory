@@ -225,7 +225,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
     protected void changeToEducationFragment() {
         super.changeToEducationFragment();
         if (viewCreated) secondActivityFragment.changeGraph("most");
-        Toast.makeText(this, "Teď si ukážeme most v grafu", Toast.LENGTH_LONG).show();
+        showSnackBar("Teď si ukážeme most v grafu");
     }
 
     @Override
@@ -248,9 +248,9 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         int displayedActivity = sharedPref.getInt("displayedActivity-second", 0);
         if (displayedActivity == 0) {
-            Toast.makeText(this, "Vyznač v grafu most (červenou čarou)", Toast.LENGTH_LONG).show();
+            showSnackBar( "Vyznač v grafu most (červenou čarou)");
         } else {
-            Toast.makeText(this, "Vyznač v grafu artikulaci (klepnutím na uzel)", Toast.LENGTH_LONG).show();
+            showSnackBar( "Vyznač v grafu artikulaci (klepnutím na uzel)");
         }
         return displayedActivity;
     }
@@ -352,11 +352,11 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
     public void secondaryTableLayoutSelectedChange(int number) {
         switch (number) {
             case 0:
-                Toast.makeText(this, "Teď si ukážeme most v grafu", Toast.LENGTH_LONG).show();
+                showSnackBar( "Teď si ukážeme most v grafu");
                 secondActivityFragment.changeGraph("most");
                 break;
             case 1:
-                Toast.makeText(this, "Teď si ukážeme artikulaci v grafu", Toast.LENGTH_LONG).show();
+                showSnackBar("Teď si ukážeme artikulaci v grafu");
                 secondActivityFragment.changeGraph("artikulace");
                 break;
         }

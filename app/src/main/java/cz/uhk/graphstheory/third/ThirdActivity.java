@@ -111,7 +111,7 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
     protected void changeToDrawingFragment() {
         super.changeToDrawingFragment();
         if (isAttached) drawingFragment.changeDrawingMethod("path");
-        Toast.makeText(this, "Nakresli doplněk grafu", Toast.LENGTH_LONG).show();
+        showSnackBar( "Nakresli doplněk grafu");
 
         //zmeni text bottomNavigationView
         Menu menu = bottomNavigationView.getMenu();
@@ -127,7 +127,7 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
     @Override
     protected void changeToEducationFragment() {
         super.changeToEducationFragment();
-        Toast.makeText(this, "Červenou čarou je vidět ukázka doplňku grafu", Toast.LENGTH_LONG).show();
+        showSnackBar( "Červenou čarou je vidět ukázka doplňku grafu");
     }
 
     @Override
