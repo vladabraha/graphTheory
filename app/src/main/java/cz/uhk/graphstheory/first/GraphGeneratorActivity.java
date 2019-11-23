@@ -65,6 +65,7 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
         bottomNavigationView = getBottomNavigationView();
         FloatingActionButton floatingActionButton = getFloatingActionButton();
 
+
         textFragment.setEducationText(R.string.first_activity_text);
 
         floatingActionButton.setOnClickListener(v -> {
