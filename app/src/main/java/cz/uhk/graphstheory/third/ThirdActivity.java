@@ -28,8 +28,8 @@ import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
 import cz.uhk.graphstheory.fourth.FourthActivity;
-import cz.uhk.graphstheory.model.CustomLine;
 import cz.uhk.graphstheory.model.Map;
+import cz.uhk.graphstheory.util.GraphChecker;
 import cz.uhk.graphstheory.util.GraphConverter;
 import cz.uhk.graphstheory.util.GraphGenerator;
 import cz.uhk.graphstheory.util.PathGenerator;
@@ -68,7 +68,7 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
         textFragment.setEducationText(R.string.third_activity_text);
 
         floatingActionButton.setOnClickListener(v -> {
-            if (checkIfGraphIsComplementGraph(drawingFragment.getUserGraph())) {
+            if (GraphChecker.checkIfGraphIsComplementGraph(drawingFragment.getUserGraph(), mapToCheck)) {
                 String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
                 assert userName != null;
                 Double receivedPoints = databaseConnector.recordUserPoints(userName, "third");
@@ -178,28 +178,6 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
         splittedMap.getRedLineList().addAll(splittedMap2.getRedLineList());
 
         drawingFragment.setUserGraph(splittedMap);
-    }
-
-    //myšlenka - pokud vezmu ten prvni graf a připočítám k němu stejnej rozdíl, dostanu stejnej graf
-    //na něm porovnám, zdali má červené čáry (doplněk) stejný souřadnice jako když by to generoval algoritmus
-    //podmínkou je lock na posunování uzlů
-    private boolean checkIfGraphIsComplementGraph(Map userGraph) {
-        ArrayList<CustomLine> redLines = userGraph.getRedLineList();
-        ArrayList<CustomLine> redLinesToCheck = mapToCheck.getRedLineList();
-
-        if (redLinesToCheck.size() == 0 && redLines.size() > 0) return false;
-
-        for (CustomLine customLine : redLinesToCheck) {
-            boolean found = false;
-            for (CustomLine redLine : redLines) {
-                if (redLine.isLineSame(customLine)){
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) return false;
-        }
-        return true;
     }
 
     @Override

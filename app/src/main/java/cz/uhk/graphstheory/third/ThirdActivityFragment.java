@@ -44,52 +44,11 @@ public class ThirdActivityFragment extends AbstractFragment {
                     width = view.getMeasuredWidth();
                     height = view.getMeasuredHeight();
                     if (width != 0) {
-
-                        //set init bipartitní graf educational fragment
-                        int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
-                        if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES)
-                            amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
                         int BRUSH_SIZE = getGraphGeneratedView().getBrushSize();
-                        Map firstMap = GraphGenerator.generateMap(height, width, BRUSH_SIZE, amountOfEdges);
-                        Map secondMap = new Map(firstMap);
+                        ArrayList<Map> complementGraphs = createComplementGraphs(BRUSH_SIZE, height, width);
 
-                        //myšlenka - mam graf - projdu všechny body a podívám se jestli jsou propojený se všema bodama
-                        //pokud s nějakým nejsou přidám je do druhého seznamu (red line listu)
-                        ArrayList<Coordinate> nodes = firstMap.getCircles();
-                        ArrayList<CustomLine> lines = firstMap.getCustomLines();
-                        ArrayList<CustomLine> redLines = new ArrayList<>();
-
-                        for (Coordinate coordinate : nodes) {
-                            ArrayList<Coordinate> alreadyFoundConnection = new ArrayList<>();
-                            for (CustomLine customLine : lines) {
-                                if (customLine.getFrom().equal(coordinate)) {
-                                    //projde vsechny body v alreadyFoundConnection a mrkne, jestli nejakej bod n se rovna custom line.getto
-                                    if (alreadyFoundConnection.stream().noneMatch(n -> n.equal(customLine.getTo()))) {
-                                        alreadyFoundConnection.add(customLine.getTo());
-                                    }
-                                } else if (customLine.getTo().equal(coordinate)) {
-                                    if (alreadyFoundConnection.stream().noneMatch(n -> n.equal(customLine.getFrom()))) {
-                                        alreadyFoundConnection.add(customLine.getFrom());
-                                    }
-                                }
-                            }
-                            //pocet nalezenych uzlu může být max. o jedna menší než všechny uzly (sám sebe tam nepřidá)
-                            if (alreadyFoundConnection.size() != (nodes.size() - 1)) {
-                                for (Coordinate allNodes : nodes) {
-                                    if (alreadyFoundConnection.stream().noneMatch(n -> n.equal(allNodes)) && !allNodes.equal(coordinate)) {
-                                        redLines.add(new CustomLine(allNodes, coordinate));
-                                    }
-                                }
-                            }
-                        }
-                        firstMap.setRedLineList(redLines);
-
-                        ArrayList<Map> maps = GraphConverter.convertMapsToSplitScreenArray(firstMap, height);
-                        Map splittedMap = maps.get(0);
-                        Map splittedMap2 = maps.get(1);
-
-                        splittedMap2.setCustomLines(new ArrayList<>());
-                        splittedMap.setRedLineList(new ArrayList<>());
+                        Map splittedMap = complementGraphs.get(0);
+                        Map splittedMap2 = complementGraphs.get(1);
 
                         splittedMap.getCircles().addAll(splittedMap2.getCircles());
                         splittedMap.getCustomLines().addAll(splittedMap2.getCustomLines());
@@ -101,5 +60,60 @@ public class ThirdActivityFragment extends AbstractFragment {
                 }
             }
         });
+
+    }
+
+    public static ArrayList<Map> createComplementGraphs(int BRUSH_SIZE, int height, int width){
+        //set init bipartitní graf educational fragment
+        int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
+        if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES)
+            amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
+
+        Map firstMap = GraphGenerator.generateMap(height, width, BRUSH_SIZE, amountOfEdges);
+        Map secondMap = new Map(firstMap);
+
+        //myšlenka - mam graf - projdu všechny body a podívám se jestli jsou propojený se všema bodama
+        //pokud s nějakým nejsou přidám je do druhého seznamu (red line listu)
+        ArrayList<Coordinate> nodes = firstMap.getCircles();
+        ArrayList<CustomLine> lines = firstMap.getCustomLines();
+        ArrayList<CustomLine> redLines = new ArrayList<>();
+
+        for (Coordinate coordinate : nodes) {
+            ArrayList<Coordinate> alreadyFoundConnection = new ArrayList<>();
+            for (CustomLine customLine : lines) {
+                if (customLine.getFrom().equal(coordinate)) {
+                    //projde vsechny body v alreadyFoundConnection a mrkne, jestli nejakej bod n se rovna custom line.getto
+                    if (alreadyFoundConnection.stream().noneMatch(n -> n.equal(customLine.getTo()))) {
+                        alreadyFoundConnection.add(customLine.getTo());
+                    }
+                } else if (customLine.getTo().equal(coordinate)) {
+                    if (alreadyFoundConnection.stream().noneMatch(n -> n.equal(customLine.getFrom()))) {
+                        alreadyFoundConnection.add(customLine.getFrom());
+                    }
+                }
+            }
+            //pocet nalezenych uzlu může být max. o jedna menší než všechny uzly (sám sebe tam nepřidá)
+            if (alreadyFoundConnection.size() != (nodes.size() - 1)) {
+                for (Coordinate allNodes : nodes) {
+                    if (alreadyFoundConnection.stream().noneMatch(n -> n.equal(allNodes)) && !allNodes.equal(coordinate)) {
+                        redLines.add(new CustomLine(allNodes, coordinate));
+                    }
+                }
+            }
+        }
+        firstMap.setRedLineList(redLines);
+
+        ArrayList<Map> maps = GraphConverter.convertMapsToSplitScreenArray(firstMap, height);
+        Map splittedMap = maps.get(0);
+        Map splittedMap2 = maps.get(1);
+
+        splittedMap2.setCustomLines(new ArrayList<>());
+        splittedMap.setRedLineList(new ArrayList<>());
+
+        ArrayList<Map> complementMaps = new ArrayList<>();
+        complementMaps.add(splittedMap);
+        complementMaps.add(splittedMap2);
+
+        return complementMaps;
     }
 }

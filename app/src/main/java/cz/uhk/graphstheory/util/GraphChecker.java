@@ -448,7 +448,7 @@ public class GraphChecker {
     }
 
     //TEORIE (reseno nakonec jinak)
-    //vezmu bod se sudym počtem sousedů (těch může být max. 2ks)
+    //vezmu bod se sudym počtem sousedů
     //Přidám bod do zásobníku a jdu na jeho souseda
     //Odstraním hranu ze zásobníku hran (tu mezi prvním bodem a sousedem)
     //pokračuju dál, pokud už nemám souseda, přádám ho do eulerovy cesty a odstraním vrchol ze zásobníku
@@ -457,16 +457,19 @@ public class GraphChecker {
         ArrayList<CustomLine> lines = map.getCustomLines();
         ArrayList<Coordinate> circles = map.getCircles();
 
-        //spocitame pocet vrcholu se sudym pocetem sousedu
-        ArrayList<Coordinate> nodesWithMoreThanTwoNeighbours = new ArrayList<>();
+        //spocitame pocet vrcholu se lichým pocetem sousedu (ty můžou být max. 2, nebo musí být všechny vrcholy sudé)
+        ArrayList<Coordinate> nodesWithMoreThanTwoEvenNeighbours = new ArrayList<>();
         for (Coordinate coordinate : circles) {
             int numberOfLinesConnectedToNode = (int) lines.stream().filter(m -> m.isPointInStartOrEndOfLine(coordinate)).count();
-            if (numberOfLinesConnectedToNode % 2 == 0) {
-                nodesWithMoreThanTwoNeighbours.add(coordinate);
+            if (numberOfLinesConnectedToNode % 2 == 1) {
+                nodesWithMoreThanTwoEvenNeighbours.add(coordinate);
             }
         }
-        if (nodesWithMoreThanTwoNeighbours.size() > 2 || nodesWithMoreThanTwoNeighbours.isEmpty())
+
+        if (nodesWithMoreThanTwoEvenNeighbours.size() > 2 || nodesWithMoreThanTwoEvenNeighbours.isEmpty())
             return "false";
+
+        if (redLines.size() != lines.size()) return "false";
 
         //kontrola, ze redlines maj vsechny normalni cary a zadnou novou navic
         for (CustomLine line : lines) {
@@ -797,5 +800,27 @@ public class GraphChecker {
             }
         }
         return "false";
+    }
+
+    //myšlenka - pokud vezmu ten prvni graf a připočítám k němu stejnej rozdíl, dostanu stejnej graf
+    //na něm porovnám, zdali má červené čáry (doplněk) stejný souřadnice jako když by to generoval algoritmus
+    //podmínkou je lock na posunování uzlů
+    public static boolean checkIfGraphIsComplementGraph(Map mapCreatedByUser, Map mapToCheck) {
+        ArrayList<CustomLine> redLines = mapCreatedByUser.getRedLineList();
+        ArrayList<CustomLine> redLinesToCheck = mapToCheck.getRedLineList();
+
+        if (redLinesToCheck.size() == 0 && redLines.size() > 0) return false;
+
+        for (CustomLine customLine : redLinesToCheck) {
+            boolean found = false;
+            for (CustomLine redLine : redLines) {
+                if (redLine.isLineSame(customLine)){
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) return false;
+        }
+        return true;
     }
 }
