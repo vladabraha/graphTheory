@@ -2,6 +2,7 @@ package cz.uhk.graphstheory.fourth;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 
@@ -11,6 +12,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -47,7 +49,7 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
 
     int height;
     int width;
-    boolean isGraphSame;
+    boolean isGraphSame, isDrawingFragmentCreated = false;
     Map firstMap, secondMap;
 
     @Override
@@ -155,6 +157,23 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
     protected void changeToDrawingFragment() {
         super.changeToDrawingFragment();
         showSnackBar( "Rozhodni, zdali se jedna o izomorfni grafy");
+
+        //hack - wait 0.5 sec if drawing fragment is already set and if not wait another 0.5
+        waitForDrawingFragment();
+    }
+
+    /**
+     * this method is kinda hack - due to unsychronous fragment transactions this will check every 0.5sec if transaction is done and then it will set proper parameter
+     */
+    private void waitForDrawingFragment() {
+        new Handler().postDelayed(() -> {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            if (fragmentManager.getFragments().contains(drawingFragment)) {
+                if (isDrawingFragmentCreated) drawingFragment.changeDrawingMethod("circle_move"); //this will enable moving nodes
+            }else{
+                waitForDrawingFragment();
+            }
+        }, 500);
     }
 
     @Override
@@ -282,6 +301,8 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
         this.height = height;
         this.width = width;
         showGraphRandomlyIsomorfic(height);
+        isDrawingFragmentCreated = true;
+        drawingFragment.changeDrawingMethod("circle_move");
     }
 
     private void showGraphRandomlyIsomorfic(int height) {
@@ -306,6 +327,7 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
         firstMap.getCircles().addAll(secondMap.getCircles());
         firstMap.getRedLineList().addAll(secondMap.getRedLineList());
         drawingFragment.setUserGraph(firstMap);
+        drawingFragment.changeDrawingMethod("circle_move"); //this will enable moving nodes
     }
 
     private void showMessage(String text) {

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Toast;
 
@@ -13,6 +14,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -48,7 +50,8 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     int height, width;
-    boolean isGraphBipartite;
+    boolean isGraphBipartite, isDrawingViewCreated = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,7 +150,7 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
                     drawingFragment.changeDrawingMethod("circle");
                     return true;
                 case R.id.circle_move:
-                    drawingFragment.changeDrawingMethod("circle_move");
+
                     return true;
                 case R.id.line:
                     drawingFragment.changeDrawingMethod("line");
@@ -206,6 +209,32 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
     protected void changeToDrawingFragment() {
         super.changeToDrawingFragment();
         showTextAccordingCurrentActivity();
+
+        //hack - wait 0.5 sec if drawing fragment is already set and if not wait another 0.5
+        waitForDrawingFragment();
+    }
+
+    /**
+     * this method is kinda hack - due to unsychronous fragment transactions this will check every 0.5sec if transaction is done and then it will set proper parameter
+     */
+    private void waitForDrawingFragment() {
+        new Handler().postDelayed(() -> {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            if (fragmentManager.getFragments().contains(drawingFragment)) {
+                if (isDrawingViewCreated){
+                    switch (getCurrentActivity()) {
+                        case 0:
+                            drawingFragment.changeDrawingMethod("circle_move");
+                            break;
+                        case 1:
+                            bottomNavigationView.setVisibility(View.VISIBLE);
+                            break;
+                    }
+                }
+            }else{
+                waitForDrawingFragment();
+            }
+        }, 500);
     }
 
     private void showTextAccordingCurrentActivity() {
@@ -234,14 +263,14 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
         this.width = width;
         this.height = height;
         setContentAccordingCurrentActivity();
-
+        isDrawingViewCreated = true;
         switch (getCurrentActivity()) {
             case 0:
+                bottomNavigationView.setVisibility(View.INVISIBLE);
                 drawingFragment.changeDrawingMethod("circle_move");
-                bottomNavigationView.setSelectedItemId(R.id.circle_move);
                 break;
             case 1:
-
+                bottomNavigationView.setVisibility(View.VISIBLE);
                 break;
         }
     }
@@ -265,12 +294,15 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
                     Map mapToSet = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
                     drawingFragment.setUserGraph(mapToSet);
                 }
+                bottomNavigationView.setVisibility(View.INVISIBLE);
+                drawingFragment.changeDrawingMethod("circle_move");
                 break;
             case 1:
                 //vymaže graf z view a nechá ho prázdný
                 drawingFragment.changeDrawingMethod("clear");
                 drawingFragment.changeDrawingMethod("circle");
                 bottomNavigationView.setSelectedItemId(R.id.circle);
+                bottomNavigationView.setVisibility(View.VISIBLE);
                 break;
         }
     }
@@ -311,5 +343,6 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
     @Override
     public void onNegativeButtonClick() {
         setContentAccordingCurrentActivity();
+        drawingFragment.changeDrawingMethod("circle_move");
     }
 }
