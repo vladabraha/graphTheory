@@ -91,7 +91,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
                         isValid = GraphChecker.checkIfGraphContainsBridge(drawingFragment.getUserGraph());
                         switch (isValid) {
                             case "true":
-                                String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
+                                String userName = Objects.requireNonNull(mAuth.getCurrentUser(), "email musn't be null").getEmail();
                                 assert userName != null;
                                 Double receivedPoints = databaseConnector.recordUserPoints(userName, "second-first");
                                 Toast.makeText(SecondActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
@@ -149,6 +149,9 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
                     case R.id.circle:
                         drawingFragment.changeDrawingMethod("circle");
                         drawingFragment.setShouldBeNodeColorSwitched(false);
+                        return true;
+                    case R.id.circle_move:
+                        drawingFragment.changeDrawingMethod("circle_move");
                         return true;
                     case R.id.line:
                         drawingFragment.changeDrawingMethod("line");
@@ -242,6 +245,9 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
             userFinishedPreviousTask = false;
             setGraphToDrawingFragment(displayedActivity);
         }
+
+        //hack - wait 0.5 sec if drawing fragment is already set and if not wait another 0.5
+        if (displayedActivity == 1 )waitForDrawingFragment("prevent_all");
     }
 
     private int showToastMessageAccordingCurrentActivity() {

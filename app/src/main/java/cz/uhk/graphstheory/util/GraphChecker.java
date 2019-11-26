@@ -3,7 +3,6 @@ package cz.uhk.graphstheory.util;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import cz.uhk.graphstheory.model.Coordinate;
@@ -64,85 +63,14 @@ public class GraphChecker {
         if (redLineList.size() < 2) return false;
         CustomLine startingLine = redLineList.get(0);
         CustomLine lastLine = redLineList.get(redLineList.size() - 1);
-        if(startingLine.getFrom().equal(lastLine.getTo())) {
+        if (startingLine.getFrom().equal(lastLine.getTo())) {
             return true;
-        }else if (startingLine.getFrom().equal(lastLine.getFrom())){
+        } else if (startingLine.getFrom().equal(lastLine.getFrom())) {
             return true;
-        }else if (startingLine.getTo().equal(lastLine.getTo())){
+        } else if (startingLine.getTo().equal(lastLine.getTo())) {
             return true;
-        }else return startingLine.getTo().equal(lastLine.getFrom());
+        } else return startingLine.getTo().equal(lastLine.getFrom());
     }
-
-    //todo rozpozna, jestli jsou 2 grafy od sebe rozdeleny, pripadne smazat
-//    public static boolean checkIfGraphIsBipartite(Map map){
-//        ArrayList<CustomLine> customLines = map.getCustomLines();
-//        ArrayList<CustomLine> customLinesCloned = (ArrayList<CustomLine>) map.getCustomLines().clone();
-//        ArrayList<Coordinate> alreadyFound = new ArrayList<>();
-//        ArrayList<Coordinate> circles = map.getCircles();
-//
-//        if (customLines.size() < 2) return false;
-//
-//        //vezmi prvni primku, hod si z ni body do seznamu
-//        //projdi vsechny primky a koukni se, jestli maji jeden bod koncici v nekterem z techto nodu
-//        //pokud ano, odstran tutu primku z dalsiho hledani a nove propojujici bod pridej do seznamu (pouze pokud tam jeste neni)
-//        //na konci porovnej, zdali je seznam s body stejne velky jako puvodni, pokud ano, neni tam zadny bipartnitni, jinak je
-//        alreadyFound.add(customLines.get(0).getFrom());
-//        alreadyFound.add(customLines.get(0).getTo());
-//        customLinesCloned.remove(0);
-//
-//        boolean shouldRun;
-//        boolean shouldBreak; //this is for currentModificationException
-//        do {
-//            shouldBreak = false;
-//            for (CustomLine customLine : customLinesCloned){
-//                for (Coordinate coordinate : alreadyFound){
-//                    if (customLine.getFrom().equal(coordinate)){ //pokud je bod uz v nasem prvotnim seznamu
-//                           //kontrola, ze bod jeste nemame v seznamu
-//                        boolean isItNewNode = true;
-//                        for (Coordinate coordinateAlreadyAdded : alreadyFound){
-//                            if (coordinateAlreadyAdded.equal(customLine.getTo())){
-//                                isItNewNode = false;
-//                            }
-//                        }
-//                        customLinesCloned.remove(customLine); //smazani, abychom to nehledali do nekonecna, hledame od prazdneho seznamu
-//                        shouldBreak = true;
-//                        if (isItNewNode){ //pokud nemame, tak ho pridej do seznamu
-//                            alreadyFound.add(customLine.getTo());
-//                            break;
-//                        }
-//                    }else if(customLine.getTo().equal(coordinate)){
-//                        boolean isItNewNode = true;
-//                        for (Coordinate coordinateAlreadyAdded : alreadyFound){
-//                            if (coordinateAlreadyAdded.equal(customLine.getFrom())){
-//                                isItNewNode = false;
-//                            }
-//                        }
-//                        if (isItNewNode){
-//                            alreadyFound.add(customLine.getFrom());
-//                            break;
-//                        }
-//                        customLinesCloned.remove(customLine); //smazani, abychom to nehledali do nekonecna, hledame od prazdneho seznamu
-//                        shouldBreak = true;
-//                    }
-//                }
-//                if (shouldBreak) break;
-//            }
-//            //check if list of lines contains any point heading to our list of nodes
-//            //if not, algorithm stops
-//            shouldRun = false;
-//            for (CustomLine customLine : customLinesCloned){
-//                for (Coordinate coordinate : alreadyFound){
-//                    if (customLine.getTo().equal(coordinate) || customLine.getFrom().equal(coordinate)){
-//                        shouldRun = true;
-//                        break;
-//                    }
-//                }
-//                if (shouldRun) break;
-//            }
-//        }while (shouldRun);
-//
-//        return alreadyFound.size() != circles.size();
-//    }
 
     public static boolean checkIfGraphIsBipartite(Map map) {
         ArrayList<CustomLine> customLines = map.getCustomLines();
@@ -185,8 +113,11 @@ public class GraphChecker {
         //projdeme vsechny cary a mrkneme, zdali ukazuji z jednoho bodu na vsechny uzly z druhe skupiny
         //pri kazdem nalezeni, odstranime bod ze seznamu druhe casti bipartitniho grafu a na konci by měl být prázdný
         for (Coordinate coordinateFirstPart : circlesInFirstPartOfBipartite) {
-            //todo vytvorit novej objekt
-            ArrayList<Coordinate> circlesInSecondPartOfBipartiteCloned = (ArrayList<Coordinate>) circlesInSecondPartOfBipartite.clone();
+            ArrayList<Coordinate> circlesInSecondPartOfBipartiteCloned = new ArrayList<>();
+            for (Coordinate coor : circlesInSecondPartOfBipartite){
+                circlesInSecondPartOfBipartiteCloned.add(new Coordinate(coor.x, coor.y));
+            }
+
             Iterator<Coordinate> iter = circlesInSecondPartOfBipartiteCloned.iterator();
 
             while (iter.hasNext()) {
@@ -200,6 +131,26 @@ public class GraphChecker {
                 }
             }
             if (!circlesInSecondPartOfBipartiteCloned.isEmpty()) return false;
+        }
+
+        //a ještě kontrola, že uzly v jedné skupině bipartitního grafu nejsou spolu propojeny
+        for (Coordinate coordinateFirstPart : circlesInFirstPartOfBipartite){
+            for (Coordinate coordinateFirstPart2 : circlesInFirstPartOfBipartite){
+                if (customLines.stream().anyMatch(customLine -> (
+                    customLine.isPointInStartOrEndOfLine(coordinateFirstPart) && customLine.isPointInStartOrEndOfLine(coordinateFirstPart2) && !coordinateFirstPart.equal(coordinateFirstPart2)
+                ))){
+                    return false;
+                }
+            }
+        }
+        for (Coordinate coordinateSecondPart : circlesInSecondPartOfBipartite){
+            for (Coordinate coordinateSecondPart2 : circlesInSecondPartOfBipartite){
+                if (customLines.stream().anyMatch(customLine -> (
+                        customLine.isPointInStartOrEndOfLine(coordinateSecondPart) && customLine.isPointInStartOrEndOfLine(coordinateSecondPart2) && !coordinateSecondPart.equal(coordinateSecondPart2)
+                ))){
+                    return false;
+                }
+            }
         }
         return true;
     }
@@ -298,99 +249,114 @@ public class GraphChecker {
 
     }
 
+    //MYŠLENKA - od uzivatele přijde červenou čarou označený most - vezmu jeden jeho konec a podívám se na všechny sousedy toho konce a ty si uložím zvlášť do seznamu a to samé udělám pro druhý konec
+    //Jakmile mám seznam sousedů jednoho konce mostu, podívám se na všechny sousedy těchto uzlů, dokud nedojdu na konec seznamu - pokud takhle najdu n-2 uzlů, tak se nejedná o most
+    //tento postup budu opakovat u druhého konce mostu a jeho seznamu sousedů
     public static String checkIfGraphContainsBridge(Map userGraph) {
         ArrayList<CustomLine> customLines = userGraph.getCustomLines();
         ArrayList<CustomLine> redLines = userGraph.getRedLineList();
         ArrayList<Coordinate> circles = userGraph.getCircles();
-        if (redLines.isEmpty() || circles.size() < 3 || redLines.size() > 1) return "false";
+        if (redLines.isEmpty()) return "chybi ohraniceni cervenou carou";
+        if (circles.size() < 3 || redLines.size() > 1) return "false";
 
         //most bude označen cervenou carou
         //hledani prvniho bodu mimo most
 
         Coordinate oneEndOfBridge = redLines.get(0).getFrom();
         Coordinate secondEndOfBridge = redLines.get(0).getTo();
-        Coordinate firstCoordinate = null;
         Coordinate borderWhereBridgeBeggins = null; //tohle je kvuli algoritmu, ktery je stejny jako u aritkulace a potřebuje hraniční bod, přes který by neměl přejít
         for (CustomLine customLine : customLines) {
             if (customLine.getFrom().equal(oneEndOfBridge) && !customLine.getTo().equal(secondEndOfBridge)) {
-                firstCoordinate = customLine.getTo();
                 borderWhereBridgeBeggins = customLine.getFrom();
             } else if (customLine.getTo().equal(oneEndOfBridge) && !customLine.getFrom().equal(secondEndOfBridge)) {
-                firstCoordinate = customLine.getFrom();
                 borderWhereBridgeBeggins = customLine.getTo();
             }
         }
-        if (firstCoordinate == null) return "chybi ohraniceni cervenou carou";
-
+        if (borderWhereBridgeBeggins == null) return "chybi ohraniceni cervenou carou";
 
         //myslenka - projdu vsechny sousedy od prvniho bodu a budu si pamatovat, ktery jsem prosel
         //v dalsim kole budu prochazet sousedy sousedů, ktere jsem jeste nenavstivil, takhle postupne projdu vsechny z teho kategorie
         //na konci by mi meli chybet v seznamu nejake uzly - ty z druhe strany, kterou artikulace spojovala
-        ArrayList<Coordinate> alreadyVisitedNodes = new ArrayList<>();
-        ArrayList<Coordinate> nodesToExplore = new ArrayList<>();
+        ArrayList<Coordinate> alreadyVisitedNodesFirstEndOfBridge = new ArrayList<>(); //seznam pro jeden konec mostu
+        ArrayList<Coordinate> nodesToExploreFirstEndOfBridge = new ArrayList<>();
+        ArrayList<Coordinate> alreadyVisitedNodesSecondEndOfBridge = new ArrayList<>(); //seznam pro druhý konec mostu
+        ArrayList<Coordinate> nodesToExploreSecondEndOfBridge = new ArrayList<>();
 
-        //pro prvni uzel najdeme vsechny nody se kterymi je spojen a jeste jsme v nich nebyly
+
+        //přihodím do prohledávání všechny uzly, které jsou propojeny s jedním koncem mostu
+        //algoritmus totiž prochází všechny uzly z nodesToExplore, ale neleze tam, kde se to dotýká červené čáry, čímž může v některých situacích vyhodnotit špatně most
         for (CustomLine customLine : customLines) {
-            if (customLine.getFrom().equal(Objects.requireNonNull(firstCoordinate))) {
-                boolean isVisited = false;
-                for (Coordinate alreadyVisitedCoordinate : alreadyVisitedNodes) {
-                    if (alreadyVisitedCoordinate.equal(customLine.getTo())) {
-                        isVisited = true;
-                    }
+            if (customLine.getFrom().equal(oneEndOfBridge) && !customLine.getTo().equal(secondEndOfBridge)) {
+                if (alreadyVisitedNodesFirstEndOfBridge.stream().noneMatch(m -> m.equal(customLine.getTo()))) {
+                    nodesToExploreFirstEndOfBridge.add(customLine.getTo());
+                    alreadyVisitedNodesFirstEndOfBridge.add(customLine.getTo());
                 }
-                if (!isVisited) {
-                    alreadyVisitedNodes.add(customLine.getTo());
-                    nodesToExplore.add(customLine.getTo());
+            } else if (customLine.getTo().equal(oneEndOfBridge) && !customLine.getFrom().equal(secondEndOfBridge)) {
+                if (alreadyVisitedNodesFirstEndOfBridge.stream().noneMatch(m -> m.equal(customLine.getFrom()))) {
+                    nodesToExploreFirstEndOfBridge.add(customLine.getFrom());
+                    alreadyVisitedNodesFirstEndOfBridge.add(customLine.getFrom());
                 }
-            } else if (customLine.getTo().equal(Objects.requireNonNull(firstCoordinate))) {
-                boolean isVisited = false;
-                for (Coordinate alreadyVisitedCoordinate : alreadyVisitedNodes) {
-                    if (alreadyVisitedCoordinate.equal(customLine.getFrom())) {
-                        isVisited = true;
-                    }
+            }else if (customLine.getTo().equal(secondEndOfBridge) && !customLine.getFrom().equal(oneEndOfBridge)) {
+                if (alreadyVisitedNodesFirstEndOfBridge.stream().noneMatch(m -> m.equal(customLine.getFrom()))) {
+                    alreadyVisitedNodesSecondEndOfBridge.add(customLine.getFrom());
+                    nodesToExploreSecondEndOfBridge.add(customLine.getFrom());
                 }
-                if (!isVisited) {
-                    alreadyVisitedNodes.add(customLine.getFrom());
-                    nodesToExplore.add(customLine.getFrom());
+            }else if (customLine.getFrom().equal(secondEndOfBridge) && !customLine.getTo().equal(oneEndOfBridge)) {
+                if (alreadyVisitedNodesFirstEndOfBridge.stream().noneMatch(m -> m.equal(customLine.getTo()))) {
+                    alreadyVisitedNodesSecondEndOfBridge.add(customLine.getTo());
+                    nodesToExploreSecondEndOfBridge.add(customLine.getTo());
                 }
             }
         }
 
-        for (int i = 0; i < nodesToExplore.size(); i++) {
-            Coordinate coordinateToExplore = nodesToExplore.get(i);
+        //teď projdu všechny sousedy nalezených uzlů pro jeden konec grafu
+        for (int i = 0; i < nodesToExploreFirstEndOfBridge.size(); i++) {
+            Coordinate coordinateToExplore = nodesToExploreFirstEndOfBridge.get(i);
             for (CustomLine customLine : customLines) {
                 //nejdriv kontrola, ze se nepresuneme pres artikulaci do druhe půlky
-                if (!customLine.getFrom().equal(borderWhereBridgeBeggins) && !customLine.getTo().equal(borderWhereBridgeBeggins)) {
+                if (!customLine.isPointInStartOrEndOfLine(borderWhereBridgeBeggins) && !customLine.isPointInStartOrEndOfLine(oneEndOfBridge) && !customLine.isPointInStartOrEndOfLine(secondEndOfBridge)) {
                     if (customLine.getFrom().equal(coordinateToExplore)) {
-                        boolean isVisited = false;
-                        for (Coordinate alreadyVisitedCoordinate : alreadyVisitedNodes) {
-                            if (alreadyVisitedCoordinate.equal(customLine.getTo())) {
-                                isVisited = true;
-                            }
-                        }
-                        if (!isVisited) {
-                            alreadyVisitedNodes.add(customLine.getTo());
-                            nodesToExplore.add(customLine.getTo());
+                        if (alreadyVisitedNodesFirstEndOfBridge.stream().noneMatch(m -> m.equal(customLine.getTo()))) {
+                            alreadyVisitedNodesFirstEndOfBridge.add(customLine.getTo());
+                            nodesToExploreFirstEndOfBridge.add(customLine.getTo());
                         }
                     } else if (customLine.getTo().equal(coordinateToExplore)) {
-                        boolean isVisited = false;
-                        for (Coordinate alreadyVisitedCoordinate : alreadyVisitedNodes) {
-                            if (alreadyVisitedCoordinate.equal(customLine.getFrom())) {
-                                isVisited = true;
-                            }
-                        }
-                        if (!isVisited) {
-                            alreadyVisitedNodes.add(customLine.getFrom());
-                            nodesToExplore.add(customLine.getFrom());
+                        if (alreadyVisitedNodesFirstEndOfBridge.stream().noneMatch(m -> m.equal(customLine.getFrom()))) {
+                            alreadyVisitedNodesFirstEndOfBridge.add(customLine.getFrom());
+                            nodesToExploreFirstEndOfBridge.add(customLine.getFrom());
                         }
                     }
                 }
             }
-            nodesToExplore.remove(i);
+            nodesToExploreFirstEndOfBridge.remove(i);
             i--;
         }
 
-        if (alreadyVisitedNodes.size() == circles.size()) {
+        //a všechny sousedy druhého konce grafu
+        for (int i = 0; i < nodesToExploreSecondEndOfBridge.size(); i++) {
+            Coordinate coordinateToExplore = nodesToExploreSecondEndOfBridge.get(i);
+            for (CustomLine customLine : customLines) {
+                //nejdriv kontrola, ze se nepresuneme pres artikulaci do druhe půlky
+                if (!customLine.isPointInStartOrEndOfLine(borderWhereBridgeBeggins) && !customLine.isPointInStartOrEndOfLine(oneEndOfBridge) && !customLine.isPointInStartOrEndOfLine(secondEndOfBridge)) {
+                    if (customLine.getFrom().equal(coordinateToExplore)) {
+                        if (alreadyVisitedNodesSecondEndOfBridge.stream().noneMatch(m -> m.equal(customLine.getTo()))) {
+                            alreadyVisitedNodesSecondEndOfBridge.add(customLine.getTo());
+                            nodesToExploreSecondEndOfBridge.add(customLine.getTo());
+                        }
+                    } else if (customLine.getTo().equal(coordinateToExplore)) {
+                        if (alreadyVisitedNodesSecondEndOfBridge.stream().noneMatch(m -> m.equal(customLine.getFrom()))) {
+                            alreadyVisitedNodesSecondEndOfBridge.add(customLine.getFrom());
+                            nodesToExploreSecondEndOfBridge.add(customLine.getFrom());
+                        }
+                    }
+                }
+            }
+            nodesToExploreSecondEndOfBridge.remove(i);
+            i--;
+        }
+
+        //pokud ani jeden seznam nemá n-2 uzlů, nejednalo se o most
+        if (alreadyVisitedNodesFirstEndOfBridge.size() == circles.size() - 2 || alreadyVisitedNodesSecondEndOfBridge.size() == circles.size() - 2) {
             return "false";
         } else {
             return "true";
@@ -492,7 +458,6 @@ public class GraphChecker {
         //tzn, ze kazdy 2 usecky musi mit spolecny prave jeden bod
         for (int i = 0; i < redLines.size(); i++) {
             if (i > 1) {
-                ArrayList<Coordinate> coordinates = new ArrayList<>();
 
                 CustomLine firstLine = redLines.get(i - 1);
                 Coordinate first = firstLine.getFrom();
@@ -624,7 +589,6 @@ public class GraphChecker {
     //tedy obdobně jako v předchozím případě vezmu první spojenej bod s prvním bodem a prohledávám všechny liny, zdali některý neobsahuje můj bod, pokud jo, odstraním ho stacku, vezmu další a pokračuju dál
     public static boolean checkIfGraphDoesNotContainsCycle(Map userGraph) {
         ArrayList<CustomLine> customLines = userGraph.getCustomLines();
-        ArrayList<Coordinate> nodes = userGraph.getCircles();
 
         ArrayList<Coordinate> nodesWithMultipleLinesFirst = new ArrayList<>();
         ArrayList<Coordinate> nodesWithMultipleLinesSecond = new ArrayList<>();
@@ -769,8 +733,8 @@ public class GraphChecker {
 
 
     /**
-     *  zjistí, zdali graf obsahuje kostru grafu
-     * @param userGraph uživatelem nakreselný graf
+     * zjistí, zdali graf obsahuje kostru grafu
+     * @param userGraph    uživatelem nakreselný graf
      * @param generatedMap graf, který byl pro uživatele vygenerován
      * @return graf - jinej graf, než byl vygenerován, false, červenou čarou není zvýrazněná kostra, true, červenou čarou je zvýrazněná kostra
      */
@@ -780,22 +744,22 @@ public class GraphChecker {
 
         //pokud je jiný počet nodů, než byl vygenerovaný, nebo neobsahuje o jedna menší počet červných linek než uzlů, vrať false
 
-       //kontrola, zdali kostra grafu prochází přes již existující čáry
+        //kontrola, zdali kostra grafu prochází přes již existující čáry
         ArrayList<CustomLine> redLineList = userGraph.getRedLineList(); //uživatelova kostra
         ArrayList<CustomLine> customLines = userGraph.getCustomLines(); //uživatelovy čáry
-        for (CustomLine redLine : redLineList){
+        for (CustomLine redLine : redLineList) {
             if (customLines.stream().noneMatch(m -> m.isLineSame(redLine))) return "cesta";
         }
 
         if (generatedMap.getCircles().size() != userGraph.getCircles().size() || generatedMap.getCustomLines().size() != userGraph.getCustomLines().size()) {
             return "graf";
-        }else if (userGraph.getRedLineList().size() != userGraph.getCircles().size() - 1 ){
+        } else if (userGraph.getRedLineList().size() != userGraph.getCircles().size() - 1) {
             return "false";
-        }else {
+        } else {
             Map mapForChecker = new Map(userGraph);
             mapForChecker.setCustomLines(mapForChecker.getRedLineList());
             mapForChecker.setRedCircles(new ArrayList<>());
-            if (checkIfGraphHasCertainAmountOfComponent(mapForChecker, 1)){
+            if (checkIfGraphHasCertainAmountOfComponent(mapForChecker, 1)) {
                 return "true";
             }
         }
@@ -814,7 +778,7 @@ public class GraphChecker {
         for (CustomLine customLine : redLinesToCheck) {
             boolean found = false;
             for (CustomLine redLine : redLines) {
-                if (redLine.isLineSame(customLine)){
+                if (redLine.isLineSame(customLine)) {
                     found = true;
                     break;
                 }

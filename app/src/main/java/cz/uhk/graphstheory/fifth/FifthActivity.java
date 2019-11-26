@@ -119,6 +119,10 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
 
                 //nakresli bipartitní graf
                 case 1:
+                    if (drawingFragment.getUserGraph().getCustomLines().size() < 2 || drawingFragment.getUserGraph().getCircles().size() < 2){
+                        Toast.makeText(FifthActivity.this, "Nakresli alespoň 2 uzly a 2 hrany", Toast.LENGTH_LONG).show();
+                        break;
+                    }
                     boolean isValid = GraphChecker.checkIfGraphIsBipartite(drawingFragment.getUserGraph());
                     if (isValid) {
                         String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();

@@ -2,6 +2,7 @@ package cz.uhk.graphstheory.abstraction;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
@@ -207,6 +208,21 @@ public abstract class AbstractActivity extends AbstractAppCompactActivity implem
     protected void showSnackBar(String snackTitle) {
         View view = findViewById(R.id.frame_layout);
         Snackbar snackbar = Snackbar.make(view, snackTitle, Snackbar.LENGTH_INDEFINITE);
+
+        //další monožsti stylování snackBaru
+//        snackbarActionTextView.setTextSize( 20 );
+//        snackbarActionTextView.setTypeface(snackbarActionTextView.getTypeface(), Typeface.BOLD);
+
+        //tohle přepíše defaultní počet řádků (2) na 3
+        //android X má nově com.google.android.material.R namísto android.support.design.R
+        TextView snackBarTextView = snackbar.getView().findViewById(com.google.android.material.R.id.snackbar_text);
+        snackBarTextView.setMaxLines( 3 );
+
+        //this will set text size of snackbar
+        final View snackView = snackbar.getView();
+        final TextView snackTextView = snackView.findViewById(com.google.android.material.R.id.snackbar_text);
+        snackTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimension(R.dimen.snackBar_textSize)); //řekne, že číslo bude v SP a hodnotu vezme z dimens
+
         snackbar.setAction("OK", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -214,6 +230,20 @@ public abstract class AbstractActivity extends AbstractAppCompactActivity implem
             }
         });
         snackbar.show();
+    }
+
+    /**
+     * this method is kinda hack - due to unsychronous fragment transactions this will check every 0.5sec if transaction is done and then it will set proper parameter
+     */
+    protected void waitForDrawingFragment(String value) {
+        new Handler().postDelayed(() -> {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            if (fragmentManager.getFragments().contains(drawingFragment)) {
+                drawingFragment.changeDrawingMethod(value); //this will enable moving nodes
+            }else{
+                waitForDrawingFragment(value);
+            }
+        }, 500);
     }
 
     public void onPositiveButtonClick(){

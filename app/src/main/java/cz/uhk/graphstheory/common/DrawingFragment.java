@@ -149,6 +149,9 @@ public class DrawingFragment extends Fragment implements DrawingFragmentListener
             case "clear":
                 paintView.clear();
                 break;
+            case "prevent_all":
+                paintView.disableAllActions();
+                break;
 
         }
     }
@@ -164,6 +167,10 @@ public class DrawingFragment extends Fragment implements DrawingFragmentListener
 
     public void setShouldBeNodeColorSwitched(boolean shouldBeNodeColorSwitched) {
         this.shouldBeNodeColorSwitched = shouldBeNodeColorSwitched;
+        //tohle zabrání všem aktivitám v provádění
+        if (shouldBeNodeColorSwitched){
+            paintView.disableAllActions();
+        }
     }
 
     public void setMapAfterViewIsCreated(Map map){

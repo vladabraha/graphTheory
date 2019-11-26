@@ -174,7 +174,7 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
                 showSnackBar( "Nakresli tah v grafu, případně si graf uprav");
                 break;
             case 2:
-                showSnackBar( "Nakresli kružnici v grafu, případně si graf uprav. Nezapoměň, že kružnice musí končit v bodě, ze kterého vychází");
+                showSnackBar( "Nakresli kružnici v grafu, případně si graf uprav. Nezapoměň, že kružnice musí končit v bodě, ze kterého vychází.");
                 break;
             case 3:
                 Random ran = new Random();

@@ -86,6 +86,7 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/navigation_drawer_header"
+        app:theme="@style/navigationDrawer"
         app:menu="@menu/navigation_drawer_content" />
 
 

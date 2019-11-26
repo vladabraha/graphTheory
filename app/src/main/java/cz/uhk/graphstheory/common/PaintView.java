@@ -140,6 +140,14 @@ public class PaintView extends View {
         move = false;
     }
 
+    public void disableAllActions(){
+        circle = false;
+        line = false;
+        remove = false;
+        path = false;
+        move = false;
+    }
+
     /**
      * Metoda je provedena každým zavoláním invalidate
      *
@@ -274,7 +282,8 @@ public class PaintView extends View {
             //pokud je coordinate první, přidá, jinak nasetuje druhej v arraylistu
             if (lineCoordinates.size() == 1) {
                 lineCoordinates.add(new Coordinate(x, y));
-            } else {
+                //když je zařízení pomalejší a vykreslí se fragment rychleji než view, tak se neprovede některá část a spadne to
+            } else if (lineCoordinates.size() > 1){
                 lineCoordinates.set(1, new Coordinate(x, y));
             }
             previousXCoordinate = x;

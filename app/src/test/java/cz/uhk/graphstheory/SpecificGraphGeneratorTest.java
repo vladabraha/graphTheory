@@ -23,6 +23,11 @@ public class SpecificGraphGeneratorTest {
     private final int BRUSH_SIZE = 15;
 
     @Test
+    public void firstActivityTest(){
+        //todo
+    }
+
+    @Test
     public void secondActivityTest(){
         Map generatedArticulation = SpecificGraphGenerator.createMapWithArticulation(HEIGHT, WIDTH, BRUSH_SIZE);
         Map generatedBridge = SpecificGraphGenerator.createMapWithABridge(HEIGHT, WIDTH, BRUSH_SIZE);

@@ -113,6 +113,9 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
         if (isAttached) drawingFragment.changeDrawingMethod("path");
         showSnackBar( "Nakresli doplněk grafu");
 
+        //hack - wait 0.5 sec if drawing fragment is already set and if not wait another 0.5
+        waitForDrawingFragment("path");
+
         //zmeni text bottomNavigationView
         Menu menu = bottomNavigationView.getMenu();
         menu.getItem(3).setTitle("doplněk");
