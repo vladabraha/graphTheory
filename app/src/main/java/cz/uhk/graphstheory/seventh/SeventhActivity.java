@@ -78,7 +78,7 @@ public class SeventhActivity extends AbstractActivity implements TabLayoutFragme
                 String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
                 assert userName != null;
                 Double receivedPoints = databaseConnector.recordUserPoints(userName, "seventh");
-                Toast.makeText(SeventhActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
+                Toast.makeText(SeventhActivity.this, "Získáno " + receivedPoints + " bodů", Toast.LENGTH_LONG).show();
                 createDialog();
             } else {
                 Toast.makeText(SeventhActivity.this, "bohužel, to není správně, oprav se a zkus to znovu", Toast.LENGTH_LONG).show();
@@ -182,6 +182,7 @@ public class SeventhActivity extends AbstractActivity implements TabLayoutFragme
         for (Integer score : graphScore) {
             text.append(score.toString()).append(", ");
         }
+        text = text.deleteCharAt(text.length() - 1);
         showSnackBar( "Nakresli graf s tímto skórem " + text);
     }
 
@@ -195,7 +196,7 @@ public class SeventhActivity extends AbstractActivity implements TabLayoutFragme
         for (Integer score : graphScore) {
             text.append(score.toString()).append(", ");
         }
-        text.deleteCharAt(text.length() - 1);
+        text = text.deleteCharAt(text.length() - 1);
         showSnackBar( "Nakresli graf s tímto skórem " + text);
     }
 
@@ -225,8 +226,9 @@ public class SeventhActivity extends AbstractActivity implements TabLayoutFragme
     public void onScoreComputed(ArrayList<Integer> graphScore) {
         scoreText = new StringBuilder("Skóre grafu je ");
         for (Integer integer : graphScore) {
-            scoreText.append(integer).append(" ");
+            scoreText.append(integer).append(", ");
         }
+        scoreText = scoreText.deleteCharAt(scoreText.length() - 1);
         showSnackBar(scoreText.toString());
     }
 

@@ -319,7 +319,10 @@ public class PaintView extends View {
                 mPaint.setColor(Color.WHITE);
                 mPaint.setTextSize(80);
 
-                mCanvas.drawText(Objects.requireNonNull(charsForNodes.get(coordinate), "hashmapa nemá pro tento coordinate hodnotu"), coordinate.x - (BRUSH_SIZE * 2), coordinate.y + (BRUSH_SIZE * 2), mPaint);
+                //todo ošetřit písmenka
+//                if(charsForNodes.get(coordinate) != null){
+                    mCanvas.drawText(Objects.requireNonNull(charsForNodes.get(coordinate), "hashmapa nemá pro tento coordinate hodnotu"), coordinate.x - (BRUSH_SIZE * 2), coordinate.y + (BRUSH_SIZE * 2), mPaint);
+//                }
             }
         }
     }

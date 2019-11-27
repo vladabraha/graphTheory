@@ -30,6 +30,7 @@ import cz.uhk.graphstheory.common.TabLayoutFragment;
 import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
 import cz.uhk.graphstheory.model.User;
+import cz.uhk.graphstheory.util.Util;
 
 public abstract class AbstractActivity extends AbstractAppCompactActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -70,6 +71,10 @@ public abstract class AbstractActivity extends AbstractAppCompactActivity implem
         fragmentTransaction.add(R.id.generator_activity_group, tabLayoutFragment);
         fragmentTransaction.add(R.id.generator_activity_group, textFragment);
         fragmentTransaction.commit();
+
+        if (!Util.isNetworkConnected(this)){
+            showSnackBar("Ajaj, nejste připojeni k internetu, bez toho to nebude bohužel fungovat");
+        }
 
     }
 

@@ -1,5 +1,8 @@
 package cz.uhk.graphstheory.util;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -54,5 +57,11 @@ public class Util {
         } while (!found);
 
         return graphScore;
+    }
+
+    public static boolean isNetworkConnected(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        assert cm != null;
+        return (cm.getActiveNetworkInfo() != null) && cm.getActiveNetworkInfo().isConnectedOrConnecting();
     }
 }

@@ -14,7 +14,7 @@
     <string name="clear_paint_view">vyčistit</string>
     <string name="delete_one_object">smazat objekt</string>
     <string name="line">hrana</string>
-    <string name="path">označ</string>
+    <string name="path">označit</string>
     <string name="node_move">posuň vrchol</string>
 
     <!--vyjížděcí menu-->

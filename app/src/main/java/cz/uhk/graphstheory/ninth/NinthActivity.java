@@ -1,6 +1,7 @@
 package cz.uhk.graphstheory.ninth;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -30,6 +31,7 @@ import cz.uhk.graphstheory.common.TextFragment;
 import cz.uhk.graphstheory.database.DatabaseConnector;
 import cz.uhk.graphstheory.interfaces.DrawingFragmentListener;
 import cz.uhk.graphstheory.model.Map;
+import cz.uhk.graphstheory.statistics.StatisticsActivity;
 import cz.uhk.graphstheory.util.GraphChecker;
 import cz.uhk.graphstheory.util.GraphGenerator;
 
@@ -78,14 +80,11 @@ public class NinthActivity extends AbstractActivity implements TabLayoutFragment
                     String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
                     assert userName != null;
                     Double receivedPoints = databaseConnector.recordUserPoints(userName, "ninth");
-                    Toast.makeText(NinthActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
+                    Toast.makeText(NinthActivity.this, "Získáno " + receivedPoints + " bodů", Toast.LENGTH_LONG).show();
                     createDialog();
                     break;
                 case "false":
                     Toast.makeText(NinthActivity.this, "bohužel, to není správně, oprav se a zkus to znovu", Toast.LENGTH_LONG).show();
-                    break;
-                case "graf":
-                    Toast.makeText(NinthActivity.this, "graf je jiný, než byl vygenerován, doplň graf do původní podoby, nebo si nech vygenerovat nový", Toast.LENGTH_LONG).show();
                     break;
                 case "cesta":
                     Toast.makeText(NinthActivity.this, "kostra je vedená minimálně v jednom úseku přes neexistující hranu v původním grafu", Toast.LENGTH_LONG).show();
@@ -149,7 +148,7 @@ public class NinthActivity extends AbstractActivity implements TabLayoutFragment
     @Override
     protected void changeToEducationFragment() {
         super.changeToEducationFragment();
-        showSnackBar( "Kostra grafu je v grafu zvýrazněna červenou čarou");
+        showSnackBar("Kostra grafu je v grafu zvýrazněna červenou čarou");
     }
 
     @Override
@@ -173,30 +172,35 @@ public class NinthActivity extends AbstractActivity implements TabLayoutFragment
     }
 
     @Override
-    public void onPositiveButtonClick() {
+    public void createDialog() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setCancelable(false);
         dialog.setTitle("Gratulujeme");
         dialog.setMessage("Jste na konci, prošli jste všemi výukovými materiály, které tato aplikace zatím nabízí. Můžete se kdykoliv vrátit ");
-        dialog.setPositiveButton("Ano", new DialogInterface.OnClickListener() {
+        dialog.setNegativeButton("Znovu procvičit", (dialog12, which) -> onNegativeButtonClick());
+        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                generateNewSpanningTree(height, width);
+                Intent newActivityIntent = new Intent(NinthActivity.this, StatisticsActivity.class);
+                newActivityIntent.putExtra("SESSION_ID", 99);
+                finish();
+                startActivity(newActivityIntent);
             }
         });
+        final AlertDialog alert = dialog.create();
+        alert.show();
     }
 
     @Override
     public void onNegativeButtonClick() {
         generateNewSpanningTree(height, width);
-        showSnackBar( "Nakresli v zadaném grafu kostru ");
+        showSnackBar("Nakresli v zadaném grafu kostru, případně si graf uprav ");
     }
-
 
     @Override
     protected void changeToDrawingFragment() {
         super.changeToDrawingFragment();
-        showSnackBar( "Nakresli v zadaném grafu kostru ");
+        showSnackBar("Nakresli v zadaném grafu kostru, případně si graf uprav ");
     }
 
     @Override
@@ -217,6 +221,7 @@ public class NinthActivity extends AbstractActivity implements TabLayoutFragment
         if (amountOfNodes < MINIMUM_AMOUNT_OF_NODES) amountOfNodes = MINIMUM_AMOUNT_OF_NODES;
 
         Map mapToSet = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
+
         generatedMap = new Map(mapToSet);
         drawingFragment.setUserGraph(mapToSet);
         bottomNavigationView.setSelectedItemId(R.id.path);

@@ -79,7 +79,7 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
                 String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
                 assert userName != null;
                 Double receivedPoints = databaseConnector.recordUserPoints(userName, "eight");
-                Toast.makeText(EightActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
+                Toast.makeText(EightActivity.this, "Získáno " + receivedPoints + " bodů", Toast.LENGTH_LONG).show();
                 createDialog();
             } else {
                 Toast.makeText(EightActivity.this, "bohužel, to není správně, oprav se a zkus to znovu", Toast.LENGTH_LONG).show();

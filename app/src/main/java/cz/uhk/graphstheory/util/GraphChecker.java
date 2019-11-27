@@ -371,7 +371,7 @@ public class GraphChecker {
         ArrayList<CustomLine> lines = userGraph.getCustomLines();
         ArrayList<Coordinate> circles = userGraph.getCircles();
 
-        if (redLines.size() < 3) return "chybi ohraniceni cervenou carou";
+        if (redLines.isEmpty()) return "chybi ohraniceni cervenou carou";
 
         ArrayList<Coordinate> alreadyVisitedNodes = new ArrayList<>();
 
@@ -752,9 +752,7 @@ public class GraphChecker {
             if (customLines.stream().noneMatch(m -> m.isLineSame(redLine))) return "cesta";
         }
 
-        if (generatedMap.getCircles().size() != userGraph.getCircles().size() || generatedMap.getCustomLines().size() != userGraph.getCustomLines().size()) {
-            return "graf";
-        } else if (userGraph.getRedLineList().size() != userGraph.getCircles().size() - 1) {
+       if (userGraph.getRedLineList().size() != userGraph.getCircles().size() - 1) {
             return "false";
         } else {
             Map mapForChecker = new Map(userGraph);

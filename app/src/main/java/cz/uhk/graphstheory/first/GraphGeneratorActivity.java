@@ -91,19 +91,19 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
                 switch (displayedActivity) {
                     case 0:
                         receivedPoints = databaseConnector.recordUserPoints(userName, "first-first");
-                        Toast.makeText(GraphGeneratorActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
+                        Toast.makeText(GraphGeneratorActivity.this, "Získáno " + receivedPoints + " bodů", Toast.LENGTH_LONG).show();
                         break;
                     case 1:
                         receivedPoints = databaseConnector.recordUserPoints(userName, "first-second");
-                        Toast.makeText(GraphGeneratorActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
+                        Toast.makeText(GraphGeneratorActivity.this, "Získáno " + receivedPoints + " bodů", Toast.LENGTH_LONG).show();
                         break;
                     case 2:
                         receivedPoints = databaseConnector.recordUserPoints(userName, "first-third");
-                        Toast.makeText(GraphGeneratorActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
+                        Toast.makeText(GraphGeneratorActivity.this, "Získáno " + receivedPoints + " bodů", Toast.LENGTH_LONG).show();
                         break;
                     case 3:
                         receivedPoints = databaseConnector.recordUserPoints(userName, "first-fourth");
-                        Toast.makeText(GraphGeneratorActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
+                        Toast.makeText(GraphGeneratorActivity.this, "Získáno " + receivedPoints + " bodů", Toast.LENGTH_LONG).show();
                         break;
                 }
                 drawingFragment.changeDrawingMethod("clear");
@@ -164,21 +164,22 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
         int displayedActivity = sharedPref.getInt("displayedActivity", 0);
         switch (displayedActivity) {
             case 0:
-                showSnackBar( "Nakresli cestu v grafu, případně si graf uprav");
+                showSnackBar("Nakresli cestu v grafu, případně si graf uprav");
                 break;
             case 1:
-                showSnackBar( "Nakresli tah v grafu, případně si graf uprav");
+                showSnackBar("Nakresli tah v grafu, případně si graf uprav");
                 break;
             case 2:
-                showSnackBar( "Nakresli kružnici v grafu, případně si graf uprav. Nezapoměň, že kružnice musí končit v bodě, ze kterého vychází.");
+                showSnackBar("Zakresli do grafu kružnici (graf si případně uprav). Nezapoměň, že kružnice musí končit v bodě, ze kterého vychází.");
                 break;
             case 3:
                 Random ran = new Random();
                 Map map = drawingFragment.getUserGraph();
                 length = ran.nextInt(map.getCustomLines().size());
                 if (length < 3) length = 3;
-                showSnackBar( "Nakresli sled délky " + length + " , případně si graf uprav");
+                showSnackBar("Nakresli sled délky " + length + " , případně si graf uprav");
                 break;
+
         }
     }
 
@@ -197,7 +198,7 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
         super.changeToDrawingFragment();
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         int displayedActivity = sharedPref.getInt("displayedActivity", 0);
-        showProperToastMessage();
+        if (isViewCreated) showProperToastMessage();
 
         if (isViewCreated) {
             setProperTitleToBottomNavigationMenu(displayedActivity);
@@ -210,7 +211,7 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
     }
 
     @Override
-    protected void changeToTextFragment(){
+    protected void changeToTextFragment() {
         super.changeToTextFragment();
         isPathGenerated = false;
     }
@@ -301,7 +302,9 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
         this.width = width;
         this.height = height;
         setMapToDrawingFragment(width, height);
+        if (!isViewCreated) showProperToastMessage();
         isViewCreated = true;
+
     }
 
     private void setMapToDrawingFragment(int width, int height) {
@@ -360,7 +363,7 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
         textToShow = convertNameOfLinesToNodes(text);
 
         if (!isPathGenerated)
-            showSnackBar( "Nyní si ukážeme v zadaném grafu cestu přes vrcholy " + textToShow);
+            showSnackBar("Nyní si ukážeme v zadaném grafu cestu přes vrcholy " + textToShow);
         isPathGenerated = true;
     }
 

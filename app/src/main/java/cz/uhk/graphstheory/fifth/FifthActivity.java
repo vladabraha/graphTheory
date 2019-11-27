@@ -91,7 +91,7 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
                                 showMessage("Získáno " + databaseConnector.recordUserPoints(userName, "fifth-first") + " bodů");
                                 createDialog();
                             } else {
-                                showMessage("bohužel, právě naopak");
+                                showMessage("Bohužel, právě naopak");
                                 setContentAccordingCurrentActivity();
                             }
                         }
@@ -101,13 +101,13 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
                                 public void onClick(DialogInterface dialog, int which) {
                                     //Action for "Cancel".
                                     if (!isGraphBipartite) {
-                                        showMessage("ano, máš pravdu!");
+                                        showMessage("Ano, máš pravdu!");
                                         String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
                                         assert userName != null;
                                         showMessage("Získáno " + databaseConnector.recordUserPoints(userName, "fifth-first") + " bodů");
                                         createDialog();
                                     } else {
-                                        showMessage("bohužel, právě naopak");
+                                        showMessage("Bohužel, právě naopak");
                                         setContentAccordingCurrentActivity();
                                     }
                                 }
@@ -172,7 +172,7 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
     }
 
     private void showMessage(String text) {
-        showSnackBar(text);
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -244,7 +244,7 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
     private void showTextAccordingCurrentActivity() {
         switch (getCurrentActivity()){
             case 0:
-                showSnackBar("Rozhodni, zda se se jedná o vygenerovaný bipartitní graf");
+                showSnackBar("Rozhodni, zda se se jedná o bipartitní graf");
                 break;
             case 1 :
                 showSnackBar("Nakresli bipartitní graf");

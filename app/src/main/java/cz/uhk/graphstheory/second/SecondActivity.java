@@ -94,7 +94,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
                                 String userName = Objects.requireNonNull(mAuth.getCurrentUser(), "email musn't be null").getEmail();
                                 assert userName != null;
                                 Double receivedPoints = databaseConnector.recordUserPoints(userName, "second-first");
-                                Toast.makeText(SecondActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
+                                Toast.makeText(SecondActivity.this, "Získáno " + receivedPoints + " bodů", Toast.LENGTH_LONG).show();
                                 createDialog();
                                 break;
                             case "false":
@@ -114,7 +114,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
                                 Double receivedPoints;
                                 Toast.makeText(SecondActivity.this, "Správně!", Toast.LENGTH_LONG).show();
                                 receivedPoints = databaseConnector.recordUserPoints(userName, "second-second");
-                                Toast.makeText(SecondActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
+                                Toast.makeText(SecondActivity.this, "Získáno " + receivedPoints + " bodů", Toast.LENGTH_LONG).show();
                                 createDialog();
                                 break;
                             case "false":
@@ -240,7 +240,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
         int displayedActivity = showToastMessageAccordingCurrentActivity();
         //zmeni text bottomNavigationView
         Menu menu = bottomNavigationView.getMenu();
-        menu.getItem(3).setTitle("označ");
+        menu.getItem(3).setTitle("označit");
 
         //pokud uzivatel splnil predchozi ukol, tak se mu nasetuje novej graf, do kteryho muze kreslit (generuje se podle ukazky, ale bez cerveny cary
         if (userFinishedPreviousTask) {

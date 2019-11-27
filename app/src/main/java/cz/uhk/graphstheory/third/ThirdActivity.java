@@ -72,7 +72,7 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
                 String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
                 assert userName != null;
                 Double receivedPoints = databaseConnector.recordUserPoints(userName, "third");
-                Toast.makeText(ThirdActivity.this, "Získáno " + receivedPoints + "bodů", Toast.LENGTH_LONG).show();
+                Toast.makeText(ThirdActivity.this, "Získáno " + receivedPoints + " bodů", Toast.LENGTH_LONG).show();
                 drawingFragment.changeDrawingMethod("clear");
                 createDialog();
             } else {

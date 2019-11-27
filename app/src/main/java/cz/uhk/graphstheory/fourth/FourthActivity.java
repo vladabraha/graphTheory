@@ -76,13 +76,13 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
                     //Action for "Delete".
                     Log.d("action", "ano");
                     if (isGraphSame) {
-                        showMessage("ano, máš pravdu!");
+                        showMessage("Ano, máš pravdu!");
                         String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
                         assert userName != null;
                         databaseConnector.recordUserPoints(userName, "fourth");
                         showGraphRandomlyIsomorfic(height);
                     } else {
-                        showMessage("bohužel, právě naopak");
+                        showMessage("Bohužel, právě naopak");
                         showGraphRandomlyIsomorfic(height);
                     }
                 }
@@ -93,13 +93,13 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
                             //Action for "Cancel".
                             Log.d("action", "ne");
                             if (!isGraphSame) {
-                                showMessage("ano, máš pravdu!");
+                                showMessage("Ano, máš pravdu!");
                                 String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
                                 assert userName != null;
                                 databaseConnector.recordUserPoints(userName, "fourth");
                                 showGraphRandomlyIsomorfic(height);
                             } else {
-                                showMessage("bohužel, právě naopak");
+                                showMessage("Bohužel, právě naopak");
                                 showGraphRandomlyIsomorfic(height);
                             }
                         }
@@ -154,7 +154,7 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
     @Override
     protected void changeToDrawingFragment() {
         super.changeToDrawingFragment();
-        showSnackBar( "Rozhodni, zdali se jedna o izomorfni grafy");
+        showSnackBar( "Rozhodni, zdali se jedná o izomorfní grafy. Až si budeš jistý, klikni na fajfku");
 
         //hack - wait 0.5 sec if drawing fragment is already set and if not wait another 0.5
         waitForDrawingFragment("circle_move");
