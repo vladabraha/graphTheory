@@ -148,10 +148,11 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
                 switch (menuItem.getItemId()) {
                     case R.id.circle:
                         drawingFragment.changeDrawingMethod("circle");
-                        drawingFragment.setShouldBeNodeColorSwitched(false);
+                        drawingFragment.setShouldBeNodeColorSwitched(false); //vypne přebarvování uzlu na červeno
                         return true;
                     case R.id.circle_move:
                         drawingFragment.changeDrawingMethod("circle_move");
+                        drawingFragment.setShouldBeNodeColorSwitched(false);
                         return true;
                     case R.id.line:
                         drawingFragment.changeDrawingMethod("line");
@@ -159,10 +160,11 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
                         return true;
                     case R.id.path:
                         drawingFragment.changeDrawingMethod("path");
-                        switchColoringNodeAccordingActivity();
+                        switchColoringNodeAccordingActivity(); //přepínání uzlu podle současné aktivity
                         return true;
                     case R.id.delete:
                         drawingFragment.changeDrawingMethod("remove"); // nechat pro prekliknuti na cernou tecku a pote smazani
+                        drawingFragment.setShouldBeNodeColorSwitched(false);
                         return true;
                     default:
                         return false; // return true if you want the item to be displayed as the selected item

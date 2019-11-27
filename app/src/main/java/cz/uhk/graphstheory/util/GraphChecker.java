@@ -509,7 +509,8 @@ public class GraphChecker {
         return true;
     }
 
-    public static boolean checkIfGraphContainsSled(Map userGraph, int length) {
+    //sled
+    public static boolean checkIfGraphContainsWalk(Map userGraph, int length) {
         return userGraph.getRedLineList().size() == length;
     }
 

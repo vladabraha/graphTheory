@@ -16,6 +16,8 @@ import org.apache.commons.math3.geometry.euclidean.twod.Segment;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Objects;
 
 import cz.uhk.graphstheory.model.Coordinate;
 import cz.uhk.graphstheory.model.CustomLine;
@@ -56,6 +58,10 @@ public class PaintView extends View {
     private boolean circle, line, move, remove, path = false;
     private boolean isCircleDragged = false;
     PaintView.CommunicationInterface mListener;
+
+    HashMap<Coordinate, String> charsForNodes;
+
+    int charValue = "A".charAt(0); //aktuální písmeno, které se zobrazuje v uzlu
 
     private Coordinate firstCoordinate; //označuje souřadnici, kam uživatel klepnul poprvé během posledního klepnutí
 
@@ -140,7 +146,7 @@ public class PaintView extends View {
         move = false;
     }
 
-    public void disableAllActions(){
+    public void disableAllActions() {
         circle = false;
         line = false;
         remove = false;
@@ -216,25 +222,9 @@ public class PaintView extends View {
                 mCanvas.drawCircle(coordinate.x, coordinate.y, BRUSH_SIZE + 30, mPaint);
             }
         }
+        createCharsInNodes();
 
-        String value = "A";
-        int charValue = value.charAt(0);
-        if (circleCoordinates.size() > 0) {
-            for (Coordinate coordinate : circleCoordinates) {
-                mPaint.setColor(DEFAULT_COLOR);
-                mPaint.setStrokeWidth(BRUSH_SIZE);
-                mPaint.setStyle(Paint.Style.FILL);
-                mCanvas.drawCircle(coordinate.x, coordinate.y, BRUSH_SIZE + 30, mPaint);
-
-                mPaint.setColor(Color.WHITE);
-                mPaint.setTextSize(80);
-                charValue++;
-                String nextChar = String.valueOf( (char) charValue);
-                mCanvas.drawText(nextChar, coordinate.x - (BRUSH_SIZE * 2 ), coordinate.y + (BRUSH_SIZE * 2), mPaint);
-            }
-        }
-
-        if (redCirclesCoordinates != null && redCirclesCoordinates.size() > 0){
+        if (redCirclesCoordinates != null && redCirclesCoordinates.size() > 0) {
             for (Coordinate coordinate : redCirclesCoordinates) {
                 mPaint.setColor(RED_COLOR);
                 mPaint.setStrokeWidth(BRUSH_SIZE);
@@ -243,13 +233,95 @@ public class PaintView extends View {
 
                 mPaint.setColor(Color.BLACK);
                 mPaint.setTextSize(80);
-                mCanvas.drawText("A", coordinate.x - (BRUSH_SIZE * 2 ), coordinate.y + (BRUSH_SIZE * 2), mPaint);
+                mCanvas.drawText("A", coordinate.x - (BRUSH_SIZE * 2), coordinate.y + (BRUSH_SIZE * 2), mPaint);
             }
         }
 
         canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
         canvas.restore();
 
+    }
+
+    /**
+     * Vytvoří HashMapu pro všechny uzly
+     * Při změně se aktualizuje jenom příslušný záznam (pro update se smaže starý a vytvoří nový se stejným písmenem)
+     */
+    private void createCharsInNodes() {
+        //pokud je hashmapa prázdná, vytvoř všechny záznamy
+        if (charsForNodes == null) {
+            charsForNodes = new HashMap<>();
+            if (circleCoordinates.size() > 0) {
+                for (Coordinate coordinate : circleCoordinates) {
+                    charValue++;
+                    String nextChar = String.valueOf((char) charValue);
+                    charsForNodes.put(coordinate, nextChar);
+                }
+            }
+        } else {
+            if (charsForNodes.size() == circleCoordinates.size()) {
+                //pokud pro daný záznam nenajdeme circle coordinate, víme, že tento záznam se už změnil a musí se aktualizovat
+                for (java.util.Map.Entry<Coordinate, String> charEntry : charsForNodes.entrySet()) {
+                    boolean shouldBreak = false;
+                    boolean found = circleCoordinates.stream().anyMatch(c -> c.equal(charEntry.getKey()));
+                    //podíváme se do hashh mapy, pokud pro dany coordinate nemá žádný záznam je to náš nový coordinate
+                    if (!found) {
+                        for (Coordinate coordinate : circleCoordinates) {
+                            boolean found2 = false;
+                            for (java.util.Map.Entry<Coordinate, String> charEntry2 : charsForNodes.entrySet()) {
+                                if (charEntry2.getKey().equal(coordinate)) {
+                                    found2 = true;
+                                }
+                            }
+                            //nalezli jsme záznam, který není v hash mape, takže si vezmeme písmeno, smažeme záznam a vytvoříme si nový se stejným písmenem
+                            if (!found2) {
+                                String value = charEntry.getValue();
+                                charsForNodes.remove(charEntry.getKey());
+                                charsForNodes.put(coordinate, value);
+                                shouldBreak = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (shouldBreak) break;
+                }
+            } else if (charsForNodes.size() > circleCoordinates.size()) {
+                //pokud pro dany zaznam nenalezneme hodnotu v circles, tak víme, že je se ma tento záznam smazat
+                for (java.util.Map.Entry<Coordinate, String> charEntry : charsForNodes.entrySet()) {
+                    if (circleCoordinates.stream().noneMatch(c -> c.equal(charEntry.getKey()))) {
+                        charsForNodes.remove(charEntry.getKey(), charEntry.getValue());
+                        break;
+                    }
+                }
+            } else {
+                //pokud pro daný uzel není záznam v hashmape, tak se přidá s dalším textem
+                for (Coordinate coordinate : circleCoordinates) {
+                    boolean found = false;
+                    for (java.util.Map.Entry<Coordinate, String> charEntry : charsForNodes.entrySet()) {
+                        if (charEntry.getKey().equal(coordinate)) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        charValue++;
+                        charsForNodes.put(coordinate, String.valueOf((char) charValue));
+                    }
+                }
+            }
+        }
+        if (circleCoordinates.size() > 0 && charsForNodes != null) {
+            for (Coordinate coordinate : circleCoordinates) {
+                mPaint.setColor(DEFAULT_COLOR);
+                mPaint.setStrokeWidth(BRUSH_SIZE);
+                mPaint.setStyle(Paint.Style.FILL);
+                mCanvas.drawCircle(coordinate.x, coordinate.y, BRUSH_SIZE + 30, mPaint);
+
+                mPaint.setColor(Color.WHITE);
+                mPaint.setTextSize(80);
+
+                mCanvas.drawText(Objects.requireNonNull(charsForNodes.get(coordinate), "hashmapa nemá pro tento coordinate hodnotu"), coordinate.x - (BRUSH_SIZE * 2), coordinate.y + (BRUSH_SIZE * 2), mPaint);
+            }
+        }
     }
 
     private void touchStart(float x, float y) {
@@ -283,7 +355,7 @@ public class PaintView extends View {
             if (lineCoordinates.size() == 1) {
                 lineCoordinates.add(new Coordinate(x, y));
                 //když je zařízení pomalejší a vykreslí se fragment rychleji než view, tak se neprovede některá část a spadne to
-            } else if (lineCoordinates.size() > 1){
+            } else if (lineCoordinates.size() > 1) {
                 lineCoordinates.set(1, new Coordinate(x, y));
             }
             previousXCoordinate = x;
@@ -439,7 +511,8 @@ public class PaintView extends View {
         }
     }
 
-    private boolean checkIsInCircle(float circle_x, float circle_y, float point_x, float point_y) {
+    private boolean checkIsInCircle(float circle_x, float circle_y, float point_x,
+                                    float point_y) {
         double D = Math.pow(point_x - circle_x, 2) + Math.pow(point_y - circle_y, 2);
         return D <= Math.pow(BRUSH_SIZE + 30, 2);
     }
@@ -468,7 +541,8 @@ public class PaintView extends View {
                     touchUp(x, y);
                     touchMove(x, y);
                 }
-                if (isCircleDragged) isCircleDragged = false; //aby to neposouvalo v dalším tahu kruhy
+                if (isCircleDragged)
+                    isCircleDragged = false; //aby to neposouvalo v dalším tahu kruhy
                 if (remove) removeObject(x, y);
                 invalidate();
                 if (mListener != null) mListener.sentTouchUpCoordinates(new Coordinate(x, y));

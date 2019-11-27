@@ -52,7 +52,6 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         DatabaseConnector databaseConnector = new DatabaseConnector();
 
         //for navigation drawer
@@ -65,10 +64,7 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
         bottomNavigationView = getBottomNavigationView();
         FloatingActionButton floatingActionButton = getFloatingActionButton();
 
-
         textFragment.setEducationText(R.string.first_activity_text);
-
-
 
         floatingActionButton.setOnClickListener(v -> {
             SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
@@ -85,7 +81,7 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
                     isValid = GraphChecker.checkIfGraphContainsCycle(drawingFragment.getUserGraph());
                     break;
                 case 3:
-                    isValid = GraphChecker.checkIfGraphContainsSled(drawingFragment.getUserGraph(), length);
+                    isValid = GraphChecker.checkIfGraphContainsWalk(drawingFragment.getUserGraph(), length);
                     break;
             }
             if (isValid) {
@@ -178,7 +174,9 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
                 break;
             case 3:
                 Random ran = new Random();
-                length = ran.nextInt(7);
+                Map map = drawingFragment.getUserGraph();
+                length = ran.nextInt(map.getCustomLines().size());
+                if (length < 3) length = 3;
                 showSnackBar( "Nakresli sled délky " + length + " , případně si graf uprav");
                 break;
         }
@@ -239,7 +237,6 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
     @Override
     protected void changeToEducationFragment() {
         super.changeToEducationFragment();
-        if (isViewCreated) setMapToDrawingFragment(width, height);
         if (isPathGenerated)
             showSnackBar("Nyní si ukážeme v zadaném grafu cestu přes vrcholy ");
     }
