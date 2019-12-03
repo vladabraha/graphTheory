@@ -1,12 +1,14 @@
 package cz.uhk.graphtheory.eight;
 
-import android.content.Intent;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -30,7 +32,6 @@ import cz.uhk.graphtheory.common.TextFragment;
 import cz.uhk.graphtheory.database.DatabaseConnector;
 import cz.uhk.graphtheory.interfaces.DrawingFragmentListener;
 import cz.uhk.graphtheory.model.Map;
-import cz.uhk.graphtheory.ninth.NinthActivity;
 import cz.uhk.graphtheory.util.GraphChecker;
 import cz.uhk.graphtheory.util.GraphGenerator;
 import cz.uhk.graphtheory.util.Util;
@@ -51,6 +52,8 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
     private EightActivityFragment eightActivityFragment;
 
     int height, width, amountOfNodes, amountOfComponent;
+    boolean isTreeGeneratable;
+    String textToDisplay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,17 +76,58 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
 
         drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         floatingActionButton.setOnClickListener(v -> {
-            boolean isValid = GraphChecker.checkIfGraphHasCertainAmountOfComponent(drawingFragment.getUserGraph(), amountOfComponent);
-//            boolean isValid = GraphChecker.checkIfGraphDoesNotContainsCycle(drawingFragment.getUserGraph());
-            if (isValid) {
-                String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
-                assert userName != null;
-                Double receivedPoints = databaseConnector.recordUserPoints(userName, "eight");
-                Toast.makeText(EightActivity.this, "Získáno " + receivedPoints + " bodů", Toast.LENGTH_LONG).show();
-                createDialog();
-            } else {
-                Toast.makeText(EightActivity.this, "bohužel, to není správně, oprav se a zkus to znovu", Toast.LENGTH_LONG).show();
+            boolean isValid;
+            switch (getCurrentActivity()) {
+                case 0:
+                    isValid = GraphChecker.checkIfGraphHasCertainAmountOfComponent(drawingFragment.getUserGraph(), amountOfComponent);
+                    if (isValid) {
+                        String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
+                        assert userName != null;
+                        Double receivedPoints = databaseConnector.recordUserPoints(userName, "eight-first");
+                        showMessage("Získáno " + receivedPoints + " bodů");
+                        createDialog();
+                    } else {
+                        showMessage("bohužel, to není správně, oprav se a zkus to znovu");
+                    }
+                    break;
+
+                case 1:
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+                    dialog.setCancelable(false);
+                    dialog.setTitle("Rozhodněte");
+                    dialog.setMessage("Dá se vygenerovat zadaný graf?");
+                    dialog.setPositiveButton("Ano", (dialog12, id) -> {
+                        if (isTreeGeneratable) {
+                            String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
+                            assert userName != null;
+                            showMessage("Získáno " + databaseConnector.recordUserPoints(userName, "eight-second") + " bodů");
+                            createDialog();
+                        } else {
+                            showMessage("Bohužel, právě naopak");
+                            prepareDecisionActivity(width, height);
+                            showSnackBar(textToDisplay);
+                        }
+                    })
+                            .setNegativeButton("Ne ", (dialog1, which) -> {
+                                //Action for "Cancel".
+                                if (!isTreeGeneratable) {
+                                    showMessage("Ano, máš pravdu!");
+                                    String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
+                                    assert userName != null;
+                                    showMessage("Získáno " + databaseConnector.recordUserPoints(userName, "eight-second") + " bodů");
+                                    createDialog();
+                                } else {
+                                    showMessage("Bohužel, právě naopak");
+                                    prepareDecisionActivity(width, height);
+                                    showSnackBar(textToDisplay);
+                                }
+                            });
+
+                    final AlertDialog alert = dialog.create();
+                    alert.show();
+                    break;
             }
+
         });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -141,7 +185,7 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
     @Override
     protected void changeToEducationFragment() {
         super.changeToEducationFragment();
-        showSnackBar( "Teď si ukážeme strom");
+        showSnackBar("Teď si ukážeme strom");
     }
 
     @Override
@@ -166,32 +210,36 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
 
     @Override
     public void onPositiveButtonClick() {
-        Intent newActivityIntent = new Intent(this, NinthActivity.class);
-        newActivityIntent.putExtra("SESSION_ID", 9);
-        finish();
-        startActivity(newActivityIntent);
+        changeActivity();
     }
 
     @Override
     public void onNegativeButtonClick() {
-        amountOfNodes = getAmountOfNodesAndGenerateGraphScore();
-        Map map = new Map(new ArrayList<>(), GraphGenerator.generateNodes(height, width, 15, amountOfNodes));
-        drawingFragment.setUserGraph(map);
-        bottomNavigationView.setSelectedItemId(R.id.line);
-        generateNewMessageWithNewAmountOfComponent();
+        setActivityAccordingCurrentPreferences(width, height);
     }
 
     @Override
     protected void changeToDrawingFragment() {
         super.changeToDrawingFragment();
-        if (amountOfComponent == 0) {
-            generateNewMessageWithNewAmountOfComponent();
-        }else {
-            if (amountOfComponent == 1 ){
-                showSnackBar( "Nakresli les s jednou komponentou");
-            }else {
-                showSnackBar( "Nakresli les s " + amountOfComponent + " komponentami");
-            }
+        showMessageAccordingCurrentActivity();
+    }
+
+    private void showMessageAccordingCurrentActivity() {
+        switch (getCurrentActivity()) {
+            case 0:
+                if (amountOfComponent == 0) {
+                    generateNewMessageWithNewAmountOfComponent();
+                } else {
+                    if (amountOfComponent == 1) {
+                        showSnackBar("Nakresli les s jednou komponentou");
+                    } else {
+                        showSnackBar("Nakresli les s " + amountOfComponent + " komponentami");
+                    }
+                }
+                break;
+            case 1:
+                showSnackBar(textToDisplay);
+                break;
         }
     }
 
@@ -199,10 +247,10 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
         Random ran = new Random();
         amountOfComponent = ran.nextInt(3);
         if (amountOfComponent == 0) amountOfComponent++;
-        if (amountOfComponent == 1 ){
-            showSnackBar( "Nakresli les s jednou komponentou");
-        }else {
-            showSnackBar( "Nakresli les s " + amountOfComponent + " komponentami");
+        if (amountOfComponent == 1) {
+            showSnackBar("Nakresli les s jednou komponentou");
+        } else {
+            showSnackBar("Nakresli les s " + amountOfComponent + " komponentami");
         }
     }
 
@@ -210,37 +258,98 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
     public void sentMetrics(int width, int height) {
         this.width = width;
         this.height = height;
+        setActivityAccordingCurrentPreferences(width, height);
+    }
 
-        amountOfNodes = getAmountOfNodesAndGenerateGraphScore();
-        Map map = new Map(new ArrayList<>(), GraphGenerator.generateNodes(height, width, 15, amountOfNodes));
-        drawingFragment.setUserGraph(map);
-        bottomNavigationView.setSelectedItemId(R.id.line);
+    private void setActivityAccordingCurrentPreferences(int width, int height) {
+        switch (getCurrentActivity()) {
+            case 0:
+                computeGraphScore();
+                Map map = new Map(new ArrayList<>(), GraphGenerator.generateNodes(height, width, 15, amountOfNodes));
+                drawingFragment.setUserGraph(map);
+                bottomNavigationView.setSelectedItemId(R.id.line);
+                break;
+            case 1:
+                prepareDecisionActivity(width, height);
+                bottomNavigationView.setSelectedItemId(R.id.line);
+                break;
+        }
 
         //zmeni text bottomNavigationView
         Menu menu = bottomNavigationView.getMenu();
         menu.getItem(3).setTitle("");
-
+        showMessageAccordingCurrentActivity();
     }
 
-    private int getAmountOfNodesAndGenerateGraphScore() {
+    private void prepareDecisionActivity(int width, int height) {
+        Random random = new Random();
+        isTreeGeneratable = random.nextBoolean();
+        amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
+        Map mapToSet = new Map(new ArrayList<>(), GraphGenerator.generateNodes(height, width, 15, amountOfNodes));
+        int nodesCount = mapToSet.getCircles().size();
+        int number;
+        if (isTreeGeneratable) {
+            number = nodesCount - 1;
+        } else {
+            Random random1 = new Random();
+            int ranInt = random1.nextInt(2);
+            if (ranInt == 0) ranInt++;
+            boolean minus = random1.nextBoolean();
+            if (minus) {
+                number = nodesCount - ranInt;
+            } else {
+                number = nodesCount + ranInt;
+            }
+        }
+        textToDisplay = "Je možné nakreslit strom s " + nodesCount + " uzly a " + number + " hranami?";
+
+        drawingFragment.setUserGraph(mapToSet);
+    }
+
+    private void computeGraphScore() {
         amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
         graphScore = Util.generateGraphScore(amountOfNodes);
-        return amountOfNodes;
     }
-
 
     @Override
     public void secondaryTableLayoutSelectedChange(int number) {
         switch (number) {
             case 0:
-                showSnackBar( "Teď si ukážeme strom");
+                showSnackBar("Teď si ukážeme strom");
                 eightActivityFragment.changeGraph("tree");
                 break;
             case 1:
-                showSnackBar( "Teď si ukážeme les");
+                showSnackBar("Teď si ukážeme les");
                 eightActivityFragment.changeGraph("forrest");
                 break;
         }
+    }
+
+    private void changeActivity() {
+        //do shared preferences si ukladame posledni otevrenou aktivitu, abychom se mohli tocit do kolecka a neotevirali pripadne porad stejnou aktivitu
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        int displayedActivity = sharedPref.getInt("displayedActivity-eight", 0);
+
+        if (displayedActivity < 1) {
+            displayedActivity++;
+        } else {
+            displayedActivity = 0;
+        }
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt("displayedActivity-eight", displayedActivity);
+        editor.apply();
+
+        setActivityAccordingCurrentPreferences(width, height);
+    }
+
+    private int getCurrentActivity() {
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        return sharedPref.getInt("displayedActivity-eight", 0);
+    }
+
+    private void showMessage(String textToDisplay) {
+        Toast.makeText(this, textToDisplay, Toast.LENGTH_LONG).show();
     }
 
 }

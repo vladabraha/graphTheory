@@ -27,8 +27,10 @@ public class GraphGenerator {
         ArrayList<Coordinate> circles = generateNodes(height - BRUSH_SIZE, width - BRUSH_SIZE, BRUSH_SIZE, amountOfNodes);
         ArrayList<CustomLine> customLines;
         Map map;
-        customLines = generateRandomEdges(circles);
-        map = new Map(customLines, circles);
+        do {
+            customLines = generateRandomEdges(circles);
+            map = new Map(customLines, circles);
+        }while (checkIfGraphIsSplitInTwo(map));
         return map;
     }
 
@@ -231,5 +233,103 @@ public class GraphGenerator {
 
         } while (shouldRun);
         return coordinateArrayList;
+    }
+
+    /**
+     * Metoda využívá alg. pro ověřování mostu - vezme přímku a podívá se kam všude se může ze sousedních bodů dostat
+     * Pokud dají obě strany počet uzlů n - 2, kde n je počet všech uzlů, tak víme, že se jedná o spojitý graf, jinak nikoliv
+     * @param map mapa, která se má prozkoumat
+     * @return true pokud je graf nespojitý
+     */
+    private static boolean checkIfGraphIsSplitInTwo(Map map){
+        ArrayList<CustomLine> customLines = map.getCustomLines();
+        ArrayList<Coordinate> circles = map.getCircles();
+
+        Coordinate oneEndOfCustomLine = customLines.get(0).getFrom();
+        Coordinate secondEndOfCustomLine = customLines.get(0).getTo();
+
+        //myslenka - projdu vsechny sousedy od prvniho bodu a budu si pamatovat, ktery jsem prosel
+        //v dalsim kole budu prochazet sousedy sousedů, ktere jsem jeste nenavstivil, takhle postupne projdu vsechny z teho kategorie
+        //na konci by mi meli chybet v seznamu nejake uzly - ty z druhe strany, kterou artikulace spojovala
+        ArrayList<Coordinate> alreadyVisitedNodesFirstEndOfBridge = new ArrayList<>(); //seznam pro jeden konec přímky
+        ArrayList<Coordinate> nodesToExploreFirstEndOfBridge = new ArrayList<>();
+        ArrayList<Coordinate> alreadyVisitedNodesSecondEndOfBridge = new ArrayList<>(); //seznam pro druhý konec přímky
+        ArrayList<Coordinate> nodesToExploreSecondEndOfBridge = new ArrayList<>();
+
+
+        //přihodím do prohledávání všechny uzly, které jsou propojeny s jedním koncem přímky
+        //algoritmus totiž prochází všechny uzly z nodesToExplore, ale neleze tam, kde se to dotýká konce čáry, čímž může v některých situacích vyhodnotit špatně propojení
+        for (CustomLine customLine : customLines) {
+            if (customLine.getFrom().equal(oneEndOfCustomLine) && !customLine.getTo().equal(secondEndOfCustomLine)) {
+                if (alreadyVisitedNodesFirstEndOfBridge.stream().noneMatch(m -> m.equal(customLine.getTo()))) {
+                    nodesToExploreFirstEndOfBridge.add(customLine.getTo());
+                    alreadyVisitedNodesFirstEndOfBridge.add(customLine.getTo());
+                }
+            } else if (customLine.getTo().equal(oneEndOfCustomLine) && !customLine.getFrom().equal(secondEndOfCustomLine)) {
+                if (alreadyVisitedNodesFirstEndOfBridge.stream().noneMatch(m -> m.equal(customLine.getFrom()))) {
+                    nodesToExploreFirstEndOfBridge.add(customLine.getFrom());
+                    alreadyVisitedNodesFirstEndOfBridge.add(customLine.getFrom());
+                }
+            }else if (customLine.getTo().equal(secondEndOfCustomLine) && !customLine.getFrom().equal(oneEndOfCustomLine)) {
+                if (alreadyVisitedNodesFirstEndOfBridge.stream().noneMatch(m -> m.equal(customLine.getFrom()))) {
+                    alreadyVisitedNodesSecondEndOfBridge.add(customLine.getFrom());
+                    nodesToExploreSecondEndOfBridge.add(customLine.getFrom());
+                }
+            }else if (customLine.getFrom().equal(secondEndOfCustomLine) && !customLine.getTo().equal(oneEndOfCustomLine)) {
+                if (alreadyVisitedNodesFirstEndOfBridge.stream().noneMatch(m -> m.equal(customLine.getTo()))) {
+                    alreadyVisitedNodesSecondEndOfBridge.add(customLine.getTo());
+                    nodesToExploreSecondEndOfBridge.add(customLine.getTo());
+                }
+            }
+        }
+
+        //teď projdu všechny sousedy nalezených uzlů pro jeden konec grafu
+        for (int i = 0; i < nodesToExploreFirstEndOfBridge.size(); i++) {
+            Coordinate coordinateToExplore = nodesToExploreFirstEndOfBridge.get(i);
+            for (CustomLine customLine : customLines) {
+                //nejdriv kontrola, ze se nepresuneme pres konec čáry do druhe půlky
+                if (!customLine.isPointInStartOrEndOfLine(oneEndOfCustomLine) && !customLine.isPointInStartOrEndOfLine(secondEndOfCustomLine)) {
+                    if (customLine.getFrom().equal(coordinateToExplore)) {
+                        if (alreadyVisitedNodesFirstEndOfBridge.stream().noneMatch(m -> m.equal(customLine.getTo()))) {
+                            alreadyVisitedNodesFirstEndOfBridge.add(customLine.getTo());
+                            nodesToExploreFirstEndOfBridge.add(customLine.getTo());
+                        }
+                    } else if (customLine.getTo().equal(coordinateToExplore)) {
+                        if (alreadyVisitedNodesFirstEndOfBridge.stream().noneMatch(m -> m.equal(customLine.getFrom()))) {
+                            alreadyVisitedNodesFirstEndOfBridge.add(customLine.getFrom());
+                            nodesToExploreFirstEndOfBridge.add(customLine.getFrom());
+                        }
+                    }
+                }
+            }
+            nodesToExploreFirstEndOfBridge.remove(i);
+            i--;
+        }
+
+        //a všechny sousedy druhého konce grafu
+        for (int i = 0; i < nodesToExploreSecondEndOfBridge.size(); i++) {
+            Coordinate coordinateToExplore = nodesToExploreSecondEndOfBridge.get(i);
+            for (CustomLine customLine : customLines) {
+                //nejdriv kontrola, ze se nepresuneme pres konec čáry do druhe půlky
+                if (!customLine.isPointInStartOrEndOfLine(oneEndOfCustomLine) && !customLine.isPointInStartOrEndOfLine(secondEndOfCustomLine)) {
+                    if (customLine.getFrom().equal(coordinateToExplore)) {
+                        if (alreadyVisitedNodesSecondEndOfBridge.stream().noneMatch(m -> m.equal(customLine.getTo()))) {
+                            alreadyVisitedNodesSecondEndOfBridge.add(customLine.getTo());
+                            nodesToExploreSecondEndOfBridge.add(customLine.getTo());
+                        }
+                    } else if (customLine.getTo().equal(coordinateToExplore)) {
+                        if (alreadyVisitedNodesSecondEndOfBridge.stream().noneMatch(m -> m.equal(customLine.getFrom()))) {
+                            alreadyVisitedNodesSecondEndOfBridge.add(customLine.getFrom());
+                            nodesToExploreSecondEndOfBridge.add(customLine.getFrom());
+                        }
+                    }
+                }
+            }
+            nodesToExploreSecondEndOfBridge.remove(i);
+            i--;
+        }
+
+        //pokud ani jeden seznam nemá n-2 uzlů, nejedná se o rozdělený graf
+        return alreadyVisitedNodesFirstEndOfBridge.size() != circles.size() - 2 && alreadyVisitedNodesSecondEndOfBridge.size() != circles.size() - 2;
     }
 }

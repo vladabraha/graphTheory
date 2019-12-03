@@ -44,7 +44,7 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
-    int height, width, length;
+    int height, width, length, sizeOfMap;
     boolean isPathGenerated, isViewCreated = false;
     String textToShow;
 
@@ -174,10 +174,9 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
                 break;
             case 3:
                 Random ran = new Random();
-                Map map = drawingFragment.getUserGraph();
-                length = ran.nextInt(map.getCustomLines().size());
-                if (length < 3) length = 3;
-                showSnackBar("Nakresli sled délky " + length + " , případně si graf uprav");
+                length = ran.nextInt(sizeOfMap);
+                if (length < 2) length = 2;
+                showSnackBar( "Nakresli sled délky " + length + " , případně si graf uprav");
                 break;
 
         }
@@ -264,6 +263,7 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
         int amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
         Map map = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
         drawingFragment.setUserGraph(map);
+        sizeOfMap = map.getCircles().size() - 1;
         showProperToastMessage();
         setProperTitleToBottomNavigationMenu(displayedActivity);
     }
@@ -278,6 +278,7 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
         int amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
         Map map = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
         drawingFragment.setUserGraph(map);
+        sizeOfMap = map.getCircles().size() - 1;
         showProperToastMessage();
     }
 
