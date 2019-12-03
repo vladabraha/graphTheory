@@ -294,7 +294,6 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
     @Override
     public void onPositiveButtonClick() {
         drawingFragment.changeDrawingMethod("clear"); //toto vymaže, co uživatel nakreslil, aby nebouchal jenom check, check...
-        tabLayoutFragment.switchSelectedTab(1);
         changeActivity();
     }
 
