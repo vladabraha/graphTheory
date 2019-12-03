@@ -10,7 +10,7 @@
     tools:context=".common.DrawingFragment">
 
 
-    <cz.uhk.graphstheory.common.PaintView
+    <cz.uhk.graphtheory.common.PaintView
         android:id="@+id/paintView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>

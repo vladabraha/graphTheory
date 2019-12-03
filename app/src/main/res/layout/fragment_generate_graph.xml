@@ -9,7 +9,7 @@
     >
 
 
-    <cz.uhk.graphstheory.common.GraphGeneratedView
+    <cz.uhk.graphtheory.common.GraphGeneratedView
         android:id="@+id/eductionGraphView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />

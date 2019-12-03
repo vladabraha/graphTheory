@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="cz.uhk.graphstheory">
+    package="cz.uhk.graphtheory">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
@@ -15,16 +15,16 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".statistics.StatisticsActivity"
+            android:name="cz.uhk.graphtheory.statistics.StatisticsActivity"
             android:noHistory="true"
             android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
-        <activity android:name=".login.FractionActivity" />
+        <activity android:name="cz.uhk.graphtheory.login.FractionActivity" />
 
         <activity
-            android:name=".login.LoginActivity"
+            android:name="cz.uhk.graphtheory.login.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,47 +33,47 @@
         </activity>
 
         <activity
-            android:name=".first.GraphGeneratorActivity"
+            android:name="cz.uhk.graphtheory.first.GraphGeneratorActivity"
             android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:theme="@style/AppTheme.NoActionBar" />
             <!--  configChanges da vedet o tom, ze se zmenila rotace obrazovky          -->
         <activity
-            android:name=".second.SecondActivity"
+            android:name="cz.uhk.graphtheory.second.SecondActivity"
             android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".third.ThirdActivity"
+            android:name="cz.uhk.graphtheory.third.ThirdActivity"
             android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".fourth.FourthActivity"
+            android:name="cz.uhk.graphtheory.fourth.FourthActivity"
             android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".fifth.FifthActivity"
+            android:name="cz.uhk.graphtheory.fifth.FifthActivity"
             android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".sixth.SixthActivity"
+            android:name="cz.uhk.graphtheory.sixth.SixthActivity"
             android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".seventh.SeventhActivity"
+            android:name="cz.uhk.graphtheory.seventh.SeventhActivity"
             android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".eight.EightActivity"
+            android:name="cz.uhk.graphtheory.eight.EightActivity"
             android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ninth.NinthActivity"
+            android:name="cz.uhk.graphtheory.ninth.NinthActivity"
             android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
