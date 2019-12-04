@@ -301,7 +301,7 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
                 number = nodesCount + ranInt;
             }
         }
-        textToDisplay = "Je možné nakreslit strom s " + nodesCount + " uzly a " + number + " hranami?";
+        textToDisplay = "Je možné nakreslit strom s " + nodesCount + " uzly a " + number + " hranami? Až si budeš jistý, klikni na fajfku";
 
         drawingFragment.setUserGraph(mapToSet);
     }
