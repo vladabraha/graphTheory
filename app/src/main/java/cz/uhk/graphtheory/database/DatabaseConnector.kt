@@ -52,7 +52,6 @@ class DatabaseConnector() {
                 map[activity] = 3.0
             }
 
-
             var score = user.score
             score += point
 
@@ -62,9 +61,37 @@ class DatabaseConnector() {
                 map[activity] = (point - 1)
                 database.getReference("users").child(user.uuID).child("remainingPointsFromActivity").setValue(map)
             }
+            setUnlockTopics(userName)
             return point
         }
         return null
+    }
+
+    private fun setUnlockTopics(userName: String) {
+        val user = findUser(userName)
+        if (user != null) {
+            val points = user.remainingPointsFromActivity
+            var activities: MutableList<String> = ArrayList()
+            for ((key, value) in points) {
+                var found = false
+                var name:String
+                if (key.indexOf("-") != -1){
+                    name = key.substring(0, key.indexOf("-"))
+                }else{
+                    name = key
+                }
+                for (activity in activities) {
+                    if (activity == name) {
+                        found = true
+                    }
+                }
+                if (!found) {
+                    activities.add(name)
+                }
+            }
+            val numberOfUnlockedTopics = activities.size
+            database.getReference("users").child(user.uuID).child("unlockTopics").setValue(numberOfUnlockedTopics)
+        }
     }
 
     private fun checkIfKeyExist(map: HashMap<String, Double>, activity: String): Boolean {
@@ -107,7 +134,7 @@ class DatabaseConnector() {
     }
 
     public interface ValuesUpdate {
-        public fun usersUpdated(users: ArrayList<User>)
+        fun usersUpdated(users: ArrayList<User>)
     }
 
 }
