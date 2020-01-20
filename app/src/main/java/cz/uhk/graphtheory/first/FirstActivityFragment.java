@@ -19,7 +19,7 @@ import cz.uhk.graphtheory.util.GraphGenerator;
 import cz.uhk.graphtheory.util.PathGenerator;
 
 
-public class GenerateGraphFragment extends AbstractFragment {
+public class FirstActivityFragment extends AbstractFragment {
 
     private boolean disableListener = false;
 
@@ -33,7 +33,7 @@ public class GenerateGraphFragment extends AbstractFragment {
 
     private FirstFragmentCommunicationInterface firstFragmentCommunicationInterface;
 
-    public GenerateGraphFragment() {
+    public FirstActivityFragment() {
         // Required empty public constructor
     }
 
@@ -77,11 +77,11 @@ public class GenerateGraphFragment extends AbstractFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
         try {
-            firstFragmentCommunicationInterface = (GenerateGraphFragment.FirstFragmentCommunicationInterface) context;
+            firstFragmentCommunicationInterface = (FirstActivityFragment.FirstFragmentCommunicationInterface) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + " must implement FirstFragmentCommunicationInterface");
         }

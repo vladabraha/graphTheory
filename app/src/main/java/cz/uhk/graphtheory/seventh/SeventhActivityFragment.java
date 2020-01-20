@@ -86,7 +86,7 @@ public class SeventhActivityFragment extends AbstractFragment {
 
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
         try {

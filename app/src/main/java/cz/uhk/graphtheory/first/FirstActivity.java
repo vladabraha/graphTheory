@@ -34,13 +34,13 @@ import cz.uhk.graphtheory.model.Map;
 import cz.uhk.graphtheory.util.GraphChecker;
 import cz.uhk.graphtheory.util.GraphGenerator;
 
-public class GraphGeneratorActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface,
-        DrawingFragment.CommunicationInterface, SecondaryTableLayoutCommunicationInterface, GenerateGraphFragment.FirstFragmentCommunicationInterface {
+public class FirstActivity extends AbstractActivity implements TabLayoutFragment.TableLayoutCommunicationInterface,
+        DrawingFragment.CommunicationInterface, SecondaryTableLayoutCommunicationInterface, FirstActivityFragment.FirstFragmentCommunicationInterface {
 
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
     private BottomNavigationView bottomNavigationView;
-    private GenerateGraphFragment generateGraphFragment;
+    private FirstActivityFragment firstActivityFragment;
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
@@ -91,19 +91,19 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
                 switch (displayedActivity) {
                     case 0:
                         receivedPoints = databaseConnector.recordUserPoints(userName, "first-first");
-                        Toast.makeText(GraphGeneratorActivity.this, "Získáno " + receivedPoints + " bodů", Toast.LENGTH_LONG).show();
+                        Toast.makeText(FirstActivity.this, "Získáno " + receivedPoints + " bodů", Toast.LENGTH_LONG).show();
                         break;
                     case 1:
                         receivedPoints = databaseConnector.recordUserPoints(userName, "first-second");
-                        Toast.makeText(GraphGeneratorActivity.this, "Získáno " + receivedPoints + " bodů", Toast.LENGTH_LONG).show();
+                        Toast.makeText(FirstActivity.this, "Získáno " + receivedPoints + " bodů", Toast.LENGTH_LONG).show();
                         break;
                     case 2:
                         receivedPoints = databaseConnector.recordUserPoints(userName, "first-third");
-                        Toast.makeText(GraphGeneratorActivity.this, "Získáno " + receivedPoints + " bodů", Toast.LENGTH_LONG).show();
+                        Toast.makeText(FirstActivity.this, "Získáno " + receivedPoints + " bodů", Toast.LENGTH_LONG).show();
                         break;
                     case 3:
                         receivedPoints = databaseConnector.recordUserPoints(userName, "first-fourth");
-                        Toast.makeText(GraphGeneratorActivity.this, "Získáno " + receivedPoints + " bodů", Toast.LENGTH_LONG).show();
+                        Toast.makeText(FirstActivity.this, "Získáno " + receivedPoints + " bodů", Toast.LENGTH_LONG).show();
                         break;
                 }
                 drawingFragment.changeDrawingMethod("clear");
@@ -111,7 +111,7 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
                 drawingFragment.changeDrawingMethod("circle");
                 createDialog();
             } else {
-                Toast.makeText(GraphGeneratorActivity.this, "Bohužel, něco je špatně, oprav graf a zkus to znovu", Toast.LENGTH_LONG).show();
+                Toast.makeText(FirstActivity.this, "Bohužel, něco je špatně, oprav graf a zkus to znovu", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -294,8 +294,8 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
 
     @Override
     protected Fragment getGraphFragment() {
-        generateGraphFragment = new GenerateGraphFragment();
-        return generateGraphFragment;
+        firstActivityFragment = new FirstActivityFragment();
+        return firstActivityFragment;
     }
 
     @Override
@@ -339,21 +339,21 @@ public class GraphGeneratorActivity extends AbstractActivity implements TabLayou
         String text;
         switch (number) {
             case 0:
-                text = generateGraphFragment.changeEducationGraph("cesta");
+                text = firstActivityFragment.changeEducationGraph("cesta");
                 text = convertNameOfLinesToNodes(text);
                 showSnackBar("Nyní si ukážeme v zadaném grafu cestu přes vrcholy " + text);
                 break;
             case 1:
-                text = generateGraphFragment.changeEducationGraph("tah");
+                text = firstActivityFragment.changeEducationGraph("tah");
                 text = convertNameOfLinesToNodes(text);
                 showSnackBar("Nyní si ukážeme v zadaném grafu tah přes vrcholy " + text);
                 break;
             case 2:
-                text = generateGraphFragment.changeEducationGraph("kruznice");
+                text = firstActivityFragment.changeEducationGraph("kruznice");
                 showSnackBar("Nyní si ukážeme v zadaném grafu kružnici delky " + text);
                 break;
             case 3:
-                text = generateGraphFragment.changeEducationGraph("kruznice");
+                text = firstActivityFragment.changeEducationGraph("kruznice");
                 showSnackBar("Nyní si ukážeme v zadaném grafu sled délky " + text);
                 break;
         }

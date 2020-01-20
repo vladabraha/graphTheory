@@ -33,7 +33,7 @@ public abstract class AbstractFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         //getView modal for current activity
-        generatedMapViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(GeneratedMapViewModel.class);
+        generatedMapViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity(), "Activity for ViewModel musn't be null")).get(GeneratedMapViewModel.class);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_generate_graph, container, false);
     }

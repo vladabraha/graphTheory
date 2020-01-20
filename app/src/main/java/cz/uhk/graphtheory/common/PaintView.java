@@ -161,7 +161,7 @@ public class PaintView extends View {
      */
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.save();
+        canvas.save(); //uloží to, co bylo do teď vykresleno, dále mohou probíhat modifikace, např. otočení, zvětšení obrazovky atd.
         mCanvas = canvas;
         mCanvas.drawColor(DEFAULT_BG_COLOR); //vybarví celou plochu bílou barvou
 
@@ -192,8 +192,8 @@ public class PaintView extends View {
 
                 if (!allLineList.isEmpty())
                     mCanvas.drawLine(allLineList.get(i).x, allLineList.get(i).y, allLineList.get(i - 1).x, allLineList.get(i - 1).y, mPaint);
-            }
-        }
+    }
+}
 
         for (int i = 0; i < redLineList.size(); i++) {
             if (i % 2 != 0) {
@@ -238,7 +238,7 @@ public class PaintView extends View {
         }
 
         canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
-        canvas.restore();
+        canvas.restore(); //v případě, že jsme nějak otočili, zvětšili, apod. canvas, tak ho to navrátí do "výchozí" podoby
 
     }
 

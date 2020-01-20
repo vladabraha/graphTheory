@@ -18,7 +18,7 @@ import java.util.Objects;
 
 import cz.uhk.graphtheory.R;
 import cz.uhk.graphtheory.database.DatabaseConnector;
-import cz.uhk.graphtheory.first.GraphGeneratorActivity;
+import cz.uhk.graphtheory.first.FirstActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("TAG", "signInWithEmail:success");
 
-                            Intent mainIntent = new Intent(LoginActivity.this, GraphGeneratorActivity.class);
+                            Intent mainIntent = new Intent(LoginActivity.this, FirstActivity.class);
                             startActivity(mainIntent);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -109,7 +109,7 @@ public class LoginActivity extends AppCompatActivity {
 
         databaseConnector.createUserAccount(Objects.requireNonNull(user).getUid(), nickNameEditText.getText().toString(), Objects.requireNonNull(user.getEmail()), selectedTeam);
 
-        Intent mainIntent = new Intent(this, GraphGeneratorActivity.class);
+        Intent mainIntent = new Intent(this, FirstActivity.class);
         startActivity(mainIntent);
     }
 
@@ -119,7 +119,7 @@ public class LoginActivity extends AppCompatActivity {
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null && currentUser.getEmail() != null) {
-            Intent notificationIntent = new Intent(this, GraphGeneratorActivity.class);
+            Intent notificationIntent = new Intent(this, FirstActivity.class);
             startActivity(notificationIntent);
         }
     }
