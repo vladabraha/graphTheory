@@ -250,7 +250,7 @@ public class GraphChecker {
     }
 
     //MYŠLENKA - od uzivatele přijde červenou čarou označený most - vezmu jeden jeho konec a podívám se na všechny sousedy toho konce a ty si uložím zvlášť do seznamu a to samé udělám pro druhý konec
-    //Jakmile mám seznam sousedů jednoho konce mostu, podívám se na všechny sousedy těchto uzlů, dokud nedojdu na konec seznamu - pokud takhle najdu n-2 uzlů, tak se nejedná o most
+    //Jakmile mám seznam sousedů jednoho konce mostu, podívám se na všechny sousedy těchto uzlů, dokud nedojdu na konec seznamu - pokud takhle najdu n-1 uzlů, tak se nejedná o most
     //tento postup budu opakovat u druhého konce mostu a jeho seznamu sousedů
     public static String checkIfGraphContainsBridge(Map userGraph) {
         ArrayList<CustomLine> customLines = userGraph.getCustomLines();
@@ -355,8 +355,8 @@ public class GraphChecker {
             i--;
         }
 
-        //pokud ani jeden seznam nemá n-2 uzlů, nejednalo se o most
-        if (alreadyVisitedNodesFirstEndOfBridge.size() == circles.size() - 2 || alreadyVisitedNodesSecondEndOfBridge.size() == circles.size() - 2) {
+        //pokud ani jeden seznam nemá n-1 uzlů, nejednalo se o most
+        if (alreadyVisitedNodesFirstEndOfBridge.size() == circles.size() - 1 || alreadyVisitedNodesSecondEndOfBridge.size() == circles.size() - 1) {
             return "false";
         } else {
             return "true";
