@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 import cz.uhk.graphtheory.abstraction.AbstractFragment;
 import cz.uhk.graphtheory.model.Coordinate;
-import cz.uhk.graphtheory.model.CustomLine;
+import cz.uhk.graphtheory.model.Edge;
 import cz.uhk.graphtheory.model.Map;
 import cz.uhk.graphtheory.util.GraphConverter;
 import cz.uhk.graphtheory.util.GraphGenerator;
@@ -50,9 +50,9 @@ public class ThirdActivityFragment extends AbstractFragment {
                         Map splittedMap = complementGraphs.get(0);
                         Map splittedMap2 = complementGraphs.get(1);
 
-                        splittedMap.getCircles().addAll(splittedMap2.getCircles());
-                        splittedMap.getCustomLines().addAll(splittedMap2.getCustomLines());
-                        splittedMap.getRedLineList().addAll(splittedMap2.getRedLineList());
+                        splittedMap.getNodes().addAll(splittedMap2.getNodes());
+                        splittedMap.getEdges().addAll(splittedMap2.getEdges());
+                        splittedMap.getRedEdgesList().addAll(splittedMap2.getRedEdgesList());
 
                         getGraphGeneratedView().setMap(splittedMap);
                     }
@@ -74,21 +74,21 @@ public class ThirdActivityFragment extends AbstractFragment {
 
         //myšlenka - mam graf - projdu všechny body a podívám se jestli jsou propojený se všema bodama
         //pokud s nějakým nejsou přidám je do druhého seznamu (red line listu)
-        ArrayList<Coordinate> nodes = firstMap.getCircles();
-        ArrayList<CustomLine> lines = firstMap.getCustomLines();
-        ArrayList<CustomLine> redLines = new ArrayList<>();
+        ArrayList<Coordinate> nodes = firstMap.getNodes();
+        ArrayList<Edge> lines = firstMap.getEdges();
+        ArrayList<Edge> redEdges = new ArrayList<>();
 
         for (Coordinate coordinate : nodes) {
             ArrayList<Coordinate> alreadyFoundConnection = new ArrayList<>();
-            for (CustomLine customLine : lines) {
-                if (customLine.getFrom().equal(coordinate)) {
+            for (Edge edge : lines) {
+                if (edge.getFrom().equal(coordinate)) {
                     //projde vsechny body v alreadyFoundConnection a mrkne, jestli nejakej bod n se rovna custom line.getto
-                    if (alreadyFoundConnection.stream().noneMatch(n -> n.equal(customLine.getTo()))) {
-                        alreadyFoundConnection.add(customLine.getTo());
+                    if (alreadyFoundConnection.stream().noneMatch(n -> n.equal(edge.getTo()))) {
+                        alreadyFoundConnection.add(edge.getTo());
                     }
-                } else if (customLine.getTo().equal(coordinate)) {
-                    if (alreadyFoundConnection.stream().noneMatch(n -> n.equal(customLine.getFrom()))) {
-                        alreadyFoundConnection.add(customLine.getFrom());
+                } else if (edge.getTo().equal(coordinate)) {
+                    if (alreadyFoundConnection.stream().noneMatch(n -> n.equal(edge.getFrom()))) {
+                        alreadyFoundConnection.add(edge.getFrom());
                     }
                 }
             }
@@ -96,19 +96,19 @@ public class ThirdActivityFragment extends AbstractFragment {
             if (alreadyFoundConnection.size() != (nodes.size() - 1)) {
                 for (Coordinate allNodes : nodes) {
                     if (alreadyFoundConnection.stream().noneMatch(n -> n.equal(allNodes)) && !allNodes.equal(coordinate)) {
-                        redLines.add(new CustomLine(allNodes, coordinate));
+                        redEdges.add(new Edge(allNodes, coordinate));
                     }
                 }
             }
         }
-        firstMap.setRedLineList(redLines);
+        firstMap.setRedEdgesList(redEdges);
 
         ArrayList<Map> maps = GraphConverter.convertMapsToSplitScreenArray(firstMap, height);
         Map splittedMap = maps.get(0);
         Map splittedMap2 = maps.get(1);
 
-        splittedMap2.setCustomLines(new ArrayList<>());
-        splittedMap.setRedLineList(new ArrayList<>());
+        splittedMap2.setEdges(new ArrayList<>());
+        splittedMap.setRedEdgesList(new ArrayList<>());
 
         ArrayList<Map> complementMaps = new ArrayList<>();
         complementMaps.add(splittedMap);

@@ -44,10 +44,10 @@ public class SpecificGraphGeneratorTest {
 
         ArrayList<Map> complementMaps = ThirdActivityFragment.createComplementGraphs(BRUSH_SIZE, HEIGHT, WIDTH);
         Map mapGenerated = complementMaps.get(0);
-        mapGenerated.setRedLineList(mapGenerated.getCustomLines());
+        mapGenerated.setRedEdgesList(mapGenerated.getEdges());
 
         Map userGraph = complementMaps.get(1);
-        userGraph.setCustomLines(userGraph.getRedLineList());
+        userGraph.setEdges(userGraph.getRedEdgesList());
 
         boolean isValid = GraphChecker.checkIfGraphIsComplementGraph(complementMaps.get(0), mapGenerated);
         Assert.assertTrue("Doplněk do grafu není správný", isValid);
@@ -86,7 +86,7 @@ public class SpecificGraphGeneratorTest {
     public void seventhActivityTest(){
 
         Map map = GraphGenerator.generateMap(HEIGHT ,WIDTH,BRUSH_SIZE,12);
-        ArrayList<Integer> graphScore = SeventhActivityFragment.computeGraphScore(map.getCircles(), map.getCustomLines());
+        ArrayList<Integer> graphScore = SeventhActivityFragment.computeGraphScore(map.getNodes(), map.getEdges());
 
         boolean isValid = GraphChecker.checkIfGraphHasCorrectScore(map, graphScore);
         Assert.assertTrue("Skore grafu se generuje špatně", isValid);
@@ -111,7 +111,7 @@ public class SpecificGraphGeneratorTest {
 
         Map userMap = NinthActivityFragment.generateSpanningTree(BRUSH_SIZE, HEIGHT, WIDTH);
         Map generatedMap = new Map(userMap);
-        generatedMap.setRedLineList(new ArrayList<>());
+        generatedMap.setRedEdgesList(new ArrayList<>());
         String isValid = GraphChecker.checkIfGraphIsSpanningTree(userMap, generatedMap);
 
         Assert.assertEquals("Kostra grafu se vygenerovala špatně", "true", isValid);

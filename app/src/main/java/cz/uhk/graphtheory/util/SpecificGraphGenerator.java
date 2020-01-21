@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import cz.uhk.graphtheory.model.Coordinate;
-import cz.uhk.graphtheory.model.CustomLine;
+import cz.uhk.graphtheory.model.Edge;
 import cz.uhk.graphtheory.model.Map;
 
 public class SpecificGraphGenerator {
@@ -28,30 +28,28 @@ public class SpecificGraphGenerator {
             }
         }
 
-        ArrayList<CustomLine> firstPartOfBipartite = GraphGenerator.generateRandomEdges(firstPartOfNodes);
-        ArrayList<CustomLine> secondPartOfBipartite = GraphGenerator.generateRandomEdges(secondPartOfNodes);
+        ArrayList<Edge> firstPartOfBipartite = GraphGenerator.generateRandomEdges(firstPartOfNodes);
+        ArrayList<Edge> secondPartOfBipartite = GraphGenerator.generateRandomEdges(secondPartOfNodes);
 
         //myšlenka - mám novej bod, mám 2 samostný grafy, pridám mezi ne bod a ten propojím s kažodou polovinou - tadá artikulace
         Coordinate newNode = new Coordinate((float) Math.random() * width, (float) Math.random() * height);
         Coordinate oneNode = firstPartOfNodes.get(0);
         Coordinate secondNode = secondPartOfNodes.get(0);
-        CustomLine newCustomLine = new CustomLine(newNode, oneNode);
-        CustomLine newCustomLine2 = new CustomLine(newNode, secondNode);
+        Edge newEdge = new Edge(newNode, oneNode);
+        Edge newEdge2 = new Edge(newNode, secondNode);
 
         //tohle jenom proto aby to bylo videt
-        ArrayList<CustomLine> redLines = new ArrayList<>();
-//        redLines.add(newCustomLine);
-//        redLines.add(newCustomLine2);
+        ArrayList<Edge> redEdges = new ArrayList<>();
         nodesToSet.add(newNode);
 
         //jeste aby to bylo i v normálních čarách
-        firstPartOfBipartite.add(newCustomLine);
-        firstPartOfBipartite.add(newCustomLine2);
+        firstPartOfBipartite.add(newEdge);
+        firstPartOfBipartite.add(newEdge2);
         ArrayList<Coordinate> redCircle = new ArrayList<>(1);
         redCircle.add(newNode);
 
         firstPartOfBipartite.addAll(secondPartOfBipartite);
-        return new Map(firstPartOfBipartite, nodesToSet, redLines, redCircle);
+        return new Map(firstPartOfBipartite, nodesToSet, redEdges, redCircle);
     }
 
     public static Map createMapWithABridge(int height, int width, int BRUSH_SIZE) {
@@ -70,23 +68,23 @@ public class SpecificGraphGenerator {
             }
         }
 
-        ArrayList<CustomLine> firstPartOfBipartite = GraphGenerator.generateRandomEdges(firstPartOfNodes);
-        ArrayList<CustomLine> secondPartOfBipartite = GraphGenerator.generateRandomEdges(secondPartOfNodes);
+        ArrayList<Edge> firstPartOfBipartite = GraphGenerator.generateRandomEdges(firstPartOfNodes);
+        ArrayList<Edge> secondPartOfBipartite = GraphGenerator.generateRandomEdges(secondPartOfNodes);
 
         //myšlenka - mám 2 samostatný grafy, spojím je jednou čarou - tadá artikulace
         Coordinate oneNode = firstPartOfNodes.get(0);
         Coordinate secondNode = secondPartOfNodes.get(0);
-        CustomLine newCustomLine = new CustomLine(oneNode, secondNode);
+        Edge newEdge = new Edge(oneNode, secondNode);
 
 
         //tohle jenom proto aby to bylo videt
-        ArrayList<CustomLine> redLines = new ArrayList<>();
-        redLines.add(newCustomLine);
-        firstPartOfBipartite.add(newCustomLine);
+        ArrayList<Edge> redEdges = new ArrayList<>();
+        redEdges.add(newEdge);
+        firstPartOfBipartite.add(newEdge);
 
 
         firstPartOfBipartite.addAll(secondPartOfBipartite);
-        return new Map(firstPartOfBipartite, nodesToSet, redLines);
+        return new Map(firstPartOfBipartite, nodesToSet, redEdges);
     }
 
     //Myšlenka - vytvořím si 2 seznamy vrcholů a ty mezi sebou všechny propojím
@@ -95,15 +93,15 @@ public class SpecificGraphGenerator {
         if (amountOfNodes < MINIMUM_AMOUNT_OF_NODES) amountOfNodes = MINIMUM_AMOUNT_OF_NODES;
         ArrayList<Coordinate> firstPart = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfNodes);
         ArrayList<Coordinate> secondPart = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfNodes);
-        ArrayList<CustomLine> customLines = new ArrayList<>();
+        ArrayList<Edge> edges = new ArrayList<>();
 
         for (Coordinate firstPartOfCoordinate : firstPart){
             for (Coordinate secondPartOfCoordinate : secondPart){
-                customLines.add(new CustomLine(firstPartOfCoordinate, secondPartOfCoordinate));
+                edges.add(new Edge(firstPartOfCoordinate, secondPartOfCoordinate));
             }
         }
         firstPart.addAll(secondPart);
-        return new Map(customLines, firstPart);
+        return new Map(edges, firstPart);
     }
 
     /**
@@ -118,19 +116,19 @@ public class SpecificGraphGenerator {
         if (amountOfNodes < MINIMUM_AMOUNT_OF_NODES) amountOfNodes = MINIMUM_AMOUNT_OF_NODES;
         ArrayList<Coordinate> firstPart = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfNodes);
         ArrayList<Coordinate> secondPart = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfNodes);
-        ArrayList<CustomLine> customLines = new ArrayList<>();
+        ArrayList<Edge> edges = new ArrayList<>();
 
         for (Coordinate firstPartOfCoordinate : firstPart){
             for (Coordinate secondPartOfCoordinate : secondPart){
-                customLines.add(new CustomLine(firstPartOfCoordinate, secondPartOfCoordinate));
+                edges.add(new Edge(firstPartOfCoordinate, secondPartOfCoordinate));
             }
         }
         for (int i = 0; i < 2; i++){
             Random random = new Random();
-            int index = random.nextInt(customLines.size() - 1);
-            customLines.remove(index);
+            int index = random.nextInt(edges.size() - 1);
+            edges.remove(index);
         }
         firstPart.addAll(secondPart);
-        return new Map(customLines, firstPart);
+        return new Map(edges, firstPart);
     }
 }

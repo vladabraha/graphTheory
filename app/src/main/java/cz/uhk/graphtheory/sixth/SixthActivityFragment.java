@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import cz.uhk.graphtheory.abstraction.AbstractFragment;
 import cz.uhk.graphtheory.common.GraphGeneratedView;
 import cz.uhk.graphtheory.model.Coordinate;
-import cz.uhk.graphtheory.model.CustomLine;
+import cz.uhk.graphtheory.model.Edge;
 import cz.uhk.graphtheory.model.GeneratedMapViewModel;
 import cz.uhk.graphtheory.model.Map;
 import cz.uhk.graphtheory.util.GraphGenerator;
@@ -101,42 +101,42 @@ public class SixthActivityFragment extends AbstractFragment implements GraphGene
     //z minulého grafu spočítám počet červených čar a z nového grafu nakopíruju stejný počet o jeden zvětšený (pokud předtím neměli stejný počet, to pak vezmu jenom první)
     private void createMapAnimation() {
         sentUpdatedMap(getGraphGeneratedView().getMap()); //před každým updatem animace si stáhnu aktuální rozmístění prvků ve view
-        int amountOfRedLines;
+        int amountOfredEdges;
         int amountOfShowedLines;
         switch (type) {
             case "euleruv":
-                amountOfRedLines = eulerMap.getRedLineList().size();
-                amountOfShowedLines = mapAnimated.getRedLineList().size();
-                if (amountOfRedLines == amountOfShowedLines){
+                amountOfredEdges = eulerMap.getRedEdgesList().size();
+                amountOfShowedLines = mapAnimated.getRedEdgesList().size();
+                if (amountOfredEdges == amountOfShowedLines){
                     mapAnimated = new Map(eulerMap);
-                    mapAnimated.setRedLineList(new ArrayList<>());
-                    ArrayList<CustomLine> redLines = mapAnimated.getRedLineList();
-                    redLines.add(eulerMap.getRedLineList().get(0));
+                    mapAnimated.setRedEdgesList(new ArrayList<>());
+                    ArrayList<Edge> redEdges = mapAnimated.getRedEdgesList();
+                    redEdges.add(eulerMap.getRedEdgesList().get(0));
                 } else {
                     mapAnimated = new Map(eulerMap);
-                    mapAnimated.setRedLineList(new ArrayList<>());
-                    ArrayList<CustomLine> redLines = mapAnimated.getRedLineList();
+                    mapAnimated.setRedEdgesList(new ArrayList<>());
+                    ArrayList<Edge> redEdges = mapAnimated.getRedEdgesList();
                     for (int i = 0; i < amountOfShowedLines + 1; i++){
-                        redLines.add(eulerMap.getRedLineList().get(i));
+                        redEdges.add(eulerMap.getRedEdgesList().get(i));
                     }
                 }
                 break;
 
             case "hamiltonovsky":
 
-                amountOfRedLines = hamiltonMap.getRedLineList().size();
-                amountOfShowedLines = mapAnimated.getRedLineList().size();
-                if (amountOfRedLines == amountOfShowedLines){
+                amountOfredEdges = hamiltonMap.getRedEdgesList().size();
+                amountOfShowedLines = mapAnimated.getRedEdgesList().size();
+                if (amountOfredEdges == amountOfShowedLines){
                     mapAnimated = new Map(hamiltonMap);
-                    mapAnimated.setRedLineList(new ArrayList<>());
-                    ArrayList<CustomLine> redLines = mapAnimated.getRedLineList();
-                    redLines.add(hamiltonMap.getRedLineList().get(0));
+                    mapAnimated.setRedEdgesList(new ArrayList<>());
+                    ArrayList<Edge> redEdges = mapAnimated.getRedEdgesList();
+                    redEdges.add(hamiltonMap.getRedEdgesList().get(0));
                 } else {
                     mapAnimated = new Map(hamiltonMap);
-                    mapAnimated.setRedLineList(new ArrayList<>());
-                    ArrayList<CustomLine> redLines = mapAnimated.getRedLineList();
+                    mapAnimated.setRedEdgesList(new ArrayList<>());
+                    ArrayList<Edge> redEdges = mapAnimated.getRedEdgesList();
                     for (int i = 0; i < amountOfShowedLines + 1; i++){
-                        redLines.add(hamiltonMap.getRedLineList().get(i));
+                        redEdges.add(hamiltonMap.getRedEdgesList().get(i));
                     }
                 }
                 break;
@@ -153,49 +153,49 @@ public class SixthActivityFragment extends AbstractFragment implements GraphGene
     }
 
     public static Map createEulerMap(ArrayList<Coordinate> nodesToSet) {
-        ArrayList<CustomLine> lines = new ArrayList<>();
-        ArrayList<CustomLine> redLines = new ArrayList<>();
+        ArrayList<Edge> lines = new ArrayList<>();
+        ArrayList<Edge> redEdges = new ArrayList<>();
 
         for (int i = 0; i < nodesToSet.size(); i++){
             if (i < nodesToSet.size() - 1){
-                lines.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(i+1)));
-                redLines.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(i+1)));
+                lines.add(new Edge(nodesToSet.get(i), nodesToSet.get(i+1)));
+                redEdges.add(new Edge(nodesToSet.get(i), nodesToSet.get(i+1)));
             }else {
-                lines.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(2)));
-                redLines.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(2)));
+                lines.add(new Edge(nodesToSet.get(i), nodesToSet.get(2)));
+                redEdges.add(new Edge(nodesToSet.get(i), nodesToSet.get(2)));
             }
         }
-        return new Map(lines, nodesToSet, redLines);
+        return new Map(lines, nodesToSet, redEdges);
     }
 
     //myšlenka, projedu postupne vrcholy a propojim je jak jdou za sebou a kdyz tam ještě nemaj normální caru z generatoru, tak ho tam taky pridam
     public static Map createHamiltonMap(ArrayList<Coordinate> nodesToSet) {
-        ArrayList<CustomLine> lines = new ArrayList<>();
-        ArrayList<CustomLine> redLines = new ArrayList<>();
-        ArrayList<CustomLine> preGeneratedLines = GraphGenerator.generateRandomEdges(nodesToSet);
+        ArrayList<Edge> lines = new ArrayList<>();
+        ArrayList<Edge> redEdges = new ArrayList<>();
+        ArrayList<Edge> preGeneratedLines = GraphGenerator.generateRandomEdges(nodesToSet);
 
         for (int i = 0; i < nodesToSet.size(); i++) {
-            CustomLine line;
-            CustomLine redline;
+            Edge line;
+            Edge redline;
             if (i < nodesToSet.size() - 1) {
-                line = new CustomLine(nodesToSet.get(i), nodesToSet.get(i + 1));
-                redline = new CustomLine(nodesToSet.get(i), nodesToSet.get(i + 1));
+                line = new Edge(nodesToSet.get(i), nodesToSet.get(i + 1));
+                redline = new Edge(nodesToSet.get(i), nodesToSet.get(i + 1));
             } else {
-                line = new CustomLine(nodesToSet.get(i), nodesToSet.get(0));
-                redline = new CustomLine(nodesToSet.get(i), nodesToSet.get(0));
+                line = new Edge(nodesToSet.get(i), nodesToSet.get(0));
+                redline = new Edge(nodesToSet.get(i), nodesToSet.get(0));
             }
             lines.add(line);
-            redLines.add(redline);
+            redEdges.add(redline);
         }
 
-        for (int j = 0; j < redLines.size(); j++) {
+        for (int j = 0; j < redEdges.size(); j++) {
             int finalJ = j;
-            if (preGeneratedLines.stream().noneMatch(line -> line.isLineSame(redLines.get(finalJ)))) {
+            if (preGeneratedLines.stream().noneMatch(line -> line.isEdgeSame(redEdges.get(finalJ)))) {
                 preGeneratedLines.add(lines.get(j));
             }
         }
 
-        return new Map(preGeneratedLines, nodesToSet, redLines);
+        return new Map(preGeneratedLines, nodesToSet, redEdges);
     }
 
     public void changeGraph(String type) {
@@ -227,57 +227,57 @@ public class SixthActivityFragment extends AbstractFragment implements GraphGene
     public void sentUpdatedMap(Map map) {
         if (previousMapToUpdate == null) return;
 
-        ArrayList<CustomLine> lines = map.getCustomLines();
-        ArrayList<Coordinate> circles = map.getCircles();
+        ArrayList<Edge> lines = map.getEdges();
+        ArrayList<Coordinate> nodes = map.getNodes();
 
-        ArrayList<CustomLine> previousLines = previousMapToUpdate.getCustomLines();
-        ArrayList<Coordinate> previousCircles = previousMapToUpdate.getCircles();
+        ArrayList<Edge> previousLines = previousMapToUpdate.getEdges();
+        ArrayList<Coordinate> previousNodes = previousMapToUpdate.getNodes();
 
 
         for (int i = 0; i < previousLines.size(); i++) {
             int finalI = i;
-            if (lines.stream().noneMatch(line -> line.isLineSame(previousLines.get(finalI)))) {
+            if (lines.stream().noneMatch(line -> line.isEdgeSame(previousLines.get(finalI)))) {
                 if (hamilton) {
-                    CustomLine customLineToUpdate = hamiltonMap.getCustomLines().get(i);
-                    ArrayList<CustomLine> hamiltonRedLines = hamiltonMap.getRedLineList();
-                    for (CustomLine hamiltonRedLine : hamiltonRedLines){
-                        if (hamiltonRedLine.isLineSame(customLineToUpdate)){
+                    Edge edgeToUpdate = hamiltonMap.getEdges().get(i);
+                    ArrayList<Edge> hamiltonredEdges = hamiltonMap.getRedEdgesList();
+                    for (Edge hamiltonRedLine : hamiltonredEdges){
+                        if (hamiltonRedLine.isEdgeSame(edgeToUpdate)){
                             hamiltonRedLine.setFrom(lines.get(i).getFrom());
                             hamiltonRedLine.setTo(lines.get(i).getTo());
                         }
                     }
-                    customLineToUpdate.setFrom(lines.get(i).getFrom());
-                    customLineToUpdate.setTo(lines.get(i).getTo());
+                    edgeToUpdate.setFrom(lines.get(i).getFrom());
+                    edgeToUpdate.setTo(lines.get(i).getTo());
 
                     //ještě aktualizuje nody
-                    for (int k = 0; k < previousCircles.size(); k++){
+                    for (int k = 0; k < previousNodes.size(); k++){
                         int finalK = k;
-                        if (circles.stream().noneMatch(circle -> circle.equal(previousCircles.get(finalK)))){
-                            Coordinate coordinate = hamiltonMap.getCircles().get(k);
-                            coordinate.x = circles.get(k).x;
-                            coordinate.y = circles.get(k).y;
+                        if (nodes.stream().noneMatch(circle -> circle.equal(previousNodes.get(finalK)))){
+                            Coordinate coordinate = hamiltonMap.getNodes().get(k);
+                            coordinate.x = nodes.get(k).x;
+                            coordinate.y = nodes.get(k).y;
                         }
                     }
 
                 } else if (euler) {
-                    CustomLine customLineToUpdate = eulerMap.getCustomLines().get(i);
-                    ArrayList<CustomLine> eulerRedLines = eulerMap.getRedLineList();
-                    for (CustomLine eulerRedLine : eulerRedLines){
-                        if (eulerRedLine.isLineSame(customLineToUpdate)){
+                    Edge edgeToUpdate = eulerMap.getEdges().get(i);
+                    ArrayList<Edge> eulerredEdges = eulerMap.getRedEdgesList();
+                    for (Edge eulerRedLine : eulerredEdges){
+                        if (eulerRedLine.isEdgeSame(edgeToUpdate)){
                             eulerRedLine.setFrom(lines.get(i).getFrom());
                             eulerRedLine.setTo(lines.get(i).getTo());
                         }
                     }
-                    customLineToUpdate.setFrom(lines.get(i).getFrom());
-                    customLineToUpdate.setTo(lines.get(i).getTo());
+                    edgeToUpdate.setFrom(lines.get(i).getFrom());
+                    edgeToUpdate.setTo(lines.get(i).getTo());
 
                     //ještě aktualizuje nody
-                    for (int k = 0; k < previousCircles.size(); k++){
+                    for (int k = 0; k < previousNodes.size(); k++){
                         int finalK = k;
-                        if (circles.stream().noneMatch(circle -> circle.equal(previousCircles.get(finalK)))){
-                            Coordinate coordinate = eulerMap.getCircles().get(k);
-                            coordinate.x = circles.get(k).x;
-                            coordinate.y = circles.get(k).y;
+                        if (nodes.stream().noneMatch(circle -> circle.equal(previousNodes.get(finalK)))){
+                            Coordinate coordinate = eulerMap.getNodes().get(k);
+                            coordinate.x = nodes.get(k).x;
+                            coordinate.y = nodes.get(k).y;
                         }
                     }
                 }

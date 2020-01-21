@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 import cz.uhk.graphtheory.model.Coordinate;
-import cz.uhk.graphtheory.model.CustomLine;
+import cz.uhk.graphtheory.model.Edge;
 import cz.uhk.graphtheory.model.FingerPath;
 import cz.uhk.graphtheory.model.Map;
 
@@ -54,7 +54,7 @@ public class PaintView extends View {
     private ArrayList<Coordinate> circleCoordinates = new ArrayList<>();
     private ArrayList<Coordinate> allLineList = new ArrayList<>(); //seznam všech vytvořených line, ktere propojuji kruhy
     private ArrayList<Coordinate> redLineList = new ArrayList<>(); //seznam vytvořené cesty
-    private ArrayList<Coordinate> redCirclesCoordinates = new ArrayList<>(); //seznam cervenych vrcholu, napr. pro artikulaci
+    private ArrayList<Coordinate> redNodesCoordinates = new ArrayList<>(); //seznam cervenych vrcholu, napr. pro artikulaci
     private boolean circle, line, move, remove, path = false;
     private boolean isCircleDragged = false;
     PaintView.CommunicationInterface mListener;
@@ -214,8 +214,8 @@ public class PaintView extends View {
             }
         }
 
-        if (redCirclesCoordinates != null && redCirclesCoordinates.size() > 0) {
-            for (Coordinate coordinate : redCirclesCoordinates) {
+        if (redNodesCoordinates != null && redNodesCoordinates.size() > 0) {
+            for (Coordinate coordinate : redNodesCoordinates) {
                 mPaint.setColor(RED_COLOR);
                 mPaint.setStrokeWidth(BRUSH_SIZE);
                 mPaint.setStyle(Paint.Style.FILL);
@@ -224,8 +224,8 @@ public class PaintView extends View {
         }
         createCharsInNodes();
 
-        if (redCirclesCoordinates != null && redCirclesCoordinates.size() > 0) {
-            for (Coordinate coordinate : redCirclesCoordinates) {
+        if (redNodesCoordinates != null && redNodesCoordinates.size() > 0) {
+            for (Coordinate coordinate : redNodesCoordinates) {
                 mPaint.setColor(RED_COLOR);
                 mPaint.setStrokeWidth(BRUSH_SIZE);
                 mPaint.setStyle(Paint.Style.FILL);
@@ -286,7 +286,7 @@ public class PaintView extends View {
                     if (shouldBreak) break;
                 }
             } else if (charsForNodes.size() > circleCoordinates.size()) {
-                //pokud pro dany zaznam nenalezneme hodnotu v circles, tak víme, že je se ma tento záznam smazat
+                //pokud pro dany zaznam nenalezneme hodnotu v nodes, tak víme, že je se ma tento záznam smazat
                 for (java.util.Map.Entry<Coordinate, String> charEntry : charsForNodes.entrySet()) {
                     if (circleCoordinates.stream().noneMatch(c -> c.equal(charEntry.getKey()))) {
                         charsForNodes.remove(charEntry.getKey(), charEntry.getValue());
@@ -378,7 +378,7 @@ public class PaintView extends View {
                     break;
                 }
             }
-            for (Coordinate coordinate : redCirclesCoordinates) {
+            for (Coordinate coordinate : redNodesCoordinates) {
                 if (checkIsInCircle(coordinate.x, coordinate.y, x, y)) {
                     isCircleDragged = true;
                     firstCoordinate = coordinate;
@@ -402,7 +402,7 @@ public class PaintView extends View {
             circleCoordinates.remove(firstCoordinate);
         } else {
             movingWithRedCircle = true;
-            redCirclesCoordinates.remove(firstCoordinate);
+            redNodesCoordinates.remove(firstCoordinate);
         }
         for (Coordinate coordinate : allLineList) {
             //při tažení se přehodí i souřadnice přímky
@@ -423,7 +423,7 @@ public class PaintView extends View {
         if (!movingWithRedCircle) {
             circleCoordinates.add(firstCoordinate);
         } else {
-            redCirclesCoordinates.add(firstCoordinate);
+            redNodesCoordinates.add(firstCoordinate);
         }
     }
 
@@ -561,37 +561,37 @@ public class PaintView extends View {
      */
     public Map getMap() {
 
-        ArrayList<CustomLine> lines = new ArrayList<>();
+        ArrayList<Edge> lines = new ArrayList<>();
         for (int x = 0; x < allLineList.size(); x++) {
             if (x % 2 != 0) {
-                CustomLine line = new CustomLine(allLineList.get(x - 1), allLineList.get(x));
+                Edge line = new Edge(allLineList.get(x - 1), allLineList.get(x));
                 lines.add(line);
             }
         }
 
-        ArrayList<CustomLine> path = new ArrayList<>();
+        ArrayList<Edge> path = new ArrayList<>();
         for (int x = 0; x < redLineList.size(); x++) {
             if (x % 2 != 0) {
-                CustomLine line = new CustomLine(redLineList.get(x - 1), redLineList.get(x));
+                Edge line = new Edge(redLineList.get(x - 1), redLineList.get(x));
                 path.add(line);
             }
         }
-        return new Map(lines, circleCoordinates, path, redCirclesCoordinates);
+        return new Map(lines, circleCoordinates, path, redNodesCoordinates);
     }
 
     public void setMap(Map map) {
-        ArrayList<CustomLine> lines = map.getCustomLines();
-        ArrayList<CustomLine> path = map.getRedLineList();
+        ArrayList<Edge> lines = map.getEdges();
+        ArrayList<Edge> path = map.getRedEdgesList();
         charsForNodes = null;
 
         allLineList.clear();
         redLineList.clear();
 
-        if (map.getCircles().isEmpty()) circleCoordinates.clear();
-        if (map.getCircles().isEmpty()) redCirclesCoordinates.clear();
-        circleCoordinates = map.getCircles();
-        redCirclesCoordinates = map.getRedCircles();
-        if (!circleCoordinates.isEmpty() || !allLineList.isEmpty() || !redCirclesCoordinates.isEmpty()) {
+        if (map.getNodes().isEmpty()) circleCoordinates.clear();
+        if (map.getNodes().isEmpty()) redNodesCoordinates.clear();
+        circleCoordinates = map.getNodes();
+        redNodesCoordinates = map.getRedNodes();
+        if (!circleCoordinates.isEmpty() || !allLineList.isEmpty() || !redNodesCoordinates.isEmpty()) {
             invalidate();
         }
 

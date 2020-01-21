@@ -125,7 +125,7 @@ public class FirstActivityFragment extends AbstractFragment {
     private ArrayList<String> getNodeChars(ArrayList<Coordinate> redLines, Map map) {
         ArrayList<String> chars = new ArrayList<>();
         if (redLines != null) {
-            ArrayList<Coordinate> nodes = map.getCircles();
+            ArrayList<Coordinate> nodes = map.getNodes();
             for (Coordinate redCoordinate : redLines) {
                 for (int i = 0; i < nodes.size(); i++) {
                     if (nodes.get(i).equal(redCoordinate)) {

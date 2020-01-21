@@ -269,12 +269,12 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
         Map map;
         if (displayedActivity == 0) {
             map = SpecificGraphGenerator.createMapWithABridge(height, width, 15);
-            map.setRedCircles(new ArrayList<>());
-            map.setRedLineList(new ArrayList<>());
+            map.setRedNodes(new ArrayList<>());
+            map.setRedEdgesList(new ArrayList<>());
         } else {
             map = SpecificGraphGenerator.createMapWithArticulation(height, width, 15);
-            map.setRedLineList(new ArrayList<>());
-            map.setRedCircles(new ArrayList<>());
+            map.setRedEdgesList(new ArrayList<>());
+            map.setRedNodes(new ArrayList<>());
         }
         drawingFragment.setUserGraph(map);
     }
@@ -318,10 +318,10 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
         Map map;
         if (displayedActivity == 0) {
             map = SpecificGraphGenerator.createMapWithABridge(height, width, 15);
-            map.setRedLineList(new ArrayList<>());
+            map.setRedEdgesList(new ArrayList<>());
         } else {
             map = SpecificGraphGenerator.createMapWithArticulation(height, width, 15);
-            map.setRedCircles(new ArrayList<>());
+            map.setRedNodes(new ArrayList<>());
         }
         drawingFragment.setUserGraph(map);
         bottomNavigationView.setSelectedItemId(R.id.path);
@@ -350,7 +350,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
         } else {
             map = SpecificGraphGenerator.createMapWithArticulation(height, width, 15);
         }
-        map.setRedLineList(new ArrayList<>());
+        map.setRedEdgesList(new ArrayList<>());
         drawingFragment.setUserGraph(map);
         bottomNavigationView.setSelectedItemId(R.id.circle);
         switchColoringNodeAccordingActivity();

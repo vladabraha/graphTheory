@@ -5,95 +5,95 @@ import java.util.ArrayList;
 
 
 public class Map {
-    private ArrayList<CustomLine> customLines;
-    private ArrayList<Coordinate> circles;
-    private ArrayList<CustomLine> redLineList = new ArrayList<>();
-    private ArrayList<Coordinate> redCircles = new ArrayList<>();
+    private ArrayList<Edge> edges;
+    private ArrayList<Coordinate> nodes;
+    private ArrayList<Edge> redEdgesList = new ArrayList<>();
+    private ArrayList<Coordinate> redNodes = new ArrayList<>();
 
 
-    public Map(ArrayList<CustomLine> customLines, ArrayList<Coordinate> circles) {
-        this.customLines = customLines;
-        this.circles = circles;
+    public Map(ArrayList<Edge> edges, ArrayList<Coordinate> nodes) {
+        this.edges = edges;
+        this.nodes = nodes;
     }
 
-    public Map(ArrayList<CustomLine> customLines, ArrayList<Coordinate> circles, ArrayList<CustomLine> redLineList) {
-        this.customLines = customLines;
-        this.circles = circles;
-        this.redLineList = redLineList;
+    public Map(ArrayList<Edge> edges, ArrayList<Coordinate> nodes, ArrayList<Edge> redEdgesList) {
+        this.edges = edges;
+        this.nodes = nodes;
+        this.redEdgesList = redEdgesList;
     }
 
-    public Map(ArrayList<CustomLine> customLines, ArrayList<Coordinate> circles, ArrayList<CustomLine> redLineList, ArrayList<Coordinate> redCircles) {
-        this.customLines = customLines;
-        this.circles = circles;
-        this.redLineList = redLineList;
-        this.redCircles = redCircles;
+    public Map(ArrayList<Edge> edges, ArrayList<Coordinate> nodes, ArrayList<Edge> redEdgesList, ArrayList<Coordinate> redNodes) {
+        this.edges = edges;
+        this.nodes = nodes;
+        this.redEdgesList = redEdgesList;
+        this.redNodes = redNodes;
     }
 
 
 
     public Map(Map map) {
-        ArrayList<CustomLine> customLinesCopied = new ArrayList<>();
-        ArrayList<Coordinate> circlesCopied = new ArrayList<>();
-        ArrayList<CustomLine> redLineListCopied = new ArrayList<>();
-        ArrayList<Coordinate> redCirclesCopied = new ArrayList<>();
+        ArrayList<Edge> customLinesCopied = new ArrayList<>();
+        ArrayList<Coordinate> nodesCopied = new ArrayList<>();
+        ArrayList<Edge> redLineListCopied = new ArrayList<>();
+        ArrayList<Coordinate> redNodesCopied = new ArrayList<>();
 
-        for (CustomLine customLine : map.customLines) {
-            Coordinate from = new Coordinate(customLine.getFrom().x, customLine.getFrom().y);
-            Coordinate to = new Coordinate(customLine.getTo().x, customLine.getTo().y);
-            customLinesCopied.add(new CustomLine(from, to));
+        for (Edge edge : map.edges) {
+            Coordinate from = new Coordinate(edge.getFrom().x, edge.getFrom().y);
+            Coordinate to = new Coordinate(edge.getTo().x, edge.getTo().y);
+            customLinesCopied.add(new Edge(from, to));
         }
 
-        for (Coordinate coordinate : map.circles) {
-            circlesCopied.add(new Coordinate(coordinate.x, coordinate.y));
+        for (Coordinate coordinate : map.nodes) {
+            nodesCopied.add(new Coordinate(coordinate.x, coordinate.y));
         }
 
-        if (map.getRedCircles() != null){
-            for (Coordinate coordinate : map.redCircles) {
-                redCirclesCopied.add(new Coordinate(coordinate.x, coordinate.y));
+        if (map.getRedNodes() != null){
+            for (Coordinate coordinate : map.redNodes) {
+                redNodesCopied.add(new Coordinate(coordinate.x, coordinate.y));
             }
         }
 
-        for (CustomLine customLine : map.redLineList) {
-            Coordinate from = new Coordinate(customLine.getFrom().x, customLine.getFrom().y);
-            Coordinate to = new Coordinate(customLine.getTo().x, customLine.getTo().y);
-            redLineListCopied.add(new CustomLine(from, to));
+        for (Edge edge : map.redEdgesList) {
+            Coordinate from = new Coordinate(edge.getFrom().x, edge.getFrom().y);
+            Coordinate to = new Coordinate(edge.getTo().x, edge.getTo().y);
+            redLineListCopied.add(new Edge(from, to));
         }
 
-        this.customLines = customLinesCopied;
-        this.circles = circlesCopied;
-        this.redLineList = redLineListCopied;
-        this.redCircles = redCirclesCopied;
+        this.edges = customLinesCopied;
+        this.nodes = nodesCopied;
+        this.redEdgesList = redLineListCopied;
+        this.redNodes = redNodesCopied;
     }
 
-    public ArrayList<CustomLine> getRedLineList() {
-        return redLineList;
+    public ArrayList<Edge> getRedEdgesList() {
+        return redEdgesList;
     }
 
-    public void setRedLineList(ArrayList<CustomLine> redLineList) {
-        this.redLineList = redLineList;
+    public void setRedEdgesList(ArrayList<Edge> redEdgesList) {
+        this.redEdgesList = redEdgesList;
     }
 
-    public ArrayList<CustomLine> getCustomLines() {
-        return customLines;
+    public ArrayList<Edge> getEdges() {
+        return edges;
     }
 
-    public void setCustomLines(ArrayList<CustomLine> customLines) {
-        this.customLines = customLines;
+    public void setEdges(ArrayList<Edge> edges) {
+        this.edges = edges;
     }
 
-    public ArrayList<Coordinate> getCircles() {
-        return circles;
+    public ArrayList<Coordinate> getNodes() {
+        return nodes;
     }
 
-    public void setCircles(ArrayList<Coordinate> circles) {
-        this.circles = circles;
+    public void setNodes(ArrayList<Coordinate> nodes) {
+        this.nodes = nodes;
     }
 
-    public ArrayList<Coordinate> getRedCircles() {
-        return redCircles;
+    public ArrayList<Coordinate> getRedNodes() {
+        return redNodes;
     }
 
-    public void setRedCircles(ArrayList<Coordinate> redCircles) {
-        this.redCircles = redCircles;
+    public void setRedNodes(ArrayList<Coordinate> redNodes) {
+        this.redNodes = redNodes;
     }
 }

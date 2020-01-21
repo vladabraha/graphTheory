@@ -14,7 +14,7 @@ import android.view.View;
 import java.util.ArrayList;
 
 import cz.uhk.graphtheory.model.Coordinate;
-import cz.uhk.graphtheory.model.CustomLine;
+import cz.uhk.graphtheory.model.Edge;
 import cz.uhk.graphtheory.model.Map;
 
 /**
@@ -30,7 +30,7 @@ public class GraphGeneratedView extends View {
     private ArrayList<Coordinate> circleCoordinates = new ArrayList<>();
     private ArrayList<Coordinate> allLineList = new ArrayList<>(); //seznam všech vytvořených line, ktere propojuji kruhy
     private ArrayList<Coordinate> redLineList = new ArrayList<>();
-    private ArrayList<Coordinate> redCirclesCoordinates = new ArrayList<>();
+    private ArrayList<Coordinate> redNodesCoordinates = new ArrayList<>();
 
     public static final int DEFAULT_COLOR = Color.BLACK;
     public static final int RED = Color.RED;
@@ -131,8 +131,8 @@ public class GraphGeneratedView extends View {
             }
         }
 
-        if (redCirclesCoordinates != null && redCirclesCoordinates.size() > 0){
-            for (Coordinate coordinate : redCirclesCoordinates) {
+        if (redNodesCoordinates != null && redNodesCoordinates.size() > 0){
+            for (Coordinate coordinate : redNodesCoordinates) {
                 mPaint.setColor(RED);
                 mPaint.setStrokeWidth(BRUSH_SIZE);
                 mPaint.setStyle(Paint.Style.FILL);
@@ -233,35 +233,35 @@ public class GraphGeneratedView extends View {
      */
     public Map getMap() {
 
-        ArrayList<CustomLine> lines = new ArrayList<>();
+        ArrayList<Edge> lines = new ArrayList<>();
         for (int x = 0; x < allLineList.size(); x++) {
             if (x % 2 != 0) {
-                CustomLine line = new CustomLine(allLineList.get(x - 1), allLineList.get(x));
+                Edge line = new Edge(allLineList.get(x - 1), allLineList.get(x));
                 lines.add(line);
             }
         }
 
-        ArrayList<CustomLine> path = new ArrayList<>();
+        ArrayList<Edge> path = new ArrayList<>();
         for (int x = 0; x < redLineList.size(); x++){
             if (x % 2 != 0) {
-                CustomLine line = new CustomLine(redLineList.get(x - 1), redLineList.get(x));
+                Edge line = new Edge(redLineList.get(x - 1), redLineList.get(x));
                 path.add(line);
             }
         }
 
-        return new Map(lines, circleCoordinates, path, redCirclesCoordinates);
+        return new Map(lines, circleCoordinates, path, redNodesCoordinates);
     }
 
     public void setMap(Map map) {
-        ArrayList<CustomLine> lines = map.getCustomLines();
-        ArrayList<CustomLine> path = map.getRedLineList();
+        ArrayList<Edge> lines = map.getEdges();
+        ArrayList<Edge> path = map.getRedEdgesList();
 
         allLineList.clear();
         redLineList.clear();
 
-        circleCoordinates = map.getCircles();
-        redCirclesCoordinates = map.getRedCircles();
-        if (!circleCoordinates.isEmpty() || !allLineList.isEmpty() || !redCirclesCoordinates.isEmpty()) {
+        circleCoordinates = map.getNodes();
+        redNodesCoordinates = map.getRedNodes();
+        if (!circleCoordinates.isEmpty() || !allLineList.isEmpty() || !redNodesCoordinates.isEmpty()) {
             invalidate();
         }
 

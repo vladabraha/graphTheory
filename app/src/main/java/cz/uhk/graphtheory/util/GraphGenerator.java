@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import cz.uhk.graphtheory.model.Coordinate;
-import cz.uhk.graphtheory.model.CustomLine;
+import cz.uhk.graphtheory.model.Edge;
 import cz.uhk.graphtheory.model.Map;
 
 public class GraphGenerator {
@@ -24,12 +24,12 @@ public class GraphGenerator {
      * @return generated map
      */
     public static Map generateMap(int height, int width, int BRUSH_SIZE, int amountOfNodes) {
-        ArrayList<Coordinate> circles = generateNodes(height - BRUSH_SIZE, width - BRUSH_SIZE, BRUSH_SIZE, amountOfNodes);
-        ArrayList<CustomLine> customLines;
+        ArrayList<Coordinate> nodes = generateNodes(height - BRUSH_SIZE, width - BRUSH_SIZE, BRUSH_SIZE, amountOfNodes);
+        ArrayList<Edge> edges;
         Map map;
         do {
-            customLines = generateRandomEdges(circles);
-            map = new Map(customLines, circles);
+            edges = generateRandomEdges(nodes);
+            map = new Map(edges, nodes);
         }while (checkIfGraphIsSplitInTwo(map));
         return map;
     }
@@ -37,11 +37,11 @@ public class GraphGenerator {
     /**
      * generate random amount of edges based on minimum amount of edges
      *
-     * @param circlesPoints nodes which should be connected
+     * @param nodesPoints nodes which should be connected
      * @return list of lines (connecting nodes)
      */
-    public static ArrayList<CustomLine> generateRandomEdges(ArrayList<Coordinate> circlesPoints) {
-        int amountOfNodes = circlesPoints.size();
+    public static ArrayList<Edge> generateRandomEdges(ArrayList<Coordinate> nodesPoints) {
+        int amountOfNodes = nodesPoints.size();
         int maximumOfEdges = (amountOfNodes * (amountOfNodes - 1)) / 2; //viz. definice uplneho grafu
         if (amountOfNodes > 3)
             maximumOfEdges = maximumOfEdges - 1; //maximum je třeba zmenšit o jedna, aby byly vidět alg., které se na graf aplikují
@@ -50,14 +50,14 @@ public class GraphGenerator {
 
         //vezmeme nahodny uzel na indexu a mrkneme na seznam, se kterymi dalsimi prvky je spojen
         //pokud neni jeste spojen s nahodnym uzlem, je dany uzel pridan do seznamu
-        SparseArray<ArrayList<Integer>> connectedNodes = new SparseArray<>(circlesPoints.size());
+        SparseArray<ArrayList<Integer>> connectedNodes = new SparseArray<>(nodesPoints.size());
         int createdEdges = 0;
         int run = 0;
         int RUN_THRESHOLD = 500;
         do {
             run++;
-            int randomIndex = (int) Math.round(Math.random() * (circlesPoints.size() - 1));
-            int randomIndex2 = (int) Math.round(Math.random() * (circlesPoints.size() - 1));
+            int randomIndex = (int) Math.round(Math.random() * (nodesPoints.size() - 1));
+            int randomIndex2 = (int) Math.round(Math.random() * (nodesPoints.size() - 1));
             //pro velmi male grafy, kde jsou napr. pouze 2 nody jede algoritmus hrozne dlouho, optimalizace pro tyto pripady
             if (randomIndex2 == 0 && randomIndex2 == randomIndex) randomIndex2++;
 
@@ -99,7 +99,7 @@ public class GraphGenerator {
         } while (createdEdges < amountOfEdges && run < RUN_THRESHOLD);
 
         //kontrola, zdali neni nejaky uzel osamocen (graf pak vypada divne)
-        for (int i = 0; i < circlesPoints.size(); i++) { //vezmeme prvni node
+        for (int i = 0; i < nodesPoints.size(); i++) { //vezmeme prvni node
             //sparse array může mít zaplenene jenom nektere indexy (např. když má size 2, tak může mít zaplneny jenom index 1 a 5 a mezitím nic -> velikost 2)
             boolean isNodeConnectedToAnotherNode = false;
             run = 0;
@@ -121,7 +121,7 @@ public class GraphGenerator {
                         } else {
                             next++;
                         }
-                    } while (!isIndexNotEmpty && next < circlesPoints.size() && run < RUN_THRESHOLD);
+                    } while (!isIndexNotEmpty && next < nodesPoints.size() && run < RUN_THRESHOLD);
 
                     if (Objects.requireNonNull(arrayList).contains(i)) { //mrkneme, zdali dany seznam obsahuje naš node
                         isNodeConnectedToAnotherNode = true; //pokud ano, hura, tenhle node je propojen jdeme na dalsi
@@ -136,7 +136,7 @@ public class GraphGenerator {
                     int index = 0;
                     boolean found = false;
 
-                    if (circlesPoints.size() < 2) {
+                    if (nodesPoints.size() < 2) {
                         switch (i) {
                             case 0:
                                 index = 1;
@@ -145,7 +145,7 @@ public class GraphGenerator {
                         }
                     } else {
                         do {
-                            index = (int) Math.round(Math.random() * (circlesPoints.size() - 1));
+                            index = (int) Math.round(Math.random() * (nodesPoints.size() - 1));
                             if (i != index) found = true;
                         } while (!found);
                     }
@@ -162,7 +162,7 @@ public class GraphGenerator {
             }
         }
 
-        ArrayList<CustomLine> edges = new ArrayList<>();
+        ArrayList<Edge> edges = new ArrayList<>();
 
         //projdeme vsechny uzly a projdeme jejich seznamy, se kterymi uzly sousedi jsou spojeni a vytvorime Customeline pro vytvoreni Liny ve View
         for (int i = 0; i < connectedNodes.size(); i++) {
@@ -172,8 +172,8 @@ public class GraphGenerator {
             ArrayList<Integer> indexesOfNodes = connectedNodes.get(key);
             if (indexesOfNodes != null) {
                 for (Integer integer : indexesOfNodes) {
-                    CustomLine customLine = new CustomLine(circlesPoints.get(key), circlesPoints.get(integer));
-                    edges.add(customLine);
+                    Edge edge = new Edge(nodesPoints.get(key), nodesPoints.get(integer));
+                    edges.add(edge);
                 }
             }
         }
@@ -242,11 +242,11 @@ public class GraphGenerator {
      * @return true pokud je graf nespojitý
      */
     private static boolean checkIfGraphIsSplitInTwo(Map map){
-        ArrayList<CustomLine> customLines = map.getCustomLines();
-        ArrayList<Coordinate> circles = map.getCircles();
+        ArrayList<Edge> edges = map.getEdges();
+        ArrayList<Coordinate> nodes = map.getNodes();
 
-        Coordinate oneEndOfCustomLine = customLines.get(0).getFrom();
-        Coordinate secondEndOfCustomLine = customLines.get(0).getTo();
+        Coordinate oneEndOfCustomLine = edges.get(0).getFrom();
+        Coordinate secondEndOfCustomLine = edges.get(0).getTo();
 
         //myslenka - projdu vsechny sousedy od prvniho bodu a budu si pamatovat, ktery jsem prosel
         //v dalsim kole budu prochazet sousedy sousedů, ktere jsem jeste nenavstivil, takhle postupne projdu vsechny z teho kategorie
@@ -259,26 +259,26 @@ public class GraphGenerator {
 
         //přihodím do prohledávání všechny uzly, které jsou propojeny s jedním koncem přímky
         //algoritmus totiž prochází všechny uzly z nodesToExplore, ale neleze tam, kde se to dotýká konce čáry, čímž může v některých situacích vyhodnotit špatně propojení
-        for (CustomLine customLine : customLines) {
-            if (customLine.getFrom().equal(oneEndOfCustomLine) && !customLine.getTo().equal(secondEndOfCustomLine)) {
-                if (alreadyVisitedNodesFirstEndOfBridge.stream().noneMatch(m -> m.equal(customLine.getTo()))) {
-                    nodesToExploreFirstEndOfBridge.add(customLine.getTo());
-                    alreadyVisitedNodesFirstEndOfBridge.add(customLine.getTo());
+        for (Edge edge : edges) {
+            if (edge.getFrom().equal(oneEndOfCustomLine) && !edge.getTo().equal(secondEndOfCustomLine)) {
+                if (alreadyVisitedNodesFirstEndOfBridge.stream().noneMatch(m -> m.equal(edge.getTo()))) {
+                    nodesToExploreFirstEndOfBridge.add(edge.getTo());
+                    alreadyVisitedNodesFirstEndOfBridge.add(edge.getTo());
                 }
-            } else if (customLine.getTo().equal(oneEndOfCustomLine) && !customLine.getFrom().equal(secondEndOfCustomLine)) {
-                if (alreadyVisitedNodesFirstEndOfBridge.stream().noneMatch(m -> m.equal(customLine.getFrom()))) {
-                    nodesToExploreFirstEndOfBridge.add(customLine.getFrom());
-                    alreadyVisitedNodesFirstEndOfBridge.add(customLine.getFrom());
+            } else if (edge.getTo().equal(oneEndOfCustomLine) && !edge.getFrom().equal(secondEndOfCustomLine)) {
+                if (alreadyVisitedNodesFirstEndOfBridge.stream().noneMatch(m -> m.equal(edge.getFrom()))) {
+                    nodesToExploreFirstEndOfBridge.add(edge.getFrom());
+                    alreadyVisitedNodesFirstEndOfBridge.add(edge.getFrom());
                 }
-            }else if (customLine.getTo().equal(secondEndOfCustomLine) && !customLine.getFrom().equal(oneEndOfCustomLine)) {
-                if (alreadyVisitedNodesFirstEndOfBridge.stream().noneMatch(m -> m.equal(customLine.getFrom()))) {
-                    alreadyVisitedNodesSecondEndOfBridge.add(customLine.getFrom());
-                    nodesToExploreSecondEndOfBridge.add(customLine.getFrom());
+            }else if (edge.getTo().equal(secondEndOfCustomLine) && !edge.getFrom().equal(oneEndOfCustomLine)) {
+                if (alreadyVisitedNodesFirstEndOfBridge.stream().noneMatch(m -> m.equal(edge.getFrom()))) {
+                    alreadyVisitedNodesSecondEndOfBridge.add(edge.getFrom());
+                    nodesToExploreSecondEndOfBridge.add(edge.getFrom());
                 }
-            }else if (customLine.getFrom().equal(secondEndOfCustomLine) && !customLine.getTo().equal(oneEndOfCustomLine)) {
-                if (alreadyVisitedNodesFirstEndOfBridge.stream().noneMatch(m -> m.equal(customLine.getTo()))) {
-                    alreadyVisitedNodesSecondEndOfBridge.add(customLine.getTo());
-                    nodesToExploreSecondEndOfBridge.add(customLine.getTo());
+            }else if (edge.getFrom().equal(secondEndOfCustomLine) && !edge.getTo().equal(oneEndOfCustomLine)) {
+                if (alreadyVisitedNodesFirstEndOfBridge.stream().noneMatch(m -> m.equal(edge.getTo()))) {
+                    alreadyVisitedNodesSecondEndOfBridge.add(edge.getTo());
+                    nodesToExploreSecondEndOfBridge.add(edge.getTo());
                 }
             }
         }
@@ -286,18 +286,18 @@ public class GraphGenerator {
         //teď projdu všechny sousedy nalezených uzlů pro jeden konec grafu
         for (int i = 0; i < nodesToExploreFirstEndOfBridge.size(); i++) {
             Coordinate coordinateToExplore = nodesToExploreFirstEndOfBridge.get(i);
-            for (CustomLine customLine : customLines) {
+            for (Edge edge : edges) {
                 //nejdriv kontrola, ze se nepresuneme pres konec čáry do druhe půlky
-                if (!customLine.isPointInStartOrEndOfLine(oneEndOfCustomLine) && !customLine.isPointInStartOrEndOfLine(secondEndOfCustomLine)) {
-                    if (customLine.getFrom().equal(coordinateToExplore)) {
-                        if (alreadyVisitedNodesFirstEndOfBridge.stream().noneMatch(m -> m.equal(customLine.getTo()))) {
-                            alreadyVisitedNodesFirstEndOfBridge.add(customLine.getTo());
-                            nodesToExploreFirstEndOfBridge.add(customLine.getTo());
+                if (!edge.isPointInStartOrEndOfLine(oneEndOfCustomLine) && !edge.isPointInStartOrEndOfLine(secondEndOfCustomLine)) {
+                    if (edge.getFrom().equal(coordinateToExplore)) {
+                        if (alreadyVisitedNodesFirstEndOfBridge.stream().noneMatch(m -> m.equal(edge.getTo()))) {
+                            alreadyVisitedNodesFirstEndOfBridge.add(edge.getTo());
+                            nodesToExploreFirstEndOfBridge.add(edge.getTo());
                         }
-                    } else if (customLine.getTo().equal(coordinateToExplore)) {
-                        if (alreadyVisitedNodesFirstEndOfBridge.stream().noneMatch(m -> m.equal(customLine.getFrom()))) {
-                            alreadyVisitedNodesFirstEndOfBridge.add(customLine.getFrom());
-                            nodesToExploreFirstEndOfBridge.add(customLine.getFrom());
+                    } else if (edge.getTo().equal(coordinateToExplore)) {
+                        if (alreadyVisitedNodesFirstEndOfBridge.stream().noneMatch(m -> m.equal(edge.getFrom()))) {
+                            alreadyVisitedNodesFirstEndOfBridge.add(edge.getFrom());
+                            nodesToExploreFirstEndOfBridge.add(edge.getFrom());
                         }
                     }
                 }
@@ -309,18 +309,18 @@ public class GraphGenerator {
         //a všechny sousedy druhého konce grafu
         for (int i = 0; i < nodesToExploreSecondEndOfBridge.size(); i++) {
             Coordinate coordinateToExplore = nodesToExploreSecondEndOfBridge.get(i);
-            for (CustomLine customLine : customLines) {
+            for (Edge edge : edges) {
                 //nejdriv kontrola, ze se nepresuneme pres konec čáry do druhe půlky
-                if (!customLine.isPointInStartOrEndOfLine(oneEndOfCustomLine) && !customLine.isPointInStartOrEndOfLine(secondEndOfCustomLine)) {
-                    if (customLine.getFrom().equal(coordinateToExplore)) {
-                        if (alreadyVisitedNodesSecondEndOfBridge.stream().noneMatch(m -> m.equal(customLine.getTo()))) {
-                            alreadyVisitedNodesSecondEndOfBridge.add(customLine.getTo());
-                            nodesToExploreSecondEndOfBridge.add(customLine.getTo());
+                if (!edge.isPointInStartOrEndOfLine(oneEndOfCustomLine) && !edge.isPointInStartOrEndOfLine(secondEndOfCustomLine)) {
+                    if (edge.getFrom().equal(coordinateToExplore)) {
+                        if (alreadyVisitedNodesSecondEndOfBridge.stream().noneMatch(m -> m.equal(edge.getTo()))) {
+                            alreadyVisitedNodesSecondEndOfBridge.add(edge.getTo());
+                            nodesToExploreSecondEndOfBridge.add(edge.getTo());
                         }
-                    } else if (customLine.getTo().equal(coordinateToExplore)) {
-                        if (alreadyVisitedNodesSecondEndOfBridge.stream().noneMatch(m -> m.equal(customLine.getFrom()))) {
-                            alreadyVisitedNodesSecondEndOfBridge.add(customLine.getFrom());
-                            nodesToExploreSecondEndOfBridge.add(customLine.getFrom());
+                    } else if (edge.getTo().equal(coordinateToExplore)) {
+                        if (alreadyVisitedNodesSecondEndOfBridge.stream().noneMatch(m -> m.equal(edge.getFrom()))) {
+                            alreadyVisitedNodesSecondEndOfBridge.add(edge.getFrom());
+                            nodesToExploreSecondEndOfBridge.add(edge.getFrom());
                         }
                     }
                 }
@@ -330,6 +330,6 @@ public class GraphGenerator {
         }
 
         //pokud ani jeden seznam nemá n-2 uzlů, nejedná se o rozdělený graf
-        return alreadyVisitedNodesFirstEndOfBridge.size() != circles.size() - 2 && alreadyVisitedNodesSecondEndOfBridge.size() != circles.size() - 2;
+        return alreadyVisitedNodesFirstEndOfBridge.size() != nodes.size() - 2 && alreadyVisitedNodesSecondEndOfBridge.size() != nodes.size() - 2;
     }
 }

@@ -12,7 +12,7 @@ import java.util.Collections;
 
 import cz.uhk.graphtheory.abstraction.AbstractFragment;
 import cz.uhk.graphtheory.model.Coordinate;
-import cz.uhk.graphtheory.model.CustomLine;
+import cz.uhk.graphtheory.model.Edge;
 import cz.uhk.graphtheory.model.Map;
 import cz.uhk.graphtheory.util.GraphGenerator;
 
@@ -63,17 +63,17 @@ public class EightActivityFragment extends AbstractFragment {
         ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfEdges);
         Collections.sort(nodesToSet);
 
-        ArrayList<CustomLine> customLines = new ArrayList<>();
+        ArrayList<Edge> edges = new ArrayList<>();
         for (int i = 0; i < nodesToSet.size(); i++) {
             if (i == nodesToSet.size() - 3 && i > 0) {
-                customLines.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(i - 1)));
-                customLines.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(i + 1)));
-                customLines.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(i + 2)));
+                edges.add(new Edge(nodesToSet.get(i), nodesToSet.get(i - 1)));
+                edges.add(new Edge(nodesToSet.get(i), nodesToSet.get(i + 1)));
+                edges.add(new Edge(nodesToSet.get(i), nodesToSet.get(i + 2)));
             } else if (i < nodesToSet.size() - 3 && i > 0) {
-                customLines.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(i - 1)));
+                edges.add(new Edge(nodesToSet.get(i), nodesToSet.get(i - 1)));
             }
         }
-        return new Map(customLines, nodesToSet);
+        return new Map(edges, nodesToSet);
     }
 
     //myšlenka - vezmu alg. na generovani stromu, a použiju ho 2 - a mám 2 samostatny stromy -> les
@@ -86,14 +86,14 @@ public class EightActivityFragment extends AbstractFragment {
         ArrayList<Coordinate> firstNodesToSet = GraphGenerator.generateNodes(height, (width / 2), BRUSH_SIZE, amountOfNodes);
         Collections.sort(firstNodesToSet);
 
-        ArrayList<CustomLine> customLines = new ArrayList<>();
+        ArrayList<Edge> edges = new ArrayList<>();
         for (int i = 0; i < firstNodesToSet.size(); i++) {
             if (i == firstNodesToSet.size() - 3 && i > 0) {
-                customLines.add(new CustomLine(firstNodesToSet.get(i), firstNodesToSet.get(i - 1)));
-                customLines.add(new CustomLine(firstNodesToSet.get(i), firstNodesToSet.get(i + 1)));
-                customLines.add(new CustomLine(firstNodesToSet.get(i), firstNodesToSet.get(i + 2)));
+                edges.add(new Edge(firstNodesToSet.get(i), firstNodesToSet.get(i - 1)));
+                edges.add(new Edge(firstNodesToSet.get(i), firstNodesToSet.get(i + 1)));
+                edges.add(new Edge(firstNodesToSet.get(i), firstNodesToSet.get(i + 2)));
             } else if (i < firstNodesToSet.size() - 3 && i > 0) {
-                customLines.add(new CustomLine(firstNodesToSet.get(i), firstNodesToSet.get(i - 1)));
+                edges.add(new Edge(firstNodesToSet.get(i), firstNodesToSet.get(i - 1)));
             }
         }
 
@@ -101,14 +101,14 @@ public class EightActivityFragment extends AbstractFragment {
         Collections.sort(firstNodesToSet);
         Collections.sort(secondNodesToSet);
 
-        ArrayList<CustomLine> secondCustomLines = new ArrayList<>();
+        ArrayList<Edge> secondEdges = new ArrayList<>();
         for (int i = 0; i < secondNodesToSet.size(); i++) {
             if (i == secondNodesToSet.size() - 3 && i > 0) {
-                secondCustomLines.add(new CustomLine(secondNodesToSet.get(i), secondNodesToSet.get(i - 1)));
-                secondCustomLines.add(new CustomLine(secondNodesToSet.get(i), secondNodesToSet.get(i + 1)));
-                secondCustomLines.add(new CustomLine(secondNodesToSet.get(i - 1), secondNodesToSet.get(i + 2)));
+                secondEdges.add(new Edge(secondNodesToSet.get(i), secondNodesToSet.get(i - 1)));
+                secondEdges.add(new Edge(secondNodesToSet.get(i), secondNodesToSet.get(i + 1)));
+                secondEdges.add(new Edge(secondNodesToSet.get(i - 1), secondNodesToSet.get(i + 2)));
             } else if (i < secondNodesToSet.size() - 3 && i > 0) {
-                secondCustomLines.add(new CustomLine(secondNodesToSet.get(i), secondNodesToSet.get(i - 1)));
+                secondEdges.add(new Edge(secondNodesToSet.get(i), secondNodesToSet.get(i - 1)));
             }
         }
 
@@ -118,10 +118,10 @@ public class EightActivityFragment extends AbstractFragment {
         }
 
 
-        customLines.addAll(secondCustomLines);
+        edges.addAll(secondEdges);
         firstNodesToSet.addAll(secondNodesToSet);
 
-        return new Map(customLines, firstNodesToSet);
+        return new Map(edges, firstNodesToSet);
     }
 
     public void changeGraph(String mode) {

@@ -188,10 +188,10 @@ public class DrawingFragment extends Fragment implements DrawingFragmentListener
             Map map = paintView.getMap();
             boolean found = false, nodeToSwitchIsRed = false;
             Coordinate nodeToSwitch = null;
-            ArrayList<Coordinate> redCircles = map.getRedCircles();
-            ArrayList<Coordinate> circles = map.getCircles();
+            ArrayList<Coordinate> redNodes = map.getRedNodes();
+            ArrayList<Coordinate> nodes = map.getNodes();
 
-            for (Coordinate nodeCoordinate : circles){
+            for (Coordinate nodeCoordinate : nodes){
                 if (checkIsInCircle(nodeCoordinate.x, nodeCoordinate.y, coordinate.x, coordinate.y)){
                     found = true;
                     nodeToSwitchIsRed = false;
@@ -199,8 +199,8 @@ public class DrawingFragment extends Fragment implements DrawingFragmentListener
                     break;
                 }
             }
-            if (!found && redCircles != null){
-                for (Coordinate redNodeCoordinate : redCircles){
+            if (!found && redNodes != null){
+                for (Coordinate redNodeCoordinate : redNodes){
                     if (checkIsInCircle(redNodeCoordinate.x, redNodeCoordinate.y, coordinate.x, coordinate.y)){
                         found = true;
                         nodeToSwitchIsRed = true;
@@ -212,18 +212,18 @@ public class DrawingFragment extends Fragment implements DrawingFragmentListener
             //pokud si kliknul na uzel, tak mu prohod barvu
             if (found){
                 if (nodeToSwitchIsRed){
-                    circles.add(nodeToSwitch);
-                    redCircles.remove(Objects.requireNonNull(nodeToSwitch));
+                    nodes.add(nodeToSwitch);
+                    redNodes.remove(Objects.requireNonNull(nodeToSwitch));
                 }else {
                     //přehoď všechny červeny uzly na normální
-                    circles.addAll(redCircles);
-                    redCircles.clear(); //to avoid ConcurrentModificationException
+                    nodes.addAll(redNodes);
+                    redNodes.clear(); //to avoid ConcurrentModificationException
                     //a teď samotné prohození
-                    redCircles.add(nodeToSwitch);
-                    circles.remove(Objects.requireNonNull(nodeToSwitch));
+                    redNodes.add(nodeToSwitch);
+                    nodes.remove(Objects.requireNonNull(nodeToSwitch));
                 }
             }
-            paintView.setMap(new Map(map.getCustomLines(), circles, map.getRedLineList(), redCircles));
+            paintView.setMap(new Map(map.getEdges(), nodes, map.getRedEdgesList(), redNodes));
         }
     }
 

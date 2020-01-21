@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 import cz.uhk.graphtheory.abstraction.AbstractFragment;
 import cz.uhk.graphtheory.model.Coordinate;
-import cz.uhk.graphtheory.model.CustomLine;
+import cz.uhk.graphtheory.model.Edge;
 import cz.uhk.graphtheory.model.Map;
 import cz.uhk.graphtheory.util.GraphGenerator;
 
@@ -62,24 +62,24 @@ public class NinthActivityFragment extends AbstractFragment {
         ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfEdges);
 //        Collections.sort(nodesToSet);
 
-        ArrayList<CustomLine> redLinesList = new ArrayList<>();
+        ArrayList<Edge> redEdgesList = new ArrayList<>();
         for (int i = 0; i < nodesToSet.size(); i++) {
             if (i == nodesToSet.size() - 3 && i > 0) {
-                redLinesList.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(i - 1)));
-                redLinesList.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(i + 1)));
-                redLinesList.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(i + 2)));
+                redEdgesList.add(new Edge(nodesToSet.get(i), nodesToSet.get(i - 1)));
+                redEdgesList.add(new Edge(nodesToSet.get(i), nodesToSet.get(i + 1)));
+                redEdgesList.add(new Edge(nodesToSet.get(i), nodesToSet.get(i + 2)));
             } else if (i < nodesToSet.size() - 3 && i > 0) {
-                redLinesList.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(i - 1)));
+                redEdgesList.add(new Edge(nodesToSet.get(i), nodesToSet.get(i - 1)));
             }
         }
         //k vytvořené kostře přidám náhodně najaké hrany
-        ArrayList<CustomLine> edges = GraphGenerator.generateRandomEdges(nodesToSet);
-        for (CustomLine redLine : redLinesList){
-            if (edges.stream().noneMatch(m -> m.isLineSame(redLine))){
+        ArrayList<Edge> edges = GraphGenerator.generateRandomEdges(nodesToSet);
+        for (Edge redLine : redEdgesList){
+            if (edges.stream().noneMatch(m -> m.isEdgeSame(redLine))){
                 edges.add(redLine);
             }
         }
-        return new Map(edges, nodesToSet, redLinesList);
+        return new Map(edges, nodesToSet, redEdgesList);
     }
 
 

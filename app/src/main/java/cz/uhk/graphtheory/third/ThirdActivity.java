@@ -174,11 +174,11 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
         Map secondMap = new Map(splittedMap2);
         mapToCheck = PathGenerator.createComplementToGraph(secondMap); //v tomhle bude mapa, vuci ktere budeme kreslit to, co vyvtvoril uzivatel
 
-        splittedMap2.setCustomLines(new ArrayList<>());
+        splittedMap2.setEdges(new ArrayList<>());
 
-        splittedMap.getCircles().addAll(splittedMap2.getCircles());
-        splittedMap.getCustomLines().addAll(splittedMap2.getCustomLines());
-        splittedMap.getRedLineList().addAll(splittedMap2.getRedLineList());
+        splittedMap.getNodes().addAll(splittedMap2.getNodes());
+        splittedMap.getEdges().addAll(splittedMap2.getEdges());
+        splittedMap.getRedEdgesList().addAll(splittedMap2.getRedEdgesList());
 
         drawingFragment.setUserGraph(splittedMap);
     }

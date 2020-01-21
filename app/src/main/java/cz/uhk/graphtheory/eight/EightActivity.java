@@ -286,7 +286,7 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
         isTreeGeneratable = random.nextBoolean();
         amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
         Map mapToSet = new Map(new ArrayList<>(), GraphGenerator.generateNodes(height, width, 15, amountOfNodes));
-        int nodesCount = mapToSet.getCircles().size();
+        int nodesCount = mapToSet.getNodes().size();
         int number;
         if (isTreeGeneratable) {
             number = nodesCount - 1;

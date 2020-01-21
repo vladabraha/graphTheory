@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 import cz.uhk.graphtheory.model.Coordinate;
-import cz.uhk.graphtheory.model.CustomLine;
+import cz.uhk.graphtheory.model.Edge;
 import cz.uhk.graphtheory.model.Map;
 
 public class PathGenerator {
@@ -17,16 +17,16 @@ public class PathGenerator {
      * @return list primek, kterymi prochazi cesta
      */
     public static ArrayList<Coordinate> generatePath(Map map) {
-        int numberOfNodes = map.getCircles().size();
+        int numberOfNodes = map.getNodes().size();
         int pathLength = (int) Math.round(Math.random() * numberOfNodes);
-        if (pathLength < ((map.getCircles().size() / 2) + 1))
-            pathLength = (map.getCircles().size() / 2) + 1;
+        if (pathLength < ((map.getNodes().size() / 2) + 1))
+            pathLength = (map.getNodes().size() / 2) + 1;
 
         List<Integer> usedIndexes = new ArrayList<>(pathLength);
         for (int i = 0; i < pathLength; i++) {
             boolean found = false;
             while (!found) {
-                int randomIndex = (int) (Math.random() * map.getCircles().size());
+                int randomIndex = (int) (Math.random() * map.getNodes().size());
                 if (!usedIndexes.contains(randomIndex)) {
                     usedIndexes.add(randomIndex);
                     found = true;
@@ -34,7 +34,7 @@ public class PathGenerator {
             }
         }
         ArrayList<Coordinate> path = new ArrayList<>();
-        ArrayList<Coordinate> circleCoordinates = map.getCircles();
+        ArrayList<Coordinate> circleCoordinates = map.getNodes();
         for (int i = 0; i < usedIndexes.size(); i++) {
             if (i != 0) {
                 path.add(circleCoordinates.get(i - 1));
@@ -51,19 +51,19 @@ public class PathGenerator {
      * @return list primek, kterymi prochazi tah
      */
     public static ArrayList<Coordinate> generateTrail(Map map) {
-        ArrayList<Coordinate> nodes = map.getCircles();
-        int numberOfNodes = map.getCircles().size();
+        ArrayList<Coordinate> nodes = map.getNodes();
+        int numberOfNodes = map.getNodes().size();
 
         Random ran = new Random();
-        int randomNumberOfRedLines = ran.nextInt(((numberOfNodes * (numberOfNodes - 1)) / 2)); //definice úplného grafu
-        if (randomNumberOfRedLines < 2) randomNumberOfRedLines = 2;
+        int randomNumberOfredEdges = ran.nextInt(((numberOfNodes * (numberOfNodes - 1)) / 2)); //definice úplného grafu
+        if (randomNumberOfredEdges < 2) randomNumberOfredEdges = 2;
 
-        ArrayList<CustomLine> customLines = new ArrayList<>();
+        ArrayList<Edge> edges = new ArrayList<>();
         ArrayList<Coordinate> tah = new ArrayList<>();
 
         int randomNode = 0;
         int randomNode2 = 0;
-        for (int i = 0; i < randomNumberOfRedLines; i++) {
+        for (int i = 0; i < randomNumberOfredEdges; i++) {
             boolean find = false;
             boolean isAvailable = true;
             //pokud cyklus doběhne do bodu, ze kterého už není dostupná cesta ven, cyklus skončí
@@ -77,15 +77,15 @@ public class PathGenerator {
                     randomNode = (int) (numberOfNodes * Math.random());
                 } while (randomNode == randomNode2);
 
-                for (CustomLine customLine : customLines) {
-                    if (customLine.isPointInStartOrEndOfLine(nodes.get(randomNode)) && customLine.isPointInStartOrEndOfLine(nodes.get(randomNode2))) {
+                for (Edge edge : edges) {
+                    if (edge.isPointInStartOrEndOfLine(nodes.get(randomNode)) && edge.isPointInStartOrEndOfLine(nodes.get(randomNode2))) {
                         isAvailable = false;
                         break;
                     }
                 }
                 if (isAvailable) {
                     find = true;
-                    customLines.add(new CustomLine(nodes.get(randomNode), nodes.get(randomNode2)));
+                    edges.add(new Edge(nodes.get(randomNode), nodes.get(randomNode2)));
                     tah.add(nodes.get(randomNode));
                     tah.add(nodes.get(randomNode2));
                 }
@@ -99,7 +99,7 @@ public class PathGenerator {
         ArrayList<Coordinate> path;
         do {
             path = generatePath(map);
-        } while (path.size() < (map.getCircles().size() - 1));
+        } while (path.size() < (map.getNodes().size() - 1));
 
         path.add(path.get(path.size() - 1));
         path.add(path.get(0));
@@ -107,25 +107,25 @@ public class PathGenerator {
     }
 
     public static Map createComplementToGraph(Map firstMap) {
-        ArrayList<Coordinate> nodes = firstMap.getCircles();
-        ArrayList<CustomLine> lines = firstMap.getCustomLines();
-        ArrayList<CustomLine> redLines = new ArrayList<>();
+        ArrayList<Coordinate> nodes = firstMap.getNodes();
+        ArrayList<Edge> lines = firstMap.getEdges();
+        ArrayList<Edge> redEdges = new ArrayList<>();
 
         for (Coordinate coordinate : nodes) {
             ArrayList<Coordinate> alreadyFoundConnection = new ArrayList<>();
-            for (CustomLine customLine : lines) {
-                if (customLine.getFrom().equal(coordinate)) {
-                    CustomLine testLine = new CustomLine(customLine.getTo(), coordinate);
+            for (Edge edge : lines) {
+                if (edge.getFrom().equal(coordinate)) {
+                    Edge testLine = new Edge(edge.getTo(), coordinate);
                     //projde vsechny body v alreadyFoundConnection a mrkne, jestli nejakej bod n se rovna custom line.getto
-                    if (alreadyFoundConnection.stream().noneMatch(n -> n.equal(customLine.getTo())) && redLines.stream().noneMatch(m -> m.isLineSame(testLine))
-                            && !coordinate.equal(customLine.getTo())) {
-                        alreadyFoundConnection.add(customLine.getTo());
+                    if (alreadyFoundConnection.stream().noneMatch(n -> n.equal(edge.getTo())) && redEdges.stream().noneMatch(m -> m.isEdgeSame(testLine))
+                            && !coordinate.equal(edge.getTo())) {
+                        alreadyFoundConnection.add(edge.getTo());
                     }
-                } else if (customLine.getTo().equal(coordinate)) {
-                    CustomLine testLine = new CustomLine(customLine.getFrom(), coordinate);
-                    if (alreadyFoundConnection.stream().noneMatch(n -> n.equal(customLine.getFrom())) && redLines.stream().noneMatch(m -> m.isLineSame(testLine))
-                            && !coordinate.equal(customLine.getFrom())) {
-                        alreadyFoundConnection.add(customLine.getFrom());
+                } else if (edge.getTo().equal(coordinate)) {
+                    Edge testLine = new Edge(edge.getFrom(), coordinate);
+                    if (alreadyFoundConnection.stream().noneMatch(n -> n.equal(edge.getFrom())) && redEdges.stream().noneMatch(m -> m.isEdgeSame(testLine))
+                            && !coordinate.equal(edge.getFrom())) {
+                        alreadyFoundConnection.add(edge.getFrom());
                     }
                 }
             }
@@ -133,76 +133,76 @@ public class PathGenerator {
             if (alreadyFoundConnection.size() != (nodes.size() - 1)) {
                 for (Coordinate allNodes : nodes) {
                     if (alreadyFoundConnection.stream().noneMatch(n -> n.equal(allNodes)) && !allNodes.equal(coordinate)) {
-                        redLines.add(new CustomLine(allNodes, coordinate));
+                        redEdges.add(new Edge(allNodes, coordinate));
                     }
                 }
             }
         }
-        firstMap.setRedLineList(redLines);
-        firstMap.setCustomLines(new ArrayList<>());
+        firstMap.setRedEdgesList(redEdges);
+        firstMap.setEdges(new ArrayList<>());
         return firstMap;
     }
 
     //myšlenka, projedu postupne vrcholy a propojim je jak jdou za sebou a kdyz tam ještě nemaj normální caru z generatoru, tak ho tam taky pridam
-    public static Map createHamiltonMapWithoutRedLines(int height, int width) {
+    public static Map createHamiltonMapWithoutredEdges(int height, int width) {
         final int MAXIMUM_AMOUNT_OF_NODES = 9;
         final int MINIMUM_AMOUNT_OF_NODES = 4;
         int amountOfNodes = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
         if (amountOfNodes < MINIMUM_AMOUNT_OF_NODES)
             amountOfNodes = MINIMUM_AMOUNT_OF_NODES;
         ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, 15, amountOfNodes);
-        ArrayList<CustomLine> lines = new ArrayList<>();
-        ArrayList<CustomLine> redLines = new ArrayList<>();
-        ArrayList<CustomLine> preGeneratedLines = GraphGenerator.generateRandomEdges(nodesToSet);
-        ArrayList<CustomLine> hamiltonRedLines = new ArrayList<>();
+        ArrayList<Edge> lines = new ArrayList<>();
+        ArrayList<Edge> redEdges = new ArrayList<>();
+        ArrayList<Edge> preGeneratedLines = GraphGenerator.generateRandomEdges(nodesToSet);
+        ArrayList<Edge> hamiltonredEdges = new ArrayList<>();
 
         for (int i = 0; i < nodesToSet.size(); i++) {
-            CustomLine line;
-            CustomLine redLine;
+            Edge line;
+            Edge redLine;
             if (i < nodesToSet.size() - 1) {
-                line = new CustomLine(nodesToSet.get(i), nodesToSet.get(i + 1));
-                redLine = new CustomLine(nodesToSet.get(i), nodesToSet.get(i + 1));
+                line = new Edge(nodesToSet.get(i), nodesToSet.get(i + 1));
+                redLine = new Edge(nodesToSet.get(i), nodesToSet.get(i + 1));
             } else {
-                line = new CustomLine(nodesToSet.get(i), nodesToSet.get(0));
-                redLine = new CustomLine(nodesToSet.get(i), nodesToSet.get(0));
+                line = new Edge(nodesToSet.get(i), nodesToSet.get(0));
+                redLine = new Edge(nodesToSet.get(i), nodesToSet.get(0));
             }
             lines.add(line);
-            hamiltonRedLines.add(redLine);
+            hamiltonredEdges.add(redLine);
         }
 
-        for (int j = 0; j < hamiltonRedLines.size(); j++) {
+        for (int j = 0; j < hamiltonredEdges.size(); j++) {
             int finalJ = j;
-            if (preGeneratedLines.stream().noneMatch(line -> line.isLineSame(hamiltonRedLines.get(finalJ)))) {
+            if (preGeneratedLines.stream().noneMatch(line -> line.isEdgeSame(hamiltonredEdges.get(finalJ)))) {
                 preGeneratedLines.add(lines.get(j));
             }
         }
 
-        return new Map(preGeneratedLines, nodesToSet, redLines);
+        return new Map(preGeneratedLines, nodesToSet, redEdges);
     }
 
-    public static Map createEulerMapWithoutRedLines(int height, int width) {
+    public static Map createEulerMapWithoutredEdges(int height, int width) {
         final int MAXIMUM_AMOUNT_OF_NODES = 9;
         final int MINIMUM_AMOUNT_OF_NODES = 4;
         int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
         if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES)
             amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
         ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, 15, amountOfEdges);
-        ArrayList<CustomLine> lines = new ArrayList<>();
-        ArrayList<CustomLine> redLines = new ArrayList<>();
+        ArrayList<Edge> lines = new ArrayList<>();
+        ArrayList<Edge> redEdges = new ArrayList<>();
 
         for (int i = 0; i < nodesToSet.size(); i++) {
             if (i < nodesToSet.size() - 1) {
-                lines.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(i + 1)));
+                lines.add(new Edge(nodesToSet.get(i), nodesToSet.get(i + 1)));
             } else {
-                lines.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(2)));
+                lines.add(new Edge(nodesToSet.get(i), nodesToSet.get(2)));
             }
         }
         if (nodesToSet.size() > 4) {
-            lines.add(new CustomLine(nodesToSet.get(0), nodesToSet.get(2)));
-            lines.add(new CustomLine(nodesToSet.get(2), nodesToSet.get(4)));
-            lines.add(new CustomLine(nodesToSet.get(4), nodesToSet.get(1)));
+            lines.add(new Edge(nodesToSet.get(0), nodesToSet.get(2)));
+            lines.add(new Edge(nodesToSet.get(2), nodesToSet.get(4)));
+            lines.add(new Edge(nodesToSet.get(4), nodesToSet.get(1)));
         }
 
-        return new Map(lines, nodesToSet, redLines);
+        return new Map(lines, nodesToSet, redEdges);
     }
 }

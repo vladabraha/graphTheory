@@ -279,12 +279,12 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
     private void setGraphAccordingCurrentActivity(int width, int height) {
         switch (getDisplayedActivity()) {
             case "euleruv":
-                eulerMap = PathGenerator.createEulerMapWithoutRedLines(height, width);
+                eulerMap = PathGenerator.createEulerMapWithoutredEdges(height, width);
                 drawingFragment.setUserGraph(eulerMap);
                 bottomNavigationView.setSelectedItemId(R.id.path);
                 break;
             case "hamiltonovsky":
-                hamiltonMap = PathGenerator.createHamiltonMapWithoutRedLines(height, width);
+                hamiltonMap = PathGenerator.createHamiltonMapWithoutredEdges(height, width);
                 drawingFragment.setUserGraph(hamiltonMap);
                 bottomNavigationView.setSelectedItemId(R.id.path);
                 break;
@@ -302,10 +302,10 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
         showToastMessageAccordingCurrentActivity();
         switch (getDisplayedActivity()) {
             case "euleruv":
-                drawingFragment.setUserGraph(PathGenerator.createEulerMapWithoutRedLines(height, width));
+                drawingFragment.setUserGraph(PathGenerator.createEulerMapWithoutredEdges(height, width));
                 break;
             case "hamiltonovsky":
-                drawingFragment.setUserGraph(PathGenerator.createHamiltonMapWithoutRedLines(height, width));
+                drawingFragment.setUserGraph(PathGenerator.createHamiltonMapWithoutredEdges(height, width));
                 break;
         }
 

@@ -263,7 +263,7 @@ public class FirstActivity extends AbstractActivity implements TabLayoutFragment
         int amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
         Map map = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
         drawingFragment.setUserGraph(map);
-        sizeOfMap = map.getCircles().size() - 1;
+        sizeOfMap = map.getNodes().size() - 1;
         showProperToastMessage();
         setProperTitleToBottomNavigationMenu(displayedActivity);
     }
@@ -278,7 +278,7 @@ public class FirstActivity extends AbstractActivity implements TabLayoutFragment
         int amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
         Map map = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
         drawingFragment.setUserGraph(map);
-        sizeOfMap = map.getCircles().size() - 1;
+        sizeOfMap = map.getNodes().size() - 1;
         showProperToastMessage();
     }
 

@@ -29,7 +29,7 @@ import cz.uhk.graphtheory.common.TabLayoutFragment;
 import cz.uhk.graphtheory.common.TextFragment;
 import cz.uhk.graphtheory.database.DatabaseConnector;
 import cz.uhk.graphtheory.model.Coordinate;
-import cz.uhk.graphtheory.model.CustomLine;
+import cz.uhk.graphtheory.model.Edge;
 import cz.uhk.graphtheory.model.Map;
 import cz.uhk.graphtheory.util.GraphConverter;
 import cz.uhk.graphtheory.util.GraphGenerator;
@@ -190,13 +190,13 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
             }
 
             generatedMap = GraphGenerator.generateMap(height, width, fourthActivityFragment.BRUSH_SIZE, amountOfEdges);
-        } while (generatedMap.getCircles().size() < 3);
+        } while (generatedMap.getNodes().size() < 3);
         return generatedMap;
     }
 
     private Map createSameGraph(Map firstMap) {
         Map secondMap = new Map(firstMap);
-        int randomNumber = (int) Math.round(Math.random() * secondMap.getCircles().size());
+        int randomNumber = (int) Math.round(Math.random() * secondMap.getNodes().size());
 
         for (int i = 0; i < randomNumber; i++) {
 
@@ -206,20 +206,20 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
 
             //vezmu náhodný uzel a tomu změním souřadnice + všem elementům se stejnou souřadnicí
 
-            int randomIndex = (int) Math.round(Math.random() * (secondMap.getCircles().size() - 1));
-            Coordinate oldCoordinate = secondMap.getCircles().get(randomIndex);
+            int randomIndex = (int) Math.round(Math.random() * (secondMap.getNodes().size() - 1));
+            Coordinate oldCoordinate = secondMap.getNodes().get(randomIndex);
             Coordinate newCoordinate = new Coordinate(newXCoordinate, newYCoordinate);
 
-            secondMap.getCircles().set(randomIndex, newCoordinate);
-            ArrayList<CustomLine> customLines = secondMap.getCustomLines();
-            for (int j = 0; j < customLines.size(); j++) {
-                CustomLine customLine = customLines.get(j);
-                if (customLine.getTo().equal(oldCoordinate)) {
-                    CustomLine newCustomLine = new CustomLine(customLine.getFrom(), newCoordinate);
-                    customLines.set(j, newCustomLine);
-                } else if (customLine.getFrom().equal(oldCoordinate)) {
-                    CustomLine newCustomLine = new CustomLine(newCoordinate, customLine.getTo());
-                    customLines.set(j, newCustomLine);
+            secondMap.getNodes().set(randomIndex, newCoordinate);
+            ArrayList<Edge> edges = secondMap.getEdges();
+            for (int j = 0; j < edges.size(); j++) {
+                Edge edge = edges.get(j);
+                if (edge.getTo().equal(oldCoordinate)) {
+                    Edge newEdge = new Edge(edge.getFrom(), newCoordinate);
+                    edges.set(j, newEdge);
+                } else if (edge.getFrom().equal(oldCoordinate)) {
+                    Edge newEdge = new Edge(newCoordinate, edge.getTo());
+                    edges.set(j, newEdge);
                 }
             }
         }
@@ -232,26 +232,26 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
         Map secondMap;
         do {
             secondMap = new Map(firstMap);
-            ArrayList<CustomLine> customLines = secondMap.getCustomLines();
-            ArrayList<Coordinate> circles = secondMap.getCircles();
+            ArrayList<Edge> edges = secondMap.getEdges();
+            ArrayList<Coordinate> nodes = secondMap.getNodes();
 
             //myšlenka, projdu nekolikrat graf, smazu z neho bod a vsechny cary, ktere jsou k nemu propojene
             // nahradim ho novym uzlem a nahodnym poctem novych car (nemusim ani hledat jestli uz nejsou s nim propojeny, protoze jsou novy)
-            int randomNumber = (int) Math.round(Math.random() * secondMap.getCustomLines().size());
+            int randomNumber = (int) Math.round(Math.random() * secondMap.getEdges().size());
             for (int i = 0; i < randomNumber; i++) {
 
                 //vezmu nahodny bod a ten smazu
-                int randomIndex = (int) Math.round(Math.random() * (secondMap.getCircles().size() - 1));
-                Coordinate oldCoordinate = secondMap.getCircles().get(randomIndex);
-                secondMap.getCircles().remove(randomIndex);
+                int randomIndex = (int) Math.round(Math.random() * (secondMap.getNodes().size() - 1));
+                Coordinate oldCoordinate = secondMap.getNodes().get(randomIndex);
+                secondMap.getNodes().remove(randomIndex);
 
                 //projdu vsechny primky a mrknu jestli neprochazely tim bodem
-                Iterator<CustomLine> iterator = customLines.iterator();
+                Iterator<Edge> iterator = edges.iterator();
                 while (iterator.hasNext()) {
-                    CustomLine customLine = iterator.next();
-                    if (customLine.getTo().equal(oldCoordinate)) {
+                    Edge edge = iterator.next();
+                    if (edge.getTo().equal(oldCoordinate)) {
                         iterator.remove();
-                    } else if (customLine.getFrom().equal(oldCoordinate)) {
+                    } else if (edge.getFrom().equal(oldCoordinate)) {
                         iterator.remove();
                     }
                 }
@@ -261,22 +261,22 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
                 float newYCoordinate = (float) (Math.random() * height);
 
                 Coordinate newCoordinate = new Coordinate(newXCoordinate, newYCoordinate);
-                circles.add(newCoordinate);
+                nodes.add(newCoordinate);
 
-                int randomNumber2 = (int) Math.round(Math.random() * (secondMap.getCircles().size() - 1));
+                int randomNumber2 = (int) Math.round(Math.random() * (secondMap.getNodes().size() - 1));
                 for (int k = 0; k < randomNumber2; k++) {
                     //nalezeni nahodneho bodu se kterym novy bod propojime
                     boolean found = false;
                     int randomIndex2;
                     do {
-                        randomIndex2 = (int) Math.round(Math.random() * (secondMap.getCircles().size() - 1));
-                        if (randomIndex2 != secondMap.getCircles().size() - 1) found = true;
+                        randomIndex2 = (int) Math.round(Math.random() * (secondMap.getNodes().size() - 1));
+                        if (randomIndex2 != secondMap.getNodes().size() - 1) found = true;
                     } while (!found);
-                    CustomLine newCustomLine = new CustomLine(circles.get(randomIndex2), newCoordinate);
-                    customLines.add(newCustomLine);
+                    Edge newEdge = new Edge(nodes.get(randomIndex2), newCoordinate);
+                    edges.add(newEdge);
                 }
             }
-        } while (secondMap.getCircles().size() < 3);
+        } while (secondMap.getNodes().size() < 3);
         return secondMap;
     }
 
@@ -306,9 +306,9 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
         ArrayList<Map> secondMapTwice = GraphConverter.convertMapsToSplitScreenArray(secondMap, height);
         secondMap = secondMapTwice.get(1);
 
-        firstMap.getCustomLines().addAll(secondMap.getCustomLines());
-        firstMap.getCircles().addAll(secondMap.getCircles());
-        firstMap.getRedLineList().addAll(secondMap.getRedLineList());
+        firstMap.getEdges().addAll(secondMap.getEdges());
+        firstMap.getNodes().addAll(secondMap.getNodes());
+        firstMap.getRedEdgesList().addAll(secondMap.getRedEdgesList());
         drawingFragment.setUserGraph(firstMap);
         drawingFragment.changeDrawingMethod("circle_move"); //this will enable moving nodes
     }

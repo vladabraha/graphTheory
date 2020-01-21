@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 import cz.uhk.graphtheory.abstraction.AbstractFragment;
 import cz.uhk.graphtheory.model.Coordinate;
-import cz.uhk.graphtheory.model.CustomLine;
+import cz.uhk.graphtheory.model.Edge;
 import cz.uhk.graphtheory.model.Map;
 import cz.uhk.graphtheory.util.GraphGenerator;
 
@@ -53,8 +53,8 @@ public class SeventhActivityFragment extends AbstractFragment {
 
                         //myšlenka - pro každý vrchol spočítám všechny čáry, který obsahuji daný uzel a mám jednu hodnotu skore grafu
                         Map mapToSet = GraphGenerator.generateMap(height, width, BRUSH_SIZE, amountOfEdges);
-                        ArrayList<Coordinate> nodes = mapToSet.getCircles();
-                        ArrayList<CustomLine> lines = mapToSet.getCustomLines();
+                        ArrayList<Coordinate> nodes = mapToSet.getNodes();
+                        ArrayList<Edge> lines = mapToSet.getEdges();
 
                         ArrayList<Integer> graphScore = computeGraphScore(nodes, lines);
 
@@ -69,12 +69,12 @@ public class SeventhActivityFragment extends AbstractFragment {
     }
 
     @NonNull
-    public static ArrayList<Integer> computeGraphScore(ArrayList<Coordinate> nodes, ArrayList<CustomLine> lines) {
+    public static ArrayList<Integer> computeGraphScore(ArrayList<Coordinate> nodes, ArrayList<Edge> lines) {
         ArrayList<Integer> graphScore = new ArrayList<>();
         for (Coordinate coordinate : nodes){
             int score = 0;
-            for (CustomLine customLine : lines){
-                if (customLine.isPointInStartOrEndOfLine(coordinate)) score++;
+            for (Edge edge : lines){
+                if (edge.isPointInStartOrEndOfLine(coordinate)) score++;
             }
             graphScore.add(score);
         }

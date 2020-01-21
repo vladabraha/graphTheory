@@ -4,18 +4,18 @@ import androidx.annotation.NonNull;
 
 import org.jetbrains.annotations.NotNull;
 
-public class CustomLine {
+public class Edge {
     private Coordinate from;
     private Coordinate to;
 
-    public CustomLine(Coordinate from, Coordinate to) {
+    public Edge(Coordinate from, Coordinate to) {
         this.from = from;
         this.to = to;
     }
 
-    public CustomLine(CustomLine customLine) {
-        Coordinate from = customLine.getFrom();
-        Coordinate to = customLine.getTo();
+    public Edge(Edge edge) {
+        Coordinate from = edge.getFrom();
+        Coordinate to = edge.getTo();
         this.from = new Coordinate(from.x, from.y);
         this.to = new Coordinate(to.x, to.y);
     }
@@ -42,9 +42,9 @@ public class CustomLine {
         }else return coordinate.x == to.x && coordinate.y == to.y;
     }
 
-    public boolean isLineSame(CustomLine customLine){
-        if (from.equal(customLine.getFrom()) || from.equal(customLine.getTo())){
-            return to.equal(customLine.getFrom()) || to.equal(customLine.getTo());
+    public boolean isEdgeSame(Edge edge){
+        if (from.equal(edge.getFrom()) || from.equal(edge.getTo())){
+            return to.equal(edge.getFrom()) || to.equal(edge.getTo());
         }
         return false;
     }
