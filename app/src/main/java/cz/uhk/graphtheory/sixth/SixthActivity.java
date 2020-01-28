@@ -29,7 +29,7 @@ import cz.uhk.graphtheory.common.TabLayoutFragment;
 import cz.uhk.graphtheory.common.TextFragment;
 import cz.uhk.graphtheory.database.DatabaseConnector;
 import cz.uhk.graphtheory.interfaces.DrawingFragmentListener;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Graph;
 import cz.uhk.graphtheory.util.GraphChecker;
 import cz.uhk.graphtheory.util.PathGenerator;
 
@@ -49,7 +49,7 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
     int height, width;
     private boolean isViewCreated;
 
-    Map eulerMap, hamiltonMap;
+    Graph eulerGraph, hamiltonGraph;
 
     DatabaseConnector databaseConnector;
 
@@ -92,7 +92,7 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
                             break;
                         case "false":
                             Toast.makeText(SixthActivity.this, "Jejda, špatně, mkrni na to ještě jednou", Toast.LENGTH_LONG).show();
-                            drawingFragment.setUserGraph(hamiltonMap);
+                            drawingFragment.setUserGraph(hamiltonGraph);
                             break;
                         case "chybi ohraniceni cervenou carou":
                             Toast.makeText(SixthActivity.this, "Zapomněl jsi označit kružnici červenou čarou", Toast.LENGTH_LONG).show();
@@ -113,7 +113,7 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
                             break;
                         case "false":
                             Toast.makeText(SixthActivity.this, "Jejda, špatně, mkrni na to ještě jednou", Toast.LENGTH_LONG).show();
-                            drawingFragment.setUserGraph(eulerMap);
+                            drawingFragment.setUserGraph(eulerGraph);
                             break;
                         case "chybi ohraniceni cervenou carou":
                             Toast.makeText(SixthActivity.this, "Zapomněl jsi označit kružnici červenou čarou", Toast.LENGTH_LONG).show();
@@ -279,13 +279,13 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
     private void setGraphAccordingCurrentActivity(int width, int height) {
         switch (getDisplayedActivity()) {
             case "euleruv":
-                eulerMap = PathGenerator.createEulerMapWithoutredEdges(height, width);
-                drawingFragment.setUserGraph(eulerMap);
+                eulerGraph = PathGenerator.createEulerGraphWithoutredEdges(height, width);
+                drawingFragment.setUserGraph(eulerGraph);
                 bottomNavigationView.setSelectedItemId(R.id.path);
                 break;
             case "hamiltonovsky":
-                hamiltonMap = PathGenerator.createHamiltonMapWithoutredEdges(height, width);
-                drawingFragment.setUserGraph(hamiltonMap);
+                hamiltonGraph = PathGenerator.createHamiltonGraphWithoutredEdges(height, width);
+                drawingFragment.setUserGraph(hamiltonGraph);
                 bottomNavigationView.setSelectedItemId(R.id.path);
                 break;
         }
@@ -302,10 +302,10 @@ public class SixthActivity extends AbstractActivity implements TabLayoutFragment
         showToastMessageAccordingCurrentActivity();
         switch (getDisplayedActivity()) {
             case "euleruv":
-                drawingFragment.setUserGraph(PathGenerator.createEulerMapWithoutredEdges(height, width));
+                drawingFragment.setUserGraph(PathGenerator.createEulerGraphWithoutredEdges(height, width));
                 break;
             case "hamiltonovsky":
-                drawingFragment.setUserGraph(PathGenerator.createHamiltonMapWithoutredEdges(height, width));
+                drawingFragment.setUserGraph(PathGenerator.createHamiltonGraphWithoutredEdges(height, width));
                 break;
         }
 

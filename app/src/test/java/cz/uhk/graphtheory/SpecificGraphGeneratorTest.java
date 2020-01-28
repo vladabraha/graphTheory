@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 import cz.uhk.graphtheory.eight.EightActivityFragment;
 import cz.uhk.graphtheory.model.Coordinate;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Graph;
 import cz.uhk.graphtheory.ninth.NinthActivityFragment;
 import cz.uhk.graphtheory.seventh.SeventhActivityFragment;
 import cz.uhk.graphtheory.sixth.SixthActivityFragment;
@@ -29,8 +29,8 @@ public class SpecificGraphGeneratorTest {
 
     @Test
     public void secondActivityTest(){
-        Map generatedArticulation = SpecificGraphGenerator.createMapWithArticulation(HEIGHT, WIDTH, BRUSH_SIZE);
-        Map generatedBridge = SpecificGraphGenerator.createMapWithABridge(HEIGHT, WIDTH, BRUSH_SIZE);
+        Graph generatedArticulation = SpecificGraphGenerator.createGraphWithArticulation(HEIGHT, WIDTH, BRUSH_SIZE);
+        Graph generatedBridge = SpecificGraphGenerator.createGraphWithABridge(HEIGHT, WIDTH, BRUSH_SIZE);
 
         String isBridgeValid = GraphChecker.checkIfGraphContainsBridge(generatedBridge);
         String isArticulationValid = GraphChecker.checkIfGraphContainsArticulation(generatedArticulation);
@@ -42,14 +42,14 @@ public class SpecificGraphGeneratorTest {
     @Test
     public void thirdActivityTest(){
 
-        ArrayList<Map> complementMaps = ThirdActivityFragment.createComplementGraphs(BRUSH_SIZE, HEIGHT, WIDTH);
-        Map mapGenerated = complementMaps.get(0);
-        mapGenerated.setRedEdgesList(mapGenerated.getEdges());
+        ArrayList<Graph> complementGraphs = ThirdActivityFragment.createComplementGraphs(BRUSH_SIZE, HEIGHT, WIDTH);
+        Graph graphGenerated = complementGraphs.get(0);
+        graphGenerated.setRedEdgesList(graphGenerated.getEdges());
 
-        Map userGraph = complementMaps.get(1);
+        Graph userGraph = complementGraphs.get(1);
         userGraph.setEdges(userGraph.getRedEdgesList());
 
-        boolean isValid = GraphChecker.checkIfGraphIsComplementGraph(complementMaps.get(0), mapGenerated);
+        boolean isValid = GraphChecker.checkIfGraphIsComplementGraph(complementGraphs.get(0), graphGenerated);
         Assert.assertTrue("Doplněk do grafu není správný", isValid);
 
     }
@@ -61,8 +61,8 @@ public class SpecificGraphGeneratorTest {
 
     @Test
     public void fifthActivityTest(){
-        Map map = SpecificGraphGenerator.generateBipartiteGraph(HEIGHT, WIDTH, BRUSH_SIZE);
-        boolean isValid = GraphChecker.checkIfGraphIsBipartite(map);
+        Graph graph = SpecificGraphGenerator.generateBipartiteGraph(HEIGHT, WIDTH, BRUSH_SIZE);
+        boolean isValid = GraphChecker.checkIfGraphIsBipartite(graph);
         Assert.assertTrue("Bipartitní graf se negeneruje správně", isValid);
     }
 
@@ -71,11 +71,11 @@ public class SpecificGraphGeneratorTest {
 
         ArrayList<Coordinate> nodes = GraphGenerator.generateNodes(HEIGHT ,WIDTH,BRUSH_SIZE,12);
 
-        Map hamiltonMap = SixthActivityFragment.createHamiltonMap(nodes);
-        Map eulerMap = SixthActivityFragment.createEulerMap(nodes);
+        Graph hamiltonGraph = SixthActivityFragment.createHamiltonMap(nodes);
+        Graph eulerGraph = SixthActivityFragment.createEulerMap(nodes);
 
-        String isEulerMapValid = GraphChecker.checkIfGraphHasEulerPath(eulerMap);
-        String isHamiltonMapValid = GraphChecker.checkIfGraphContainsHamiltonCircle(hamiltonMap);
+        String isEulerMapValid = GraphChecker.checkIfGraphHasEulerPath(eulerGraph);
+        String isHamiltonMapValid = GraphChecker.checkIfGraphContainsHamiltonCircle(hamiltonGraph);
 
         Assert.assertEquals("eulerova mapa neni vygenerována špatně", isEulerMapValid,"true");
         Assert.assertEquals("hamiltonova mapa neni vygenerována špatně", isHamiltonMapValid,"true");
@@ -85,10 +85,10 @@ public class SpecificGraphGeneratorTest {
     @Test
     public void seventhActivityTest(){
 
-        Map map = GraphGenerator.generateMap(HEIGHT ,WIDTH,BRUSH_SIZE,12);
-        ArrayList<Integer> graphScore = SeventhActivityFragment.computeGraphScore(map.getNodes(), map.getEdges());
+        Graph graph = GraphGenerator.generateGraph(HEIGHT ,WIDTH,BRUSH_SIZE,12);
+        ArrayList<Integer> graphScore = SeventhActivityFragment.computeGraphScore(graph.getNodes(), graph.getEdges());
 
-        boolean isValid = GraphChecker.checkIfGraphHasCorrectScore(map, graphScore);
+        boolean isValid = GraphChecker.checkIfGraphHasCorrectScore(graph, graphScore);
         Assert.assertTrue("Skore grafu se generuje špatně", isValid);
 
     }
@@ -96,11 +96,11 @@ public class SpecificGraphGeneratorTest {
     @Test
     public void eightActivityTest(){
 
-        Map mapWithForrest = EightActivityFragment.generateForrest(BRUSH_SIZE,HEIGHT,WIDTH);
-        Map mapWithTree = EightActivityFragment.generateTree(BRUSH_SIZE,HEIGHT,WIDTH);
+        Graph graphWithForrest = EightActivityFragment.generateForrest(BRUSH_SIZE,HEIGHT,WIDTH);
+        Graph graphWithTree = EightActivityFragment.generateTree(BRUSH_SIZE,HEIGHT,WIDTH);
 
-        boolean isForrestValid = GraphChecker.checkIfGraphHasCertainAmountOfComponent(mapWithForrest, 2);
-        boolean isTreeValid = GraphChecker.checkIfGraphHasCertainAmountOfComponent(mapWithTree, 1);
+        boolean isForrestValid = GraphChecker.checkIfGraphHasCertainAmountOfComponent(graphWithForrest, 2);
+        boolean isTreeValid = GraphChecker.checkIfGraphHasCertainAmountOfComponent(graphWithTree, 1);
 
         Assert.assertTrue("Les se nevygeneroval se 2 komponentami", isForrestValid);
         Assert.assertTrue("Strom se nevygeneroval s 1 komponentou", isTreeValid);
@@ -109,10 +109,10 @@ public class SpecificGraphGeneratorTest {
     @Test
     public void ninthActivityTest(){
 
-        Map userMap = NinthActivityFragment.generateSpanningTree(BRUSH_SIZE, HEIGHT, WIDTH);
-        Map generatedMap = new Map(userMap);
-        generatedMap.setRedEdgesList(new ArrayList<>());
-        String isValid = GraphChecker.checkIfGraphIsSpanningTree(userMap, generatedMap);
+        Graph userGraph = NinthActivityFragment.generateSpanningTree(BRUSH_SIZE, HEIGHT, WIDTH);
+        Graph generatedGraph = new Graph(userGraph);
+        generatedGraph.setRedEdgesList(new ArrayList<>());
+        String isValid = GraphChecker.checkIfGraphIsSpanningTree(userGraph, generatedGraph);
 
         Assert.assertEquals("Kostra grafu se vygenerovala špatně", "true", isValid);
 

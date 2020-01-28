@@ -30,7 +30,7 @@ import cz.uhk.graphtheory.common.TextFragment;
 import cz.uhk.graphtheory.database.DatabaseConnector;
 import cz.uhk.graphtheory.model.Coordinate;
 import cz.uhk.graphtheory.model.Edge;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Graph;
 import cz.uhk.graphtheory.util.GraphConverter;
 import cz.uhk.graphtheory.util.GraphGenerator;
 
@@ -48,7 +48,7 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
     int height;
     int width;
     boolean isGraphSame = false;
-    Map firstMap, secondMap;
+    Graph firstGraph, secondGraph;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,23 +180,23 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
         }
     }
 
-    private Map createMap() {
+    private Graph createGraph() {
         //budeme chtit vygenerovat mapu, ktera ma alespon 3 uzly
-        Map generatedMap;
+        Graph generatedGraph;
         do {
             int amountOfEdges = (int) (Math.random() * FourthActivityFragment.MAXIMUM_AMOUNT_OF_NODES);
             if (amountOfEdges < FourthActivityFragment.MINIMUM_AMOUNT_OF_NODES) {
                 amountOfEdges = FourthActivityFragment.MINIMUM_AMOUNT_OF_NODES;
             }
 
-            generatedMap = GraphGenerator.generateMap(height, width, fourthActivityFragment.BRUSH_SIZE, amountOfEdges);
-        } while (generatedMap.getNodes().size() < 3);
-        return generatedMap;
+            generatedGraph = GraphGenerator.generateGraph(height, width, fourthActivityFragment.BRUSH_SIZE, amountOfEdges);
+        } while (generatedGraph.getNodes().size() < 3);
+        return generatedGraph;
     }
 
-    private Map createSameGraph(Map firstMap) {
-        Map secondMap = new Map(firstMap);
-        int randomNumber = (int) Math.round(Math.random() * secondMap.getNodes().size());
+    private Graph createSameGraph(Graph firstGraph) {
+        Graph secondGraph = new Graph(firstGraph);
+        int randomNumber = (int) Math.round(Math.random() * secondGraph.getNodes().size());
 
         for (int i = 0; i < randomNumber; i++) {
 
@@ -206,12 +206,12 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
 
             //vezmu náhodný uzel a tomu změním souřadnice + všem elementům se stejnou souřadnicí
 
-            int randomIndex = (int) Math.round(Math.random() * (secondMap.getNodes().size() - 1));
-            Coordinate oldCoordinate = secondMap.getNodes().get(randomIndex);
+            int randomIndex = (int) Math.round(Math.random() * (secondGraph.getNodes().size() - 1));
+            Coordinate oldCoordinate = secondGraph.getNodes().get(randomIndex);
             Coordinate newCoordinate = new Coordinate(newXCoordinate, newYCoordinate);
 
-            secondMap.getNodes().set(randomIndex, newCoordinate);
-            ArrayList<Edge> edges = secondMap.getEdges();
+            secondGraph.getNodes().set(randomIndex, newCoordinate);
+            ArrayList<Edge> edges = secondGraph.getEdges();
             for (int j = 0; j < edges.size(); j++) {
                 Edge edge = edges.get(j);
                 if (edge.getTo().equal(oldCoordinate)) {
@@ -223,27 +223,27 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
                 }
             }
         }
-        return secondMap;
+        return secondGraph;
     }
 
-    private Map createDifferentGraph(Map firstMap) {
+    private Graph createDifferentGraph(Graph firstGraph) {
 
         //jina mapa by mela mit take alespon 3 uzly, aby bylo co poznat
-        Map secondMap;
+        Graph secondGraph;
         do {
-            secondMap = new Map(firstMap);
-            ArrayList<Edge> edges = secondMap.getEdges();
-            ArrayList<Coordinate> nodes = secondMap.getNodes();
+            secondGraph = new Graph(firstGraph);
+            ArrayList<Edge> edges = secondGraph.getEdges();
+            ArrayList<Coordinate> nodes = secondGraph.getNodes();
 
             //myšlenka, projdu nekolikrat graf, smazu z neho bod a vsechny cary, ktere jsou k nemu propojene
             // nahradim ho novym uzlem a nahodnym poctem novych car (nemusim ani hledat jestli uz nejsou s nim propojeny, protoze jsou novy)
-            int randomNumber = (int) Math.round(Math.random() * secondMap.getEdges().size());
+            int randomNumber = (int) Math.round(Math.random() * secondGraph.getEdges().size());
             for (int i = 0; i < randomNumber; i++) {
 
                 //vezmu nahodny bod a ten smazu
-                int randomIndex = (int) Math.round(Math.random() * (secondMap.getNodes().size() - 1));
-                Coordinate oldCoordinate = secondMap.getNodes().get(randomIndex);
-                secondMap.getNodes().remove(randomIndex);
+                int randomIndex = (int) Math.round(Math.random() * (secondGraph.getNodes().size() - 1));
+                Coordinate oldCoordinate = secondGraph.getNodes().get(randomIndex);
+                secondGraph.getNodes().remove(randomIndex);
 
                 //projdu vsechny primky a mrknu jestli neprochazely tim bodem
                 Iterator<Edge> iterator = edges.iterator();
@@ -263,21 +263,21 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
                 Coordinate newCoordinate = new Coordinate(newXCoordinate, newYCoordinate);
                 nodes.add(newCoordinate);
 
-                int randomNumber2 = (int) Math.round(Math.random() * (secondMap.getNodes().size() - 1));
+                int randomNumber2 = (int) Math.round(Math.random() * (secondGraph.getNodes().size() - 1));
                 for (int k = 0; k < randomNumber2; k++) {
                     //nalezeni nahodneho bodu se kterym novy bod propojime
                     boolean found = false;
                     int randomIndex2;
                     do {
-                        randomIndex2 = (int) Math.round(Math.random() * (secondMap.getNodes().size() - 1));
-                        if (randomIndex2 != secondMap.getNodes().size() - 1) found = true;
+                        randomIndex2 = (int) Math.round(Math.random() * (secondGraph.getNodes().size() - 1));
+                        if (randomIndex2 != secondGraph.getNodes().size() - 1) found = true;
                     } while (!found);
                     Edge newEdge = new Edge(nodes.get(randomIndex2), newCoordinate);
                     edges.add(newEdge);
                 }
             }
-        } while (secondMap.getNodes().size() < 3);
-        return secondMap;
+        } while (secondGraph.getNodes().size() < 3);
+        return secondGraph;
     }
 
     @Override
@@ -289,27 +289,27 @@ public class FourthActivity extends AbstractActivity implements TabLayoutFragmen
     }
 
     private void showGraphRandomlyIsomorfic(int height) {
-        firstMap = createMap();
+        firstGraph = createGraph();
         if (Math.random() > 0.5) {
-            secondMap = createSameGraph(firstMap);
+            secondGraph = createSameGraph(firstGraph);
             isGraphSame = true;
         } else {
-            secondMap = createDifferentGraph(firstMap);
+            secondGraph = createDifferentGraph(firstGraph);
             isGraphSame = false;
         }
 
         //rozdelim si mapu na 2 poloviny (metoda bohužel vrací ten samej graf rozdelenej na polovinu, takze si to musi zavolat 2x a pak si to z toho vytahnu
         //nez to poslu do view, tak to musim ještě slepit do jednoho grafu
-        ArrayList<Map> firstMapTwice = GraphConverter.convertMapsToSplitScreenArray(firstMap, height);
-        firstMap = firstMapTwice.get(0);
+        ArrayList<Graph> firstGraphTwice = GraphConverter.convertGraphsToSplitScreenArray(firstGraph, height);
+        firstGraph = firstGraphTwice.get(0);
 
-        ArrayList<Map> secondMapTwice = GraphConverter.convertMapsToSplitScreenArray(secondMap, height);
-        secondMap = secondMapTwice.get(1);
+        ArrayList<Graph> secondGraphTwice = GraphConverter.convertGraphsToSplitScreenArray(secondGraph, height);
+        secondGraph = secondGraphTwice.get(1);
 
-        firstMap.getEdges().addAll(secondMap.getEdges());
-        firstMap.getNodes().addAll(secondMap.getNodes());
-        firstMap.getRedEdgesList().addAll(secondMap.getRedEdgesList());
-        drawingFragment.setUserGraph(firstMap);
+        firstGraph.getEdges().addAll(secondGraph.getEdges());
+        firstGraph.getNodes().addAll(secondGraph.getNodes());
+        firstGraph.getRedEdgesList().addAll(secondGraph.getRedEdgesList());
+        drawingFragment.setUserGraph(firstGraph);
         drawingFragment.changeDrawingMethod("circle_move"); //this will enable moving nodes
     }
 

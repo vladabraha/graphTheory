@@ -13,7 +13,7 @@ import java.util.Collections;
 import cz.uhk.graphtheory.abstraction.AbstractFragment;
 import cz.uhk.graphtheory.model.Coordinate;
 import cz.uhk.graphtheory.model.Edge;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Graph;
 import cz.uhk.graphtheory.util.GraphGenerator;
 
 public class EightActivityFragment extends AbstractFragment {
@@ -57,7 +57,7 @@ public class EightActivityFragment extends AbstractFragment {
     //nejnižsí souřadnici si zajistím tak, že budu mít array list serazenej pomoci comparatoru
     //plus tam 3 od konce trochu náhodně pospojuju, aby to nějak vypadalo
     @SuppressWarnings("unchecked")
-    public static Map generateTree(int BRUSH_SIZE, int height,int width) {
+    public static Graph generateTree(int BRUSH_SIZE, int height, int width) {
         int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
         if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES) amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
         ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfEdges);
@@ -73,13 +73,13 @@ public class EightActivityFragment extends AbstractFragment {
                 edges.add(new Edge(nodesToSet.get(i), nodesToSet.get(i - 1)));
             }
         }
-        return new Map(edges, nodesToSet);
+        return new Graph(edges, nodesToSet);
     }
 
     //myšlenka - vezmu alg. na generovani stromu, a použiju ho 2 - a mám 2 samostatny stromy -> les
     //ještě tomu dám poloviční šířku viewportu, takže k tý druhý půlce přičtu polovinu viewportu a zobrazí se mi to hezky na půlku
     @SuppressWarnings("unchecked")
-    public static Map generateForrest(int BRUSH_SIZE, int height,int width) {
+    public static Graph generateForrest(int BRUSH_SIZE, int height, int width) {
 
         int amountOfNodes = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
         if (amountOfNodes < MINIMUM_AMOUNT_OF_NODES) amountOfNodes = MINIMUM_AMOUNT_OF_NODES;
@@ -121,19 +121,19 @@ public class EightActivityFragment extends AbstractFragment {
         edges.addAll(secondEdges);
         firstNodesToSet.addAll(secondNodesToSet);
 
-        return new Map(edges, firstNodesToSet);
+        return new Graph(edges, firstNodesToSet);
     }
 
     public void changeGraph(String mode) {
         switch (mode) {
             case "tree":
-                getGraphGeneratedView().setMap(generateTree(getGraphGeneratedView().getBrushSize(), height, width));
+                getGraphGeneratedView().setGraph(generateTree(getGraphGeneratedView().getBrushSize(), height, width));
                 break;
             case "forrest":
-                getGraphGeneratedView().setMap(generateForrest(getGraphGeneratedView().getBrushSize(), height, width));
+                getGraphGeneratedView().setGraph(generateForrest(getGraphGeneratedView().getBrushSize(), height, width));
                 break;
             default:
-                getGraphGeneratedView().setMap(generateTree(getGraphGeneratedView().getBrushSize(), height, width));
+                getGraphGeneratedView().setGraph(generateTree(getGraphGeneratedView().getBrushSize(), height, width));
                 break;
         }
     }

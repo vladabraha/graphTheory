@@ -22,7 +22,7 @@ import java.util.Objects;
 import cz.uhk.graphtheory.model.Coordinate;
 import cz.uhk.graphtheory.model.Edge;
 import cz.uhk.graphtheory.model.FingerPath;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Graph;
 
 /**
  * obecna trida pro kresleni - bude pouzita ve vsech kreslicich prvcich
@@ -557,9 +557,9 @@ public class PaintView extends View {
     }
 
     /**
-     * get map for DrawMapViewModel
+     * get graph for DrawMapViewModel
      */
-    public Map getMap() {
+    public Graph getGraph() {
 
         ArrayList<Edge> lines = new ArrayList<>();
         for (int x = 0; x < allLineList.size(); x++) {
@@ -576,21 +576,21 @@ public class PaintView extends View {
                 path.add(line);
             }
         }
-        return new Map(lines, circleCoordinates, path, redNodesCoordinates);
+        return new Graph(lines, circleCoordinates, path, redNodesCoordinates);
     }
 
-    public void setMap(Map map) {
-        ArrayList<Edge> lines = map.getEdges();
-        ArrayList<Edge> path = map.getRedEdgesList();
+    public void setGraph(Graph graph) {
+        ArrayList<Edge> lines = graph.getEdges();
+        ArrayList<Edge> path = graph.getRedEdgesList();
         charsForNodes = null;
 
         allLineList.clear();
         redLineList.clear();
 
-        if (map.getNodes().isEmpty()) circleCoordinates.clear();
-        if (map.getNodes().isEmpty()) redNodesCoordinates.clear();
-        circleCoordinates = map.getNodes();
-        redNodesCoordinates = map.getRedNodes();
+        if (graph.getNodes().isEmpty()) circleCoordinates.clear();
+        if (graph.getNodes().isEmpty()) redNodesCoordinates.clear();
+        circleCoordinates = graph.getNodes();
+        redNodesCoordinates = graph.getRedNodes();
         if (!circleCoordinates.isEmpty() || !allLineList.isEmpty() || !redNodesCoordinates.isEmpty()) {
             invalidate();
         }

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import cz.uhk.graphtheory.abstraction.AbstractFragment;
 import cz.uhk.graphtheory.model.Coordinate;
 import cz.uhk.graphtheory.model.Edge;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Graph;
 import cz.uhk.graphtheory.util.GraphGenerator;
 
 public class NinthActivityFragment extends AbstractFragment {
@@ -43,7 +43,7 @@ public class NinthActivityFragment extends AbstractFragment {
                     height = view.getMeasuredHeight();
                     if (width != 0) {
                         int BRUSH_SIZE = getGraphGeneratedView().getBrushSize();
-                        getGraphGeneratedView().setMap(generateSpanningTree(BRUSH_SIZE, height, width));
+                        getGraphGeneratedView().setGraph(generateSpanningTree(BRUSH_SIZE, height, width));
 
                     }
                     disableListener = true;
@@ -56,7 +56,7 @@ public class NinthActivityFragment extends AbstractFragment {
     //myšlenka - projdu uzly, vezmu ten co má nejnižší y souřadnici a postupně ho budu propojovat dál s nodama, který leží níž
     //nejnižsí souřadnici si zajistím tak, že budu mít array list serazenej pomoci comparatoru
     //plus tam 3 od konce trochu náhodně pospojuju, aby to nějak vypadalo
-    public static Map generateSpanningTree(int BRUSH_SIZE, int height, int width ) {
+    public static Graph generateSpanningTree(int BRUSH_SIZE, int height, int width ) {
         int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
         if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES) amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
         ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfEdges);
@@ -79,7 +79,7 @@ public class NinthActivityFragment extends AbstractFragment {
                 edges.add(redLine);
             }
         }
-        return new Map(edges, nodesToSet, redEdgesList);
+        return new Graph(edges, nodesToSet, redEdgesList);
     }
 
 

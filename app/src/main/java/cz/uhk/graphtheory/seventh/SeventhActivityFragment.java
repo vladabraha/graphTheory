@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import cz.uhk.graphtheory.abstraction.AbstractFragment;
 import cz.uhk.graphtheory.model.Coordinate;
 import cz.uhk.graphtheory.model.Edge;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Graph;
 import cz.uhk.graphtheory.util.GraphGenerator;
 
 public class SeventhActivityFragment extends AbstractFragment {
@@ -52,14 +52,14 @@ public class SeventhActivityFragment extends AbstractFragment {
                         ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfEdges);
 
                         //myšlenka - pro každý vrchol spočítám všechny čáry, který obsahuji daný uzel a mám jednu hodnotu skore grafu
-                        Map mapToSet = GraphGenerator.generateMap(height, width, BRUSH_SIZE, amountOfEdges);
-                        ArrayList<Coordinate> nodes = mapToSet.getNodes();
-                        ArrayList<Edge> lines = mapToSet.getEdges();
+                        Graph graphToSet = GraphGenerator.generateGraph(height, width, BRUSH_SIZE, amountOfEdges);
+                        ArrayList<Coordinate> nodes = graphToSet.getNodes();
+                        ArrayList<Edge> lines = graphToSet.getEdges();
 
                         ArrayList<Integer> graphScore = computeGraphScore(nodes, lines);
 
                         seventhFragmentActivityCommunicationInterface.onScoreComputed(graphScore);
-                        getGraphGeneratedView().setMap(mapToSet);
+                        getGraphGeneratedView().setGraph(graphToSet);
 
                     }
                     disableListener = true;

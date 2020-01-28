@@ -10,28 +10,28 @@ import java.util.Objects;
 
 import cz.uhk.graphtheory.model.Coordinate;
 import cz.uhk.graphtheory.model.Edge;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Graph;
 
 public class GraphGenerator {
 
     private static final int DISTANCE_BETWEEN_NEAREST_NODE = 300;
 
     /**
-     * generate random map
+     * generate random graph
      *
      * @param height dimension x
      * @param width  dimension y
-     * @return generated map
+     * @return generated graph
      */
-    public static Map generateMap(int height, int width, int BRUSH_SIZE, int amountOfNodes) {
+    public static Graph generateGraph(int height, int width, int BRUSH_SIZE, int amountOfNodes) {
         ArrayList<Coordinate> nodes = generateNodes(height - BRUSH_SIZE, width - BRUSH_SIZE, BRUSH_SIZE, amountOfNodes);
         ArrayList<Edge> edges;
-        Map map;
+        Graph graph;
         do {
             edges = generateRandomEdges(nodes);
-            map = new Map(edges, nodes);
-        }while (checkIfGraphIsSplitInTwo(map));
-        return map;
+            graph = new Graph(edges, nodes);
+        }while (checkIfGraphIsSplitInTwo(graph));
+        return graph;
     }
 
     /**
@@ -238,12 +238,12 @@ public class GraphGenerator {
     /**
      * Metoda využívá alg. pro ověřování mostu - vezme přímku a podívá se kam všude se může ze sousedních bodů dostat
      * Pokud dají obě strany počet uzlů n - 2, kde n je počet všech uzlů, tak víme, že se jedná o spojitý graf, jinak nikoliv
-     * @param map mapa, která se má prozkoumat
+     * @param graph mapa, která se má prozkoumat
      * @return true pokud je graf nespojitý
      */
-    private static boolean checkIfGraphIsSplitInTwo(Map map){
-        ArrayList<Edge> edges = map.getEdges();
-        ArrayList<Coordinate> nodes = map.getNodes();
+    private static boolean checkIfGraphIsSplitInTwo(Graph graph){
+        ArrayList<Edge> edges = graph.getEdges();
+        ArrayList<Coordinate> nodes = graph.getNodes();
 
         Coordinate oneEndOfCustomLine = edges.get(0).getFrom();
         Coordinate secondEndOfCustomLine = edges.get(0).getTo();

@@ -33,7 +33,7 @@ import cz.uhk.graphtheory.common.TextFragment;
 import cz.uhk.graphtheory.database.DatabaseConnector;
 import cz.uhk.graphtheory.interfaces.DrawingFragmentListener;
 import cz.uhk.graphtheory.model.Coordinate;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Graph;
 import cz.uhk.graphtheory.util.GraphChecker;
 import cz.uhk.graphtheory.util.SpecificGraphGenerator;
 
@@ -43,10 +43,7 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
     private BottomNavigationView bottomNavigationView;
-    private Fragment educationGraphFragment;
-    private FloatingActionButton floatingActionButton;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private TabLayoutFragment tabLayoutFragment;
     private SecondActivityFragment secondActivityFragment;
 
     private DrawingFragmentListener drawingFragmentListener;
@@ -71,10 +68,8 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
         //get instance of abstraction object
         textFragment = getTextFragment();
         drawingFragment = getDrawingFragment();
-        educationGraphFragment = getGenerateGraphFragment();
         bottomNavigationView = getBottomNavigationView();
-        floatingActionButton = getFloatingActionButton();
-        tabLayoutFragment = getTabLayoutFragment();
+        FloatingActionButton floatingActionButton = getFloatingActionButton();
 
         textFragment.setEducationText(R.string.second_activity_text);
 
@@ -265,18 +260,18 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
 
     //vygeneruje graf jak do education fragmentu, ale odstraní z toho červený čáry
     private void setGraphToDrawingFragment(int displayedActivity) {
-        //set new map to create user graph
-        Map map;
+        //set new graph to create user graph
+        Graph graph;
         if (displayedActivity == 0) {
-            map = SpecificGraphGenerator.createMapWithABridge(height, width, 15);
-            map.setRedNodes(new ArrayList<>());
-            map.setRedEdgesList(new ArrayList<>());
+            graph = SpecificGraphGenerator.createGraphWithABridge(height, width, 15);
+            graph.setRedNodes(new ArrayList<>());
+            graph.setRedEdgesList(new ArrayList<>());
         } else {
-            map = SpecificGraphGenerator.createMapWithArticulation(height, width, 15);
-            map.setRedEdgesList(new ArrayList<>());
-            map.setRedNodes(new ArrayList<>());
+            graph = SpecificGraphGenerator.createGraphWithArticulation(height, width, 15);
+            graph.setRedEdgesList(new ArrayList<>());
+            graph.setRedNodes(new ArrayList<>());
         }
-        drawingFragment.setUserGraph(map);
+        drawingFragment.setUserGraph(graph);
     }
 
     @Override
@@ -315,15 +310,15 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
         //nasetovani spravneho grafu po nacteni view (ale metrics se poslou jenom jednou)
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         int displayedActivity = sharedPref.getInt("displayedActivity-second", 0);
-        Map map;
+        Graph graph;
         if (displayedActivity == 0) {
-            map = SpecificGraphGenerator.createMapWithABridge(height, width, 15);
-            map.setRedEdgesList(new ArrayList<>());
+            graph = SpecificGraphGenerator.createGraphWithABridge(height, width, 15);
+            graph.setRedEdgesList(new ArrayList<>());
         } else {
-            map = SpecificGraphGenerator.createMapWithArticulation(height, width, 15);
-            map.setRedNodes(new ArrayList<>());
+            graph = SpecificGraphGenerator.createGraphWithArticulation(height, width, 15);
+            graph.setRedNodes(new ArrayList<>());
         }
-        drawingFragment.setUserGraph(map);
+        drawingFragment.setUserGraph(graph);
         bottomNavigationView.setSelectedItemId(R.id.path);
         drawingFragment.changeDrawingMethod("path");
 
@@ -344,14 +339,14 @@ public class SecondActivity extends AbstractActivity implements TabLayoutFragmen
         //nasetovani spravneho grafu po nacteni view (ale metrics se poslou jenom jednou)
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         int displayedActivity = sharedPref.getInt("displayedActivity-second", 0);
-        Map map;
+        Graph graph;
         if (displayedActivity == 0) {
-            map = SpecificGraphGenerator.createMapWithABridge(height, width, 15);
+            graph = SpecificGraphGenerator.createGraphWithABridge(height, width, 15);
         } else {
-            map = SpecificGraphGenerator.createMapWithArticulation(height, width, 15);
+            graph = SpecificGraphGenerator.createGraphWithArticulation(height, width, 15);
         }
-        map.setRedEdgesList(new ArrayList<>());
-        drawingFragment.setUserGraph(map);
+        graph.setRedEdgesList(new ArrayList<>());
+        drawingFragment.setUserGraph(graph);
         bottomNavigationView.setSelectedItemId(R.id.circle);
         switchColoringNodeAccordingActivity();
     }

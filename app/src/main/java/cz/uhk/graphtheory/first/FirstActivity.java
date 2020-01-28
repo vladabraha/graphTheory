@@ -30,7 +30,7 @@ import cz.uhk.graphtheory.common.SecondaryTabLayoutFragment.SecondaryTableLayout
 import cz.uhk.graphtheory.common.TabLayoutFragment;
 import cz.uhk.graphtheory.common.TextFragment;
 import cz.uhk.graphtheory.database.DatabaseConnector;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Graph;
 import cz.uhk.graphtheory.util.GraphChecker;
 import cz.uhk.graphtheory.util.GraphGenerator;
 
@@ -261,9 +261,9 @@ public class FirstActivity extends AbstractActivity implements TabLayoutFragment
         assert userName != null;
 
         int amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
-        Map map = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
-        drawingFragment.setUserGraph(map);
-        sizeOfMap = map.getNodes().size() - 1;
+        Graph graph = GraphGenerator.generateGraph(height, width, 15, amountOfNodes);
+        drawingFragment.setUserGraph(graph);
+        sizeOfMap = graph.getNodes().size() - 1;
         showProperToastMessage();
         setProperTitleToBottomNavigationMenu(displayedActivity);
     }
@@ -276,9 +276,9 @@ public class FirstActivity extends AbstractActivity implements TabLayoutFragment
     @Override
     public void onNegativeButtonClick() {
         int amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
-        Map map = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
-        drawingFragment.setUserGraph(map);
-        sizeOfMap = map.getNodes().size() - 1;
+        Graph graph = GraphGenerator.generateGraph(height, width, 15, amountOfNodes);
+        drawingFragment.setUserGraph(graph);
+        sizeOfMap = graph.getNodes().size() - 1;
         showProperToastMessage();
     }
 
@@ -302,16 +302,16 @@ public class FirstActivity extends AbstractActivity implements TabLayoutFragment
     public void sentMetrics(int width, int height) {
         this.width = width;
         this.height = height;
-        setMapToDrawingFragment(width, height);
+        setGraphToDrawingFragment(width, height);
         if (!isViewCreated) showProperToastMessage();
         isViewCreated = true;
 
     }
 
-    private void setMapToDrawingFragment(int width, int height) {
+    private void setGraphToDrawingFragment(int width, int height) {
         int amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
-        Map map = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
-        drawingFragment.setUserGraph(map);
+        Graph graph = GraphGenerator.generateGraph(height, width, 15, amountOfNodes);
+        drawingFragment.setUserGraph(graph);
         Menu menu = bottomNavigationView.getMenu();
 
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);

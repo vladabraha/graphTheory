@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import cz.uhk.graphtheory.abstraction.AbstractFragment;
 import cz.uhk.graphtheory.model.Coordinate;
 import cz.uhk.graphtheory.model.Edge;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Graph;
 import cz.uhk.graphtheory.util.GraphGenerator;
 
 public class FifthActivityFragment extends AbstractFragment {
@@ -70,8 +70,8 @@ public class FifthActivityFragment extends AbstractFragment {
                             }
                         }
 
-                        Map mapToSet = new Map(bipartite, nodesToSet);
-                        getGraphGeneratedView().setMap(mapToSet);
+                        Graph graphToSet = new Graph(bipartite, nodesToSet);
+                        getGraphGeneratedView().setGraph(graphToSet);
                     }
                     disableListener = true;
                 }

@@ -4,24 +4,24 @@ import java.util.ArrayList;
 
 import cz.uhk.graphtheory.model.Coordinate;
 import cz.uhk.graphtheory.model.Edge;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Graph;
 
 public class GraphConverter {
 
     /**
      * rozdeli 2 grafy na 2 poloviny obrazovky
-     * @param firstMap prvni mapa
+     * @param firstGraph prvni graf
      * @param height vyska viewportu
-     * @return jedna mapa obsahujici obe mapy
+     * @return jeden graf obsahujici oba grafy
      */
-    public static Map convertMapsToSplitScreen(Map firstMap, int height){
+    public static Graph convertGraphsToSplitScreen(Graph firstGraph, int height){
         int halfHeight = height / 2;
         halfHeight = halfHeight - 100; //tohle je pro posunutí prostoru pro to, aby to nelezlo pod bottomNavigation view
 
         //rozdeleni prvniho grafu do prvni poloviny obrazovky
-        ArrayList<Edge> edges = firstMap.getEdges();
-        ArrayList<Edge> redEdges = firstMap.getRedEdgesList();
-        ArrayList<Coordinate> nodes = firstMap.getNodes();
+        ArrayList<Edge> edges = firstGraph.getEdges();
+        ArrayList<Edge> redEdges = firstGraph.getRedEdgesList();
+        ArrayList<Coordinate> nodes = firstGraph.getNodes();
 
         for (Coordinate circleCoordinate : nodes){
             if (Float.compare(circleCoordinate.y, (float) halfHeight) > 0) circleCoordinate.y = circleCoordinate.y / 2;
@@ -49,11 +49,11 @@ public class GraphConverter {
             }
         }
 
-        Map secondMap = new Map(firstMap);
+        Graph secondGraph = new Graph(firstGraph);
         //rozdeleni druheho grafu do druhe poloviny obrazovky
-        ArrayList<Edge> customLines2 = secondMap.getEdges();
-        ArrayList<Edge> redEdges2 = secondMap.getRedEdgesList();
-        ArrayList<Coordinate> nodes2 = secondMap.getNodes();
+        ArrayList<Edge> customLines2 = secondGraph.getEdges();
+        ArrayList<Edge> redEdges2 = secondGraph.getRedEdgesList();
+        ArrayList<Coordinate> nodes2 = secondGraph.getNodes();
 
         for (Coordinate circleCoordinate : nodes2){
             if (Float.compare(circleCoordinate.y , (float) halfHeight) < 0){
@@ -87,17 +87,17 @@ public class GraphConverter {
         redEdges.addAll(redEdges2);
         nodes.addAll(nodes2);
 
-        return firstMap;
+        return firstGraph;
     }
 
-    public static ArrayList<Map> convertMapsToSplitScreenArray(Map firstMap, int height){
+    public static ArrayList<Graph> convertGraphsToSplitScreenArray(Graph firstGraph, int height){
         int halfHeight = height / 2;
         halfHeight = halfHeight - 100; //tohle je pro posunutí prostoru pro to, aby to nelezlo pod bottomNavigation view
 
         //rozdeleni prvniho grafu do prvni poloviny obrazovky
-        ArrayList<Edge> edges = firstMap.getEdges();
-        ArrayList<Edge> redEdges = firstMap.getRedEdgesList();
-        ArrayList<Coordinate> nodes = firstMap.getNodes();
+        ArrayList<Edge> edges = firstGraph.getEdges();
+        ArrayList<Edge> redEdges = firstGraph.getRedEdgesList();
+        ArrayList<Coordinate> nodes = firstGraph.getNodes();
 
         for (Coordinate circleCoordinate : nodes){
             if (Float.compare(circleCoordinate.y, (float) halfHeight) > 0) circleCoordinate.y = circleCoordinate.y / 2;
@@ -125,11 +125,11 @@ public class GraphConverter {
             }
         }
 
-        Map secondMap = new Map(firstMap);
+        Graph secondGraph = new Graph(firstGraph);
         //rozdeleni druheho grafu do druhe poloviny obrazovky
-        ArrayList<Edge> customLines2 = secondMap.getEdges();
-        ArrayList<Edge> redEdges2 = secondMap.getRedEdgesList();
-        ArrayList<Coordinate> nodes2 = secondMap.getNodes();
+        ArrayList<Edge> customLines2 = secondGraph.getEdges();
+        ArrayList<Edge> redEdges2 = secondGraph.getRedEdgesList();
+        ArrayList<Coordinate> nodes2 = secondGraph.getNodes();
 
         for (Coordinate circleCoordinate : nodes2){
             if (Float.compare(circleCoordinate.y , (float) halfHeight) < 0){
@@ -159,10 +159,10 @@ public class GraphConverter {
             }
         }
 
-        ArrayList<Map> maps = new ArrayList<>();
-        maps.add(firstMap);
-        maps.add(secondMap);
-        return maps;
+        ArrayList<Graph> graphs = new ArrayList<>();
+        graphs.add(firstGraph);
+        graphs.add(secondGraph);
+        return graphs;
     }
 
 }

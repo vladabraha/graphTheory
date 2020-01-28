@@ -7,16 +7,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import cz.uhk.graphtheory.model.Coordinate;
 import cz.uhk.graphtheory.model.Edge;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Graph;
 
 public class GraphChecker {
 
-    public static boolean checkIfGraphContainsPath(Map map) {
-        if (map != null) {
+    public static boolean checkIfGraphContainsPath(Graph graph) {
+        if (graph != null) {
 
             //mrknu, že každý bod je v seznamu maximálně 2x
-            ArrayList<Edge> path = map.getRedEdgesList();
-            ArrayList<Edge> edges = map.getEdges();
+            ArrayList<Edge> path = graph.getRedEdgesList();
+            ArrayList<Edge> edges = graph.getEdges();
             if (path.size() < 1) return false;
             ArrayList<Coordinate> coordinateArrayList = new ArrayList<>();
 
@@ -42,8 +42,8 @@ public class GraphChecker {
         return true;
     }
 
-    public static boolean checkIfGraphContainsTah(Map map) {
-        ArrayList<Edge> redLineList = map.getRedEdgesList();
+    public static boolean checkIfGraphContainsTah(Graph graph) {
+        ArrayList<Edge> redLineList = graph.getRedEdgesList();
         if (redLineList.size() == 0) return false;
         ArrayList<Edge> alreadyChecked = new ArrayList<>();
 
@@ -58,8 +58,8 @@ public class GraphChecker {
         return true;
     }
 
-    public static boolean checkIfGraphContainsCycle(Map map) {
-        ArrayList<Edge> redLineList = map.getRedEdgesList();
+    public static boolean checkIfGraphContainsCycle(Graph graph) {
+        ArrayList<Edge> redLineList = graph.getRedEdgesList();
         if (redLineList.size() < 2) return false;
         Edge startingLine = redLineList.get(0);
         Edge lastLine = redLineList.get(redLineList.size() - 1);
@@ -72,9 +72,9 @@ public class GraphChecker {
         } else return startingLine.getTo().equal(lastLine.getFrom());
     }
 
-    public static boolean checkIfGraphIsBipartite(Map map) {
-        ArrayList<Edge> edges = map.getEdges();
-        ArrayList<Coordinate> nodes = map.getNodes();
+    public static boolean checkIfGraphIsBipartite(Graph graph) {
+        ArrayList<Edge> edges = graph.getEdges();
+        ArrayList<Coordinate> nodes = graph.getNodes();
         ArrayList<Coordinate> nodesConnectedTogether = new ArrayList<>();
         ArrayList<Coordinate> nodesInFirstPartOfBipartite = new ArrayList<>();
         ArrayList<Coordinate> nodesInSecondPartOfBipartite = new ArrayList<>();
@@ -158,13 +158,13 @@ public class GraphChecker {
     /**
      * projde všechny spoje na jednu stranu od označené artikulace a pokud má na konci nalezených více jak n-1 nodu vrati false
      *
-     * @param map uzivatelova mapa
+     * @param graph uzivatelova mapa
      * @return -
      */
-    public static String checkIfGraphContainsArticulation(Map map) {
-        ArrayList<Edge> edges = map.getEdges();
-        ArrayList<Coordinate> nodes = map.getNodes();
-        ArrayList<Coordinate> redNodes = map.getRedNodes();
+    public static String checkIfGraphContainsArticulation(Graph graph) {
+        ArrayList<Edge> edges = graph.getEdges();
+        ArrayList<Coordinate> nodes = graph.getNodes();
+        ArrayList<Coordinate> redNodes = graph.getRedNodes();
 
         if (edges.size() < 2 || nodes.size() < 2) return "false";
         if (redNodes.size() != 1) return "chyba v poctu cervenych bodu";
@@ -252,7 +252,7 @@ public class GraphChecker {
     //MYŠLENKA - od uzivatele přijde červenou čarou označený most - vezmu jeden jeho konec a podívám se na všechny sousedy toho konce a ty si uložím zvlášť do seznamu a to samé udělám pro druhý konec
     //Jakmile mám seznam sousedů jednoho konce mostu, podívám se na všechny sousedy těchto uzlů, dokud nedojdu na konec seznamu - pokud takhle najdu n-1 uzlů, tak se nejedná o most
     //tento postup budu opakovat u druhého konce mostu a jeho seznamu sousedů
-    public static String checkIfGraphContainsBridge(Map userGraph) {
+    public static String checkIfGraphContainsBridge(Graph userGraph) {
         ArrayList<Edge> edges = userGraph.getEdges();
         ArrayList<Edge> redEdges = userGraph.getRedEdgesList();
         ArrayList<Coordinate> nodes = userGraph.getNodes();
@@ -366,7 +366,7 @@ public class GraphChecker {
     //myšlenka - projdu postupně všechny redEdges a budu si paamatovat kde jsem byl
     //na konci by měl bejt seznam 2x tak velkej než nodes (každej bod by tam měl bejt max.2 a zároveň by tam neměl chybět
     //a taky se musi jeste vratit kruznice do prvniho bodu kde zacala
-    public static String checkIfGraphContainsHamiltonCircle(Map userGraph) {
+    public static String checkIfGraphContainsHamiltonCircle(Graph userGraph) {
         ArrayList<Edge> redEdges = userGraph.getRedEdgesList();
         ArrayList<Edge> lines = userGraph.getEdges();
         ArrayList<Coordinate> nodes = userGraph.getNodes();
@@ -418,10 +418,10 @@ public class GraphChecker {
     //Přidám bod do zásobníku a jdu na jeho souseda
     //Odstraním hranu ze zásobníku hran (tu mezi prvním bodem a sousedem)
     //pokračuju dál, pokud už nemám souseda, přádám ho do eulerovy cesty a odstraním vrchol ze zásobníku
-    public static String checkIfGraphHasEulerPath(Map map) {
-        ArrayList<Edge> redEdges = map.getRedEdgesList();
-        ArrayList<Edge> lines = map.getEdges();
-        ArrayList<Coordinate> nodes = map.getNodes();
+    public static String checkIfGraphHasEulerPath(Graph graph) {
+        ArrayList<Edge> redEdges = graph.getRedEdgesList();
+        ArrayList<Edge> lines = graph.getEdges();
+        ArrayList<Coordinate> nodes = graph.getNodes();
 
         //spocitame pocet vrcholu se lichým pocetem sousedu (ty můžou být max. 2, nebo musí být všechny vrcholy sudé)
         ArrayList<Coordinate> nodesWithMoreThanTwoEvenNeighbours = new ArrayList<>();
@@ -475,9 +475,9 @@ public class GraphChecker {
         return "true";
     }
 
-    public static boolean checkIfGraphHasCorrectScore(Map map, ArrayList<Integer> degreeList) {
-        ArrayList<Edge> lines = map.getEdges();
-        ArrayList<Coordinate> nodes = map.getNodes();
+    public static boolean checkIfGraphHasCorrectScore(Graph graph, ArrayList<Integer> degreeList) {
+        ArrayList<Edge> lines = graph.getEdges();
+        ArrayList<Coordinate> nodes = graph.getNodes();
 
         if (degreeList.size() != nodes.size()) return false;
 
@@ -510,7 +510,7 @@ public class GraphChecker {
     }
 
     //sled
-    public static boolean checkIfGraphContainsWalk(Map userGraph, int length) {
+    public static boolean checkIfGraphContainsWalk(Graph userGraph, int length) {
         return userGraph.getRedEdgesList().size() == length;
     }
 
@@ -518,7 +518,7 @@ public class GraphChecker {
     //na konci prohledani odstranim bod ze zasobniku a pokracuju dalsim bodem, dokud neprojdu takto vsechny vrcholy na ktere dosahnu
     //pokud mi zbydou jeste nějaké vrcholy k prozkoumání, mám druhou komponentu, vyberu tedy libovolny zbyvajici bod a provedu na nem opět prohledávání
     //toto opakuji tolikrat, kolik ma byt kompo
-    public static boolean checkIfGraphHasCertainAmountOfComponent(Map userGraph, int amountOfComponent) {
+    public static boolean checkIfGraphHasCertainAmountOfComponent(Graph userGraph, int amountOfComponent) {
         if (!checkIfGraphDoesNotContainsCycle(userGraph)) return false;
         ArrayList<Edge> edges = userGraph.getEdges();
         ArrayList<Coordinate> nodes = userGraph.getNodes();
@@ -588,7 +588,7 @@ public class GraphChecker {
     //
     //speciální případ, pokud graf nemá žádný vrchol s více jak 2 hranami, vezmu první bod, který uživatel vybral a zkusím projet všechny navazující úsečky, zdali neobsahují kružnici
     //tedy obdobně jako v předchozím případě vezmu první spojenej bod s prvním bodem a prohledávám všechny liny, zdali některý neobsahuje můj bod, pokud jo, odstraním ho stacku, vezmu další a pokračuju dál
-    public static boolean checkIfGraphDoesNotContainsCycle(Map userGraph) {
+    public static boolean checkIfGraphDoesNotContainsCycle(Graph userGraph) {
         ArrayList<Edge> edges = userGraph.getEdges();
 
         ArrayList<Coordinate> nodesWithMultipleLinesFirst = new ArrayList<>();
@@ -736,12 +736,12 @@ public class GraphChecker {
     /**
      * zjistí, zdali graf obsahuje kostru grafu
      * @param userGraph    uživatelem nakreselný graf
-     * @param generatedMap graf, který byl pro uživatele vygenerován
+     * @param generatedGraph graf, který byl pro uživatele vygenerován
      * @return graf - jinej graf, než byl vygenerován, false, červenou čarou není zvýrazněná kostra, true, červenou čarou je zvýrazněná kostra
      */
     //vzhledem k tomu, že definicí kostry grafu je to same co  stromu, tedy že neobsahuje kružnici a je spojitý, tedy má jednu komponentu, využijeme checker na strom
     //akorát zkontrolujeme, že se jedná o stejně početný graf na nody, jaký byl vygenerován a přehodíme pro checker redEdges na běžné customlines (edges)
-    public static String checkIfGraphIsSpanningTree(Map userGraph, Map generatedMap) {
+    public static String checkIfGraphIsSpanningTree(Graph userGraph, Graph generatedGraph) {
 
         //pokud je jiný počet nodů, než byl vygenerovaný, nebo neobsahuje o jedna menší počet červných linek než uzlů, vrať false
 
@@ -755,10 +755,10 @@ public class GraphChecker {
        if (userGraph.getRedEdgesList().size() != userGraph.getNodes().size() - 1) {
             return "false";
         } else {
-            Map mapForChecker = new Map(userGraph);
-            mapForChecker.setEdges(mapForChecker.getRedEdgesList());
-            mapForChecker.setRedNodes(new ArrayList<>());
-            if (checkIfGraphHasCertainAmountOfComponent(mapForChecker, 1)) {
+            Graph graphForChecker = new Graph(userGraph);
+            graphForChecker.setEdges(graphForChecker.getRedEdgesList());
+            graphForChecker.setRedNodes(new ArrayList<>());
+            if (checkIfGraphHasCertainAmountOfComponent(graphForChecker, 1)) {
                 return "true";
             }
         }
@@ -768,16 +768,16 @@ public class GraphChecker {
     //myšlenka - pokud vezmu ten prvni graf a připočítám k němu stejnej rozdíl, dostanu stejnej graf
     //na něm porovnám, zdali má červené čáry (doplněk) stejný souřadnice jako když by to generoval algoritmus
     //podmínkou je lock na posunování uzlů
-    public static boolean checkIfGraphIsComplementGraph(Map mapCreatedByUser, Map mapToCheck) {
-        ArrayList<Edge> redEdges = mapCreatedByUser.getRedEdgesList();
-        ArrayList<Edge> redEdgesToCheck = mapToCheck.getRedEdgesList();
+    public static boolean checkIfGraphIsComplementGraph(Graph graphCreatedByUser, Graph graphToCheck) {
+        ArrayList<Edge> redEdges = graphCreatedByUser.getRedEdgesList();
+        ArrayList<Edge> redEdgesToCheck = graphToCheck.getRedEdgesList();
 
         if (redEdgesToCheck.size() == 0 && redEdges.size() > 0) return false;
 
         for (Edge edge : redEdgesToCheck) {
             boolean found = false;
-            for (Edge redLine : redEdges) {
-                if (redLine.isEdgeSame(edge)) {
+            for (Edge redEdge : redEdges) {
+                if (redEdge.isEdgeSame(edge)) {
                     found = true;
                     break;
                 }

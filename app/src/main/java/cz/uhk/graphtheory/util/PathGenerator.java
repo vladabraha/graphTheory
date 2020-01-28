@@ -6,27 +6,27 @@ import java.util.Random;
 
 import cz.uhk.graphtheory.model.Coordinate;
 import cz.uhk.graphtheory.model.Edge;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Graph;
 
 public class PathGenerator {
 
     /**
      * z predane mapy vrati nahodne vytvorenou cestu (kazdy vrchol max. jednou)
      *
-     * @param map mapa
+     * @param graph mapa
      * @return list primek, kterymi prochazi cesta
      */
-    public static ArrayList<Coordinate> generatePath(Map map) {
-        int numberOfNodes = map.getNodes().size();
+    public static ArrayList<Coordinate> generatePath(Graph graph) {
+        int numberOfNodes = graph.getNodes().size();
         int pathLength = (int) Math.round(Math.random() * numberOfNodes);
-        if (pathLength < ((map.getNodes().size() / 2) + 1))
-            pathLength = (map.getNodes().size() / 2) + 1;
+        if (pathLength < ((graph.getNodes().size() / 2) + 1))
+            pathLength = (graph.getNodes().size() / 2) + 1;
 
         List<Integer> usedIndexes = new ArrayList<>(pathLength);
         for (int i = 0; i < pathLength; i++) {
             boolean found = false;
             while (!found) {
-                int randomIndex = (int) (Math.random() * map.getNodes().size());
+                int randomIndex = (int) (Math.random() * graph.getNodes().size());
                 if (!usedIndexes.contains(randomIndex)) {
                     usedIndexes.add(randomIndex);
                     found = true;
@@ -34,7 +34,7 @@ public class PathGenerator {
             }
         }
         ArrayList<Coordinate> path = new ArrayList<>();
-        ArrayList<Coordinate> circleCoordinates = map.getNodes();
+        ArrayList<Coordinate> circleCoordinates = graph.getNodes();
         for (int i = 0; i < usedIndexes.size(); i++) {
             if (i != 0) {
                 path.add(circleCoordinates.get(i - 1));
@@ -45,14 +45,14 @@ public class PathGenerator {
     }
 
     /**
-     * z predane mapy vrati nahodne vytvoren tah (kazdy hrana max. jednou)
+     * z predaneho grafu vrati nahodne vytvoren tah (kazdy hrana max. jednou)
      *
-     * @param map mapa
+     * @param graph graf
      * @return list primek, kterymi prochazi tah
      */
-    public static ArrayList<Coordinate> generateTrail(Map map) {
-        ArrayList<Coordinate> nodes = map.getNodes();
-        int numberOfNodes = map.getNodes().size();
+    public static ArrayList<Coordinate> generateTrail(Graph graph) {
+        ArrayList<Coordinate> nodes = graph.getNodes();
+        int numberOfNodes = graph.getNodes().size();
 
         Random ran = new Random();
         int randomNumberOfredEdges = ran.nextInt(((numberOfNodes * (numberOfNodes - 1)) / 2)); //definice úplného grafu
@@ -95,25 +95,25 @@ public class PathGenerator {
         return tah;
     }
 
-    public static ArrayList<Coordinate> generateCycle(Map map) {
+    public static ArrayList<Coordinate> generateCycle(Graph graph) {
         ArrayList<Coordinate> path;
         do {
-            path = generatePath(map);
-        } while (path.size() < (map.getNodes().size() - 1));
+            path = generatePath(graph);
+        } while (path.size() < (graph.getNodes().size() - 1));
 
         path.add(path.get(path.size() - 1));
         path.add(path.get(0));
         return path;
     }
 
-    public static Map createComplementToGraph(Map firstMap) {
-        ArrayList<Coordinate> nodes = firstMap.getNodes();
-        ArrayList<Edge> lines = firstMap.getEdges();
+    public static Graph createComplementToGraph(Graph firstGraph) {
+        ArrayList<Coordinate> nodes = firstGraph.getNodes();
+        ArrayList<Edge> edges = firstGraph.getEdges();
         ArrayList<Edge> redEdges = new ArrayList<>();
 
         for (Coordinate coordinate : nodes) {
             ArrayList<Coordinate> alreadyFoundConnection = new ArrayList<>();
-            for (Edge edge : lines) {
+            for (Edge edge : edges) {
                 if (edge.getFrom().equal(coordinate)) {
                     Edge testLine = new Edge(edge.getTo(), coordinate);
                     //projde vsechny body v alreadyFoundConnection a mrkne, jestli nejakej bod n se rovna custom line.getto
@@ -138,13 +138,13 @@ public class PathGenerator {
                 }
             }
         }
-        firstMap.setRedEdgesList(redEdges);
-        firstMap.setEdges(new ArrayList<>());
-        return firstMap;
+        firstGraph.setRedEdgesList(redEdges);
+        firstGraph.setEdges(new ArrayList<>());
+        return firstGraph;
     }
 
     //myšlenka, projedu postupne vrcholy a propojim je jak jdou za sebou a kdyz tam ještě nemaj normální caru z generatoru, tak ho tam taky pridam
-    public static Map createHamiltonMapWithoutredEdges(int height, int width) {
+    public static Graph createHamiltonGraphWithoutredEdges(int height, int width) {
         final int MAXIMUM_AMOUNT_OF_NODES = 9;
         final int MINIMUM_AMOUNT_OF_NODES = 4;
         int amountOfNodes = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
@@ -177,10 +177,10 @@ public class PathGenerator {
             }
         }
 
-        return new Map(preGeneratedLines, nodesToSet, redEdges);
+        return new Graph(preGeneratedLines, nodesToSet, redEdges);
     }
 
-    public static Map createEulerMapWithoutredEdges(int height, int width) {
+    public static Graph createEulerGraphWithoutredEdges(int height, int width) {
         final int MAXIMUM_AMOUNT_OF_NODES = 9;
         final int MINIMUM_AMOUNT_OF_NODES = 4;
         int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
@@ -203,6 +203,6 @@ public class PathGenerator {
             lines.add(new Edge(nodesToSet.get(4), nodesToSet.get(1)));
         }
 
-        return new Map(lines, nodesToSet, redEdges);
+        return new Graph(lines, nodesToSet, redEdges);
     }
 }

@@ -2,7 +2,7 @@ package cz.uhk.graphtheory.model;
 
 import androidx.lifecycle.ViewModel;
 
-public class DrawMapViewModel extends ViewModel {
+public class GeneratedGraphViewModel extends ViewModel {
     public Graph graph;
 
     public Graph getGraph() {

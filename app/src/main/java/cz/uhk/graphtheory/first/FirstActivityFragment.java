@@ -14,7 +14,7 @@ import java.util.Collections;
 
 import cz.uhk.graphtheory.abstraction.AbstractFragment;
 import cz.uhk.graphtheory.model.Coordinate;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Graph;
 import cz.uhk.graphtheory.util.GraphGenerator;
 import cz.uhk.graphtheory.util.PathGenerator;
 
@@ -51,13 +51,13 @@ public class FirstActivityFragment extends AbstractFragment {
                         if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES)
                             amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
                         int BRUSH_SIZE = getGraphGeneratedView().getBrushSize();
-                        Map mapToSet = GraphGenerator.generateMap(height, width, BRUSH_SIZE, amountOfEdges);
-                        getGraphGeneratedView().setMap(mapToSet);
+                        Graph graphToSet = GraphGenerator.generateGraph(height, width, BRUSH_SIZE, amountOfEdges);
+                        getGraphGeneratedView().setGraph(graphToSet);
 
-                        Map map = getGraphGeneratedView().getMap();
-                        ArrayList<Coordinate> redLines = PathGenerator.generatePath(map);
+                        Graph graph = getGraphGeneratedView().getGraph();
+                        ArrayList<Coordinate> redLines = PathGenerator.generatePath(graph);
                         getGraphGeneratedView().setRedLineList(redLines);
-                        firstFragmentCommunicationInterface.passArrayOfNodes(getNodeChars(redLines, map).toString());
+                        firstFragmentCommunicationInterface.passArrayOfNodes(getNodeChars(redLines, graph).toString());
                     }
                     disableListener = true;
                 }
@@ -67,12 +67,12 @@ public class FirstActivityFragment extends AbstractFragment {
         //typ "cervene cary", ktera se nad grafem vykresli
         if (!type.isEmpty()) {
             ArrayList<Coordinate> redLines;
-            Map map = getGraphGeneratedView().getMap();
+            Graph graph = getGraphGeneratedView().getGraph();
 
-            redLines = PathGenerator.generatePath(map);
+            redLines = PathGenerator.generatePath(graph);
             getGraphGeneratedView().setRedLineList(redLines);
             getGraphGeneratedView().invalidate();
-            firstFragmentCommunicationInterface.passArrayOfNodes(getNodeChars(redLines, map).toString());
+            firstFragmentCommunicationInterface.passArrayOfNodes(getNodeChars(redLines, graph).toString());
         }
     }
 
@@ -98,21 +98,21 @@ public class FirstActivityFragment extends AbstractFragment {
         this.type = type;
         ArrayList<Coordinate> redLines;
         if (!type.isEmpty()) {
-            Map map = getGraphGeneratedView().getMap();
+            Graph graph = getGraphGeneratedView().getGraph();
             switch (type) {
                 case "cesta":
-                    redLines = PathGenerator.generatePath(getGraphGeneratedView().getMap());
+                    redLines = PathGenerator.generatePath(getGraphGeneratedView().getGraph());
                     getGraphGeneratedView().setRedLineList(redLines);
                     getGraphGeneratedView().invalidate();
-                    return getNodeChars(redLines, map).toString();
+                    return getNodeChars(redLines, graph).toString();
                 case "tah":
-                    redLines = PathGenerator.generateTrail(getGraphGeneratedView().getMap());
+                    redLines = PathGenerator.generateTrail(getGraphGeneratedView().getGraph());
                     getGraphGeneratedView().setRedLineList(redLines);
                     getGraphGeneratedView().invalidate();
-                    return getNodeChars(redLines, map).toString();
+                    return getNodeChars(redLines, graph).toString();
 
                 case "kruznice":
-                    ArrayList<Coordinate> coordinates = PathGenerator.generateCycle(getGraphGeneratedView().getMap());
+                    ArrayList<Coordinate> coordinates = PathGenerator.generateCycle(getGraphGeneratedView().getGraph());
                     int length = Math.round(coordinates.size() / 2);
                     getGraphGeneratedView().setRedLineList(coordinates);
                     getGraphGeneratedView().invalidate();
@@ -122,10 +122,10 @@ public class FirstActivityFragment extends AbstractFragment {
         return "";
     }
 
-    private ArrayList<String> getNodeChars(ArrayList<Coordinate> redLines, Map map) {
+    private ArrayList<String> getNodeChars(ArrayList<Coordinate> redLines, Graph graph) {
         ArrayList<String> chars = new ArrayList<>();
         if (redLines != null) {
-            ArrayList<Coordinate> nodes = map.getNodes();
+            ArrayList<Coordinate> nodes = graph.getNodes();
             for (Coordinate redCoordinate : redLines) {
                 for (int i = 0; i < nodes.size(); i++) {
                     if (nodes.get(i).equal(redCoordinate)) {

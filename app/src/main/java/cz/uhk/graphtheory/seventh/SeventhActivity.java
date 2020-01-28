@@ -29,7 +29,7 @@ import cz.uhk.graphtheory.common.TextFragment;
 import cz.uhk.graphtheory.database.DatabaseConnector;
 import cz.uhk.graphtheory.eight.EightActivity;
 import cz.uhk.graphtheory.interfaces.DrawingFragmentListener;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Graph;
 import cz.uhk.graphtheory.util.GraphChecker;
 import cz.uhk.graphtheory.util.GraphGenerator;
 import cz.uhk.graphtheory.util.Util;
@@ -174,8 +174,8 @@ public class SeventhActivity extends AbstractActivity implements TabLayoutFragme
     @Override
     public void onNegativeButtonClick() {
         amountOfNodes = getAmountOfNodesAndGenerateGraphScore();
-        Map map = new Map(new ArrayList<>(), GraphGenerator.generateNodes(height, width, 15, amountOfNodes));
-        drawingFragment.setUserGraph(map);
+        Graph graph = new Graph(new ArrayList<>(), GraphGenerator.generateNodes(height, width, 15, amountOfNodes));
+        drawingFragment.setUserGraph(graph);
         bottomNavigationView.setSelectedItemId(R.id.line);
 
         StringBuilder text = new StringBuilder();
@@ -206,8 +206,8 @@ public class SeventhActivity extends AbstractActivity implements TabLayoutFragme
         this.height = height;
 
         if (amountOfNodes == 0) getAmountOfNodesAndGenerateGraphScore();
-        Map map = new Map(new ArrayList<>(), GraphGenerator.generateNodes(height, width, 15, amountOfNodes));
-        drawingFragment.setUserGraph(map);
+        Graph graph = new Graph(new ArrayList<>(), GraphGenerator.generateNodes(height, width, 15, amountOfNodes));
+        drawingFragment.setUserGraph(graph);
         bottomNavigationView.setSelectedItemId(R.id.line);
 
         //zmeni text bottomNavigationView

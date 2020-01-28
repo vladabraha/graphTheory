@@ -31,7 +31,7 @@ import cz.uhk.graphtheory.common.TabLayoutFragment;
 import cz.uhk.graphtheory.common.TextFragment;
 import cz.uhk.graphtheory.database.DatabaseConnector;
 import cz.uhk.graphtheory.interfaces.DrawingFragmentListener;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Graph;
 import cz.uhk.graphtheory.util.GraphChecker;
 import cz.uhk.graphtheory.util.GraphGenerator;
 import cz.uhk.graphtheory.util.Util;
@@ -265,8 +265,8 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
         switch (getCurrentActivity()) {
             case 0:
                 computeGraphScore();
-                Map map = new Map(new ArrayList<>(), GraphGenerator.generateNodes(height, width, 15, amountOfNodes));
-                drawingFragment.setUserGraph(map);
+                Graph graph = new Graph(new ArrayList<>(), GraphGenerator.generateNodes(height, width, 15, amountOfNodes));
+                drawingFragment.setUserGraph(graph);
                 bottomNavigationView.setSelectedItemId(R.id.line);
                 break;
             case 1:
@@ -285,8 +285,8 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
         Random random = new Random();
         isTreeGeneratable = random.nextBoolean();
         amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
-        Map mapToSet = new Map(new ArrayList<>(), GraphGenerator.generateNodes(height, width, 15, amountOfNodes));
-        int nodesCount = mapToSet.getNodes().size();
+        Graph graphToSet = new Graph(new ArrayList<>(), GraphGenerator.generateNodes(height, width, 15, amountOfNodes));
+        int nodesCount = graphToSet.getNodes().size();
         int number;
         if (isTreeGeneratable) {
             number = nodesCount - 1;
@@ -303,7 +303,7 @@ public class EightActivity extends AbstractActivity implements TabLayoutFragment
         }
         textToDisplay = "Je možné nakreslit strom s " + nodesCount + " uzly a " + number + " hranami? Až si budeš jistý, klikni na fajfku";
 
-        drawingFragment.setUserGraph(mapToSet);
+        drawingFragment.setUserGraph(graphToSet);
     }
 
     private void computeGraphScore() {

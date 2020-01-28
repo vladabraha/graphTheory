@@ -5,14 +5,14 @@ import java.util.Random;
 
 import cz.uhk.graphtheory.model.Coordinate;
 import cz.uhk.graphtheory.model.Edge;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Graph;
 
 public class SpecificGraphGenerator {
 
     private static final int MAXIMUM_AMOUNT_OF_NODES = 7;
     private static final int MINIMUM_AMOUNT_OF_NODES = 5;
 
-    public static Map createMapWithArticulation(int height, int width, int BRUSH_SIZE) {
+    public static Graph createGraphWithArticulation(int height, int width, int BRUSH_SIZE) {
         int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
         if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES) amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
         ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfEdges);
@@ -49,10 +49,10 @@ public class SpecificGraphGenerator {
         redCircle.add(newNode);
 
         firstPartOfBipartite.addAll(secondPartOfBipartite);
-        return new Map(firstPartOfBipartite, nodesToSet, redEdges, redCircle);
+        return new Graph(firstPartOfBipartite, nodesToSet, redEdges, redCircle);
     }
 
-    public static Map createMapWithABridge(int height, int width, int BRUSH_SIZE) {
+    public static Graph createGraphWithABridge(int height, int width, int BRUSH_SIZE) {
         int amountOfNodes = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
         if (amountOfNodes < MINIMUM_AMOUNT_OF_NODES) amountOfNodes = MINIMUM_AMOUNT_OF_NODES;
         ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfNodes);
@@ -84,11 +84,11 @@ public class SpecificGraphGenerator {
 
 
         firstPartOfBipartite.addAll(secondPartOfBipartite);
-        return new Map(firstPartOfBipartite, nodesToSet, redEdges);
+        return new Graph(firstPartOfBipartite, nodesToSet, redEdges);
     }
 
     //Myšlenka - vytvořím si 2 seznamy vrcholů a ty mezi sebou všechny propojím
-    public static Map generateBipartiteGraph(int height, int width, int BRUSH_SIZE){
+    public static Graph generateBipartiteGraph(int height, int width, int BRUSH_SIZE){
         int amountOfNodes = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
         if (amountOfNodes < MINIMUM_AMOUNT_OF_NODES) amountOfNodes = MINIMUM_AMOUNT_OF_NODES;
         ArrayList<Coordinate> firstPart = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfNodes);
@@ -101,7 +101,7 @@ public class SpecificGraphGenerator {
             }
         }
         firstPart.addAll(secondPart);
-        return new Map(edges, firstPart);
+        return new Graph(edges, firstPart);
     }
 
     /**
@@ -109,9 +109,9 @@ public class SpecificGraphGenerator {
      * @param height of viewport
      * @param width of viewport
      * @param BRUSH_SIZE size of node
-     * @return map to set
+     * @return graph to set
      */
-    public static Map generateGraphSimilarToBipartiteGraph(int height, int width, int BRUSH_SIZE){
+    public static Graph generateGraphSimilarToBipartiteGraph(int height, int width, int BRUSH_SIZE){
         int amountOfNodes = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
         if (amountOfNodes < MINIMUM_AMOUNT_OF_NODES) amountOfNodes = MINIMUM_AMOUNT_OF_NODES;
         ArrayList<Coordinate> firstPart = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfNodes);
@@ -129,6 +129,6 @@ public class SpecificGraphGenerator {
             edges.remove(index);
         }
         firstPart.addAll(secondPart);
-        return new Map(edges, firstPart);
+        return new Graph(edges, firstPart);
     }
 }
