@@ -82,7 +82,6 @@ public class GraphChecker {
         //myšlenka, hledám všechny uzly, se kterými je jeden uzel propojen a ty se kterými není si dám s ním do jedné skupiny
         //protoze u bipartitniho grafu plati, ze je jeden uzel spojen se vsemi prvky druhe skupiny, staci nam pro urceni skupiny jeden uzel
         // pro nej zjistime se kterymi uzly neni propojen a ty by meli byt propojeny se vsemi uzly druhe skupiny
-
         if (nodes.size() < 2 || edges.size() < 3) return false;
         Coordinate coordinate = nodes.get(0);
 
@@ -189,7 +188,6 @@ public class GraphChecker {
         //takhle budu pokracovat (budu si ještě kontrolovat, že nejdu zase přes artikulaci na druhou stranu
         // dokud nedojdu na konec - pokud uz dal nemuzu, vyhodim uzel ze seznamu a vezmu predposledni a zkusim pro nej najit další cesty, dokud nevyprazdnim seznma
         //na konci bych měl mít seznam všech prozkoumaných vrcholů (ty si musím evidovat ve speciálním seznamu) menší o 2 než seznam všech vrcholů, aby to byla artikulace
-
         ArrayList<Edge> customLinesCopy = new ArrayList<>();
         for (Edge edge : edges) {
             customLinesCopy.add(new Edge(edge));
@@ -261,7 +259,6 @@ public class GraphChecker {
 
         //most bude označen cervenou carou
         //hledani prvniho bodu mimo most
-
         Coordinate oneEndOfBridge = redEdges.get(0).getFrom();
         Coordinate secondEndOfBridge = redEdges.get(0).getTo();
         Coordinate borderWhereBridgeBeggins = null; //tohle je kvuli algoritmu, ktery je stejny jako u aritkulace a potřebuje hraniční bod, přes který by neměl přejít

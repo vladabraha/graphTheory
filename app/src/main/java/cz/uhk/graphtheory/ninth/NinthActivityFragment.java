@@ -60,7 +60,6 @@ public class NinthActivityFragment extends AbstractFragment {
         int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
         if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES) amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
         ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfEdges);
-//        Collections.sort(nodesToSet);
 
         ArrayList<Edge> redEdgesList = new ArrayList<>();
         for (int i = 0; i < nodesToSet.size(); i++) {
@@ -81,20 +80,4 @@ public class NinthActivityFragment extends AbstractFragment {
         }
         return new Graph(edges, nodesToSet, redEdgesList);
     }
-
-
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        try {
-//            seventhFragmentActivityCommunicationInterface = (SeventhFragmentActivityCommunicationInterface) context;
-//        } catch (ClassCastException e) {
-//            throw new ClassCastException(context.toString() + " must implement SeventhFragmentActivityCommunicationInterface");
-//        }
-//    }
-//
-//    public interface SeventhFragmentActivityCommunicationInterface {
-//        public void onScoreComputed(ArrayList<Integer> graphScore);
-//    }
-
 }

@@ -192,8 +192,8 @@ public class PaintView extends View {
 
                 if (!allLineList.isEmpty())
                     mCanvas.drawLine(allLineList.get(i).x, allLineList.get(i).y, allLineList.get(i - 1).x, allLineList.get(i - 1).y, mPaint);
-    }
-}
+            }
+        }
 
         for (int i = 0; i < redLineList.size(); i++) {
             if (i % 2 != 0) {
@@ -253,7 +253,8 @@ public class PaintView extends View {
             if (circleCoordinates.size() > 0) {
                 for (Coordinate coordinate : circleCoordinates) {
                     charValue++;
-                    if(charValue > 90) charValue = "A".charAt(0); //pokud jsme překročili Z, vrať se na A
+                    if (charValue > 90)
+                        charValue = "A".charAt(0); //pokud jsme překročili Z, vrať se na A
                     String nextChar = String.valueOf((char) charValue);
                     charsForNodes.put(coordinate, nextChar);
                 }
@@ -305,7 +306,8 @@ public class PaintView extends View {
                     }
                     if (!found) {
                         charValue++;
-                        if(charValue > 90) charValue = "A".charAt(0); //pokud jsme překročili Z, vrať se na A
+                        if (charValue > 90)
+                            charValue = "A".charAt(0); //pokud jsme překročili Z, vrať se na A
                         charsForNodes.put(coordinate, String.valueOf((char) charValue));
                     }
                 }
@@ -321,27 +323,15 @@ public class PaintView extends View {
                 mPaint.setColor(Color.WHITE);
                 mPaint.setTextSize(80);
 
-                //todo ošetřit písmenka
-//                if(charsForNodes.get(coordinate) != null){
-                    mCanvas.drawText(Objects.requireNonNull(charsForNodes.get(coordinate), "hashmapa nemá pro tento coordinate hodnotu"), coordinate.x - (BRUSH_SIZE * 2), coordinate.y + (BRUSH_SIZE * 2), mPaint);
-//                }
+                mCanvas.drawText(Objects.requireNonNull(charsForNodes.get(coordinate), "hashmapa nemá pro tento coordinate hodnotu"), coordinate.x - (BRUSH_SIZE * 2), coordinate.y + (BRUSH_SIZE * 2), mPaint);
             }
         }
     }
 
     private void touchStart(float x, float y) {
-//        mPath = new Path(); //sem se kresli jedna cesta do zdvihnuti
-//        FingerPath fp = new FingerPath(currentColor, strokeWidth, mPath);
-//        fingerPaths.add(fp);
-//
-//        //nastaveni prvni souradnice do pathu
-//        mPath.reset();
-//        mPath.moveTo(x, y); //posune prvni texku
-
         firstCoordinate = new Coordinate(x, y);
         //nasetuje prvni hodnotu do lineCoordinates (pro vykresleni čáry, která se právě kreslí
         lineCoordinates.add(new Coordinate(x, y));
-
 
         //nastaveni počátečních hodnot pro toleranci
         previousXCoordinate = x;
