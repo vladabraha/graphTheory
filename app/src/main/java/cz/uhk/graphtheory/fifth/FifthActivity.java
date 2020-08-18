@@ -33,7 +33,7 @@ import cz.uhk.graphtheory.common.TabLayoutFragment;
 import cz.uhk.graphtheory.common.TextFragment;
 import cz.uhk.graphtheory.database.DatabaseConnector;
 import cz.uhk.graphtheory.interfaces.DrawingFragmentListener;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Graph;
 import cz.uhk.graphtheory.util.GraphChecker;
 import cz.uhk.graphtheory.util.GraphGenerator;
 import cz.uhk.graphtheory.util.SpecificGraphGenerator;
@@ -119,7 +119,7 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
 
                 //nakresli bipartitní graf
                 case 1:
-                    if (drawingFragment.getUserGraph().getCustomLines().size() < 2 || drawingFragment.getUserGraph().getCircles().size() < 2){
+                    if (drawingFragment.getUserGraph().getEdges().size() < 2 || drawingFragment.getUserGraph().getNodes().size() < 2){
                         Toast.makeText(FifthActivity.this, "Nakresli alespoň 2 uzly a 2 hrany", Toast.LENGTH_LONG).show();
                         break;
                     }
@@ -291,12 +291,12 @@ public class FifthActivity extends AbstractActivity implements TabLayoutFragment
                 Random random = new Random();
                 isGraphBipartite = random.nextBoolean();
                 if (isGraphBipartite){
-                    Map mapToSet = SpecificGraphGenerator.generateBipartiteGraph(height, width, 15);
-                    drawingFragment.setUserGraph(mapToSet);
+                    Graph graphToSet = SpecificGraphGenerator.generateBipartiteGraph(height, width, 15);
+                    drawingFragment.setUserGraph(graphToSet);
                 }else {
                     int amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
-                    Map mapToSet = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
-                    drawingFragment.setUserGraph(mapToSet);
+                    Graph graphToSet = GraphGenerator.generateGraph(height, width, 15, amountOfNodes);
+                    drawingFragment.setUserGraph(graphToSet);
                 }
                 bottomNavigationView.setVisibility(View.INVISIBLE);
                 drawingFragment.changeDrawingMethod("circle_move");

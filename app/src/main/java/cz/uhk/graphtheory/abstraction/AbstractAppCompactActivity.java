@@ -15,7 +15,7 @@ import com.google.android.material.navigation.NavigationView;
 import cz.uhk.graphtheory.R;
 import cz.uhk.graphtheory.eight.EightActivity;
 import cz.uhk.graphtheory.fifth.FifthActivity;
-import cz.uhk.graphtheory.first.GraphGeneratorActivity;
+import cz.uhk.graphtheory.first.FirstActivity;
 import cz.uhk.graphtheory.fourth.FourthActivity;
 import cz.uhk.graphtheory.ninth.NinthActivity;
 import cz.uhk.graphtheory.second.SecondActivity;
@@ -59,7 +59,7 @@ public abstract class AbstractAppCompactActivity extends AppCompatActivity imple
 
         if (id == R.id.nav_first) {
             if (sessionId != 1) {
-                Intent newActivityIntent = new Intent(this, GraphGeneratorActivity.class);
+                Intent newActivityIntent = new Intent(this, FirstActivity.class);
                 newActivityIntent.putExtra("SESSION_ID", 1);
                 finish();
                 startActivity(newActivityIntent);

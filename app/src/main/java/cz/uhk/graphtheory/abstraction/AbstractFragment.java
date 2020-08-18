@@ -16,13 +16,13 @@ import java.util.Objects;
 
 import cz.uhk.graphtheory.R;
 import cz.uhk.graphtheory.common.GraphGeneratedView;
-import cz.uhk.graphtheory.model.GeneratedMapViewModel;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.GeneratedGraphViewModel;
+import cz.uhk.graphtheory.model.Graph;
 
 public abstract class AbstractFragment extends Fragment {
 
     private GraphGeneratedView graphGeneratedView;
-    private GeneratedMapViewModel generatedMapViewModel;
+    private GeneratedGraphViewModel generatedGraphViewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,7 +33,7 @@ public abstract class AbstractFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         //getView modal for current activity
-        generatedMapViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(GeneratedMapViewModel.class);
+        generatedGraphViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity(), "Activity for ViewModel musn't be null")).get(GeneratedGraphViewModel.class);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_generate_graph, container, false);
     }
@@ -45,8 +45,8 @@ public abstract class AbstractFragment extends Fragment {
         DisplayMetrics metrics = new DisplayMetrics();
         Objects.requireNonNull(getActivity()).getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
         graphGeneratedView.init(metrics);
-        if (generatedMapViewModel.getMap() != null) {
-            graphGeneratedView.setMap(generatedMapViewModel.getMap());
+        if (generatedGraphViewModel.getGraph() != null) {
+            graphGeneratedView.setGraph(generatedGraphViewModel.getGraph());
         }
 
     }
@@ -67,17 +67,17 @@ public abstract class AbstractFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        //set current map to view modal when fragment detached
-        Map map = graphGeneratedView.getMap();
-        generatedMapViewModel.setMap(map);
+        //set current graph to view modal when fragment detached
+        Graph graph = graphGeneratedView.getGraph();
+        generatedGraphViewModel.setGraph(graph);
     }
 
     public GraphGeneratedView getGraphGeneratedView() {
         return graphGeneratedView;
     }
 
-    public GeneratedMapViewModel getGeneratedMapViewModel() {
-        return generatedMapViewModel;
+    public GeneratedGraphViewModel getGeneratedGraphViewModel() {
+        return generatedGraphViewModel;
     }
 
 

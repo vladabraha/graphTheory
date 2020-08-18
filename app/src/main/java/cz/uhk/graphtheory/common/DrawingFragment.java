@@ -20,7 +20,7 @@ import cz.uhk.graphtheory.R;
 import cz.uhk.graphtheory.interfaces.DrawingFragmentListener;
 import cz.uhk.graphtheory.model.Coordinate;
 import cz.uhk.graphtheory.model.DrawMapViewModel;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Graph;
 
 
 ///**
@@ -45,28 +45,13 @@ public class DrawingFragment extends Fragment implements DrawingFragmentListener
     private static int BRUSH_SIZE;
 
     private boolean disableListener = false;
-    private Map sentMap;
-    private boolean shouldBeSentMapSet, shouldBeNodeColorSwitched;
+    private Graph sentGraph;
+    private boolean shouldBeSentGraphSet, shouldBeNodeColorSwitched;
 
 //    private GraphListener mListener;
 
     public DrawingFragment() {
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment DrawingFragment.
-     */
-
-    public static DrawingFragment newInstance(String param1, String param2) {
-        DrawingFragment fragment = new DrawingFragment();
-        fragment.setRetainInstance(true); //při otočení displaye by se to nemělo změnit
-        return fragment;
     }
 
     @Override
@@ -89,13 +74,13 @@ public class DrawingFragment extends Fragment implements DrawingFragmentListener
         metrics = new DisplayMetrics();
         Objects.requireNonNull(getActivity()).getWindowManager().getDefaultDisplay().getMetrics(metrics);
         paintView.init(metrics);
-        if (shouldBeSentMapSet){
-            shouldBeSentMapSet = false;
-            paintView.setMap(sentMap);
-            drawMapViewModel.setMap(sentMap);
+        if (shouldBeSentGraphSet){
+            shouldBeSentGraphSet = false;
+            paintView.setGraph(sentGraph);
+            drawMapViewModel.setGraph(sentGraph);
 
-        }else if (drawMapViewModel.getMap() != null) {
-            paintView.setMap(drawMapViewModel.getMap());
+        }else if (drawMapViewModel.getGraph() != null) {
+            paintView.setGraph(drawMapViewModel.getGraph());
         }
         paintView.setmListener(this);
         view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -125,8 +110,8 @@ public class DrawingFragment extends Fragment implements DrawingFragmentListener
     @Override
     public void onDetach() {
         super.onDetach();
-        Map map = paintView.getMap();
-        drawMapViewModel.setMap(map);
+        Graph graph = paintView.getGraph();
+        drawMapViewModel.setGraph(graph);
     }
 
     public void changeDrawingMethod(String method) {
@@ -157,12 +142,12 @@ public class DrawingFragment extends Fragment implements DrawingFragmentListener
     }
 
     @Override
-    public Map getUserGraph() {
-        return paintView.getMap();
+    public Graph getUserGraph() {
+        return paintView.getGraph();
     }
 
-    public void setUserGraph(Map map) {
-        paintView.setMap(map);
+    public void setUserGraph(Graph graph) {
+        paintView.setGraph(graph);
     }
 
     public void setShouldBeNodeColorSwitched(boolean shouldBeNodeColorSwitched) {
@@ -173,9 +158,9 @@ public class DrawingFragment extends Fragment implements DrawingFragmentListener
         }
     }
 
-    public void setMapAfterViewIsCreated(Map map){
-        shouldBeSentMapSet = true;
-        sentMap = map;
+    public void setMapAfterViewIsCreated(Graph graph){
+        shouldBeSentGraphSet = true;
+        sentGraph = graph;
     }
 
     public DisplayMetrics getMetrics() {
@@ -185,13 +170,13 @@ public class DrawingFragment extends Fragment implements DrawingFragmentListener
     @Override
     public void sentTouchUpCoordinates(Coordinate coordinate) {
         if (shouldBeNodeColorSwitched){
-            Map map = paintView.getMap();
+            Graph graph = paintView.getGraph();
             boolean found = false, nodeToSwitchIsRed = false;
             Coordinate nodeToSwitch = null;
-            ArrayList<Coordinate> redCircles = map.getRedCircles();
-            ArrayList<Coordinate> circles = map.getCircles();
+            ArrayList<Coordinate> redNodes = graph.getRedNodes();
+            ArrayList<Coordinate> nodes = graph.getNodes();
 
-            for (Coordinate nodeCoordinate : circles){
+            for (Coordinate nodeCoordinate : nodes){
                 if (checkIsInCircle(nodeCoordinate.x, nodeCoordinate.y, coordinate.x, coordinate.y)){
                     found = true;
                     nodeToSwitchIsRed = false;
@@ -199,8 +184,8 @@ public class DrawingFragment extends Fragment implements DrawingFragmentListener
                     break;
                 }
             }
-            if (!found && redCircles != null){
-                for (Coordinate redNodeCoordinate : redCircles){
+            if (!found && redNodes != null){
+                for (Coordinate redNodeCoordinate : redNodes){
                     if (checkIsInCircle(redNodeCoordinate.x, redNodeCoordinate.y, coordinate.x, coordinate.y)){
                         found = true;
                         nodeToSwitchIsRed = true;
@@ -212,18 +197,18 @@ public class DrawingFragment extends Fragment implements DrawingFragmentListener
             //pokud si kliknul na uzel, tak mu prohod barvu
             if (found){
                 if (nodeToSwitchIsRed){
-                    circles.add(nodeToSwitch);
-                    redCircles.remove(Objects.requireNonNull(nodeToSwitch));
+                    nodes.add(nodeToSwitch);
+                    redNodes.remove(Objects.requireNonNull(nodeToSwitch));
                 }else {
                     //přehoď všechny červeny uzly na normální
-                    circles.addAll(redCircles);
-                    redCircles.clear(); //to avoid ConcurrentModificationException
+                    nodes.addAll(redNodes);
+                    redNodes.clear(); //to avoid ConcurrentModificationException
                     //a teď samotné prohození
-                    redCircles.add(nodeToSwitch);
-                    circles.remove(Objects.requireNonNull(nodeToSwitch));
+                    redNodes.add(nodeToSwitch);
+                    nodes.remove(Objects.requireNonNull(nodeToSwitch));
                 }
             }
-            paintView.setMap(new Map(map.getCustomLines(), circles, map.getRedLineList(), redCircles));
+            paintView.setGraph(new Graph(graph.getEdges(), nodes, graph.getRedEdgesList(), redNodes));
         }
     }
 

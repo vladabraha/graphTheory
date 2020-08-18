@@ -3,33 +3,33 @@ package cz.uhk.graphtheory.util;
 import java.util.ArrayList;
 
 import cz.uhk.graphtheory.model.Coordinate;
-import cz.uhk.graphtheory.model.CustomLine;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Edge;
+import cz.uhk.graphtheory.model.Graph;
 
 public class GraphConverter {
 
     /**
      * rozdeli 2 grafy na 2 poloviny obrazovky
-     * @param firstMap prvni mapa
+     * @param firstGraph prvni graf
      * @param height vyska viewportu
-     * @return jedna mapa obsahujici obe mapy
+     * @return jeden graf obsahujici oba grafy
      */
-    public static Map convertMapsToSplitScreen(Map firstMap, int height){
+    public static Graph convertGraphsToSplitScreen(Graph firstGraph, int height){
         int halfHeight = height / 2;
         halfHeight = halfHeight - 100; //tohle je pro posunutí prostoru pro to, aby to nelezlo pod bottomNavigation view
 
         //rozdeleni prvniho grafu do prvni poloviny obrazovky
-        ArrayList<CustomLine> customLines = firstMap.getCustomLines();
-        ArrayList<CustomLine> redLines = firstMap.getRedLineList();
-        ArrayList<Coordinate> circles = firstMap.getCircles();
+        ArrayList<Edge> edges = firstGraph.getEdges();
+        ArrayList<Edge> redEdges = firstGraph.getRedEdgesList();
+        ArrayList<Coordinate> nodes = firstGraph.getNodes();
 
-        for (Coordinate circleCoordinate : circles){
+        for (Coordinate circleCoordinate : nodes){
             if (Float.compare(circleCoordinate.y, (float) halfHeight) > 0) circleCoordinate.y = circleCoordinate.y / 2;
         }
 
-        for (CustomLine customLine : customLines){
-            Coordinate from = customLine.getFrom();
-            Coordinate to = customLine.getTo();
+        for (Edge edge : edges){
+            Coordinate from = edge.getFrom();
+            Coordinate to = edge.getTo();
             if (Float.compare(from.y, (float) halfHeight) > 0){
                 from.y = from.y / 2;
             }
@@ -38,7 +38,7 @@ public class GraphConverter {
             }
         }
 
-        for (CustomLine redLine : redLines){
+        for (Edge redLine : redEdges){
             Coordinate from = redLine.getFrom();
             Coordinate to = redLine.getTo();
             if (Float.compare(from.y , (float) halfHeight) > 0){
@@ -49,21 +49,21 @@ public class GraphConverter {
             }
         }
 
-        Map secondMap = new Map(firstMap);
+        Graph secondGraph = new Graph(firstGraph);
         //rozdeleni druheho grafu do druhe poloviny obrazovky
-        ArrayList<CustomLine> customLines2 = secondMap.getCustomLines();
-        ArrayList<CustomLine> redLines2 = secondMap.getRedLineList();
-        ArrayList<Coordinate> circles2 = secondMap.getCircles();
+        ArrayList<Edge> customLines2 = secondGraph.getEdges();
+        ArrayList<Edge> redEdges2 = secondGraph.getRedEdgesList();
+        ArrayList<Coordinate> nodes2 = secondGraph.getNodes();
 
-        for (Coordinate circleCoordinate : circles2){
+        for (Coordinate circleCoordinate : nodes2){
             if (Float.compare(circleCoordinate.y , (float) halfHeight) < 0){
                 circleCoordinate.y = circleCoordinate.y + halfHeight;
             }
         }
 
-        for (CustomLine customLine : customLines2){
-            Coordinate from = customLine.getFrom();
-            Coordinate to = customLine.getTo();
+        for (Edge edge : customLines2){
+            Coordinate from = edge.getFrom();
+            Coordinate to = edge.getTo();
             if (Float.compare(from.y , (float) halfHeight) < 0){
                 from.y = from.y + halfHeight;
             }
@@ -72,7 +72,7 @@ public class GraphConverter {
             }
         }
 
-        for (CustomLine redLine : redLines2){
+        for (Edge redLine : redEdges2){
             Coordinate from = redLine.getFrom();
             Coordinate to = redLine.getTo();
             if (Float.compare(from.y , (float) halfHeight) < 0){
@@ -83,29 +83,29 @@ public class GraphConverter {
             }
         }
 
-        customLines.addAll(customLines2);
-        redLines.addAll(redLines2);
-        circles.addAll(circles2);
+        edges.addAll(customLines2);
+        redEdges.addAll(redEdges2);
+        nodes.addAll(nodes2);
 
-        return firstMap;
+        return firstGraph;
     }
 
-    public static ArrayList<Map> convertMapsToSplitScreenArray(Map firstMap, int height){
+    public static ArrayList<Graph> convertGraphsToSplitScreenArray(Graph firstGraph, int height){
         int halfHeight = height / 2;
         halfHeight = halfHeight - 100; //tohle je pro posunutí prostoru pro to, aby to nelezlo pod bottomNavigation view
 
         //rozdeleni prvniho grafu do prvni poloviny obrazovky
-        ArrayList<CustomLine> customLines = firstMap.getCustomLines();
-        ArrayList<CustomLine> redLines = firstMap.getRedLineList();
-        ArrayList<Coordinate> circles = firstMap.getCircles();
+        ArrayList<Edge> edges = firstGraph.getEdges();
+        ArrayList<Edge> redEdges = firstGraph.getRedEdgesList();
+        ArrayList<Coordinate> nodes = firstGraph.getNodes();
 
-        for (Coordinate circleCoordinate : circles){
+        for (Coordinate circleCoordinate : nodes){
             if (Float.compare(circleCoordinate.y, (float) halfHeight) > 0) circleCoordinate.y = circleCoordinate.y / 2;
         }
 
-        for (CustomLine customLine : customLines){
-            Coordinate from = customLine.getFrom();
-            Coordinate to = customLine.getTo();
+        for (Edge edge : edges){
+            Coordinate from = edge.getFrom();
+            Coordinate to = edge.getTo();
             if (Float.compare(from.y, (float) halfHeight) > 0){
                 from.y = from.y / 2;
             }
@@ -114,7 +114,7 @@ public class GraphConverter {
             }
         }
 
-        for (CustomLine redLine : redLines){
+        for (Edge redLine : redEdges){
             Coordinate from = redLine.getFrom();
             Coordinate to = redLine.getTo();
             if (Float.compare(from.y , (float) halfHeight) > 0){
@@ -125,21 +125,21 @@ public class GraphConverter {
             }
         }
 
-        Map secondMap = new Map(firstMap);
+        Graph secondGraph = new Graph(firstGraph);
         //rozdeleni druheho grafu do druhe poloviny obrazovky
-        ArrayList<CustomLine> customLines2 = secondMap.getCustomLines();
-        ArrayList<CustomLine> redLines2 = secondMap.getRedLineList();
-        ArrayList<Coordinate> circles2 = secondMap.getCircles();
+        ArrayList<Edge> customLines2 = secondGraph.getEdges();
+        ArrayList<Edge> redEdges2 = secondGraph.getRedEdgesList();
+        ArrayList<Coordinate> nodes2 = secondGraph.getNodes();
 
-        for (Coordinate circleCoordinate : circles2){
+        for (Coordinate circleCoordinate : nodes2){
             if (Float.compare(circleCoordinate.y , (float) halfHeight) < 0){
                 circleCoordinate.y = circleCoordinate.y + halfHeight;
             }
         }
 
-        for (CustomLine customLine : customLines2){
-            Coordinate from = customLine.getFrom();
-            Coordinate to = customLine.getTo();
+        for (Edge edge : customLines2){
+            Coordinate from = edge.getFrom();
+            Coordinate to = edge.getTo();
             if (Float.compare(from.y , (float) halfHeight) < 0){
                 from.y = from.y + halfHeight;
             }
@@ -148,7 +148,7 @@ public class GraphConverter {
             }
         }
 
-        for (CustomLine redLine : redLines2){
+        for (Edge redLine : redEdges2){
             Coordinate from = redLine.getFrom();
             Coordinate to = redLine.getTo();
             if (Float.compare(from.y , (float) halfHeight) < 0){
@@ -159,10 +159,10 @@ public class GraphConverter {
             }
         }
 
-        ArrayList<Map> maps = new ArrayList<>();
-        maps.add(firstMap);
-        maps.add(secondMap);
-        return maps;
+        ArrayList<Graph> graphs = new ArrayList<>();
+        graphs.add(firstGraph);
+        graphs.add(secondGraph);
+        return graphs;
     }
 
 }

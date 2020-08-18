@@ -11,8 +11,8 @@ import java.util.ArrayList;
 
 import cz.uhk.graphtheory.abstraction.AbstractFragment;
 import cz.uhk.graphtheory.model.Coordinate;
-import cz.uhk.graphtheory.model.CustomLine;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Edge;
+import cz.uhk.graphtheory.model.Graph;
 import cz.uhk.graphtheory.util.GraphConverter;
 import cz.uhk.graphtheory.util.GraphGenerator;
 
@@ -45,16 +45,16 @@ public class ThirdActivityFragment extends AbstractFragment {
                     height = view.getMeasuredHeight();
                     if (width != 0) {
                         int BRUSH_SIZE = getGraphGeneratedView().getBrushSize();
-                        ArrayList<Map> complementGraphs = createComplementGraphs(BRUSH_SIZE, height, width);
+                        ArrayList<Graph> complementGraphs = createComplementGraphs(BRUSH_SIZE, height, width);
 
-                        Map splittedMap = complementGraphs.get(0);
-                        Map splittedMap2 = complementGraphs.get(1);
+                        Graph splittedGraph = complementGraphs.get(0);
+                        Graph splittedGraph2 = complementGraphs.get(1);
 
-                        splittedMap.getCircles().addAll(splittedMap2.getCircles());
-                        splittedMap.getCustomLines().addAll(splittedMap2.getCustomLines());
-                        splittedMap.getRedLineList().addAll(splittedMap2.getRedLineList());
+                        splittedGraph.getNodes().addAll(splittedGraph2.getNodes());
+                        splittedGraph.getEdges().addAll(splittedGraph2.getEdges());
+                        splittedGraph.getRedEdgesList().addAll(splittedGraph2.getRedEdgesList());
 
-                        getGraphGeneratedView().setMap(splittedMap);
+                        getGraphGeneratedView().setGraph(splittedGraph);
                     }
                     disableListener = true;
                 }
@@ -63,32 +63,32 @@ public class ThirdActivityFragment extends AbstractFragment {
 
     }
 
-    public static ArrayList<Map> createComplementGraphs(int BRUSH_SIZE, int height, int width){
+    public static ArrayList<Graph> createComplementGraphs(int BRUSH_SIZE, int height, int width){
         //set init bipartitní graf educational fragment
         int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
         if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES)
             amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
 
-        Map firstMap = GraphGenerator.generateMap(height, width, BRUSH_SIZE, amountOfEdges);
-        Map secondMap = new Map(firstMap);
+        Graph firstGraph = GraphGenerator.generateGraph(height, width, BRUSH_SIZE, amountOfEdges);
+        Graph secondGraph = new Graph(firstGraph);
 
         //myšlenka - mam graf - projdu všechny body a podívám se jestli jsou propojený se všema bodama
         //pokud s nějakým nejsou přidám je do druhého seznamu (red line listu)
-        ArrayList<Coordinate> nodes = firstMap.getCircles();
-        ArrayList<CustomLine> lines = firstMap.getCustomLines();
-        ArrayList<CustomLine> redLines = new ArrayList<>();
+        ArrayList<Coordinate> nodes = firstGraph.getNodes();
+        ArrayList<Edge> lines = firstGraph.getEdges();
+        ArrayList<Edge> redEdges = new ArrayList<>();
 
         for (Coordinate coordinate : nodes) {
             ArrayList<Coordinate> alreadyFoundConnection = new ArrayList<>();
-            for (CustomLine customLine : lines) {
-                if (customLine.getFrom().equal(coordinate)) {
+            for (Edge edge : lines) {
+                if (edge.getFrom().equal(coordinate)) {
                     //projde vsechny body v alreadyFoundConnection a mrkne, jestli nejakej bod n se rovna custom line.getto
-                    if (alreadyFoundConnection.stream().noneMatch(n -> n.equal(customLine.getTo()))) {
-                        alreadyFoundConnection.add(customLine.getTo());
+                    if (alreadyFoundConnection.stream().noneMatch(n -> n.equal(edge.getTo()))) {
+                        alreadyFoundConnection.add(edge.getTo());
                     }
-                } else if (customLine.getTo().equal(coordinate)) {
-                    if (alreadyFoundConnection.stream().noneMatch(n -> n.equal(customLine.getFrom()))) {
-                        alreadyFoundConnection.add(customLine.getFrom());
+                } else if (edge.getTo().equal(coordinate)) {
+                    if (alreadyFoundConnection.stream().noneMatch(n -> n.equal(edge.getFrom()))) {
+                        alreadyFoundConnection.add(edge.getFrom());
                     }
                 }
             }
@@ -96,24 +96,24 @@ public class ThirdActivityFragment extends AbstractFragment {
             if (alreadyFoundConnection.size() != (nodes.size() - 1)) {
                 for (Coordinate allNodes : nodes) {
                     if (alreadyFoundConnection.stream().noneMatch(n -> n.equal(allNodes)) && !allNodes.equal(coordinate)) {
-                        redLines.add(new CustomLine(allNodes, coordinate));
+                        redEdges.add(new Edge(allNodes, coordinate));
                     }
                 }
             }
         }
-        firstMap.setRedLineList(redLines);
+        firstGraph.setRedEdgesList(redEdges);
 
-        ArrayList<Map> maps = GraphConverter.convertMapsToSplitScreenArray(firstMap, height);
-        Map splittedMap = maps.get(0);
-        Map splittedMap2 = maps.get(1);
+        ArrayList<Graph> graphs = GraphConverter.convertGraphsToSplitScreenArray(firstGraph, height);
+        Graph splittedGraph = graphs.get(0);
+        Graph splittedGraph2 = graphs.get(1);
 
-        splittedMap2.setCustomLines(new ArrayList<>());
-        splittedMap.setRedLineList(new ArrayList<>());
+        splittedGraph2.setEdges(new ArrayList<>());
+        splittedGraph.setRedEdgesList(new ArrayList<>());
 
-        ArrayList<Map> complementMaps = new ArrayList<>();
-        complementMaps.add(splittedMap);
-        complementMaps.add(splittedMap2);
+        ArrayList<Graph> complementGraphs = new ArrayList<>();
+        complementGraphs.add(splittedGraph);
+        complementGraphs.add(splittedGraph2);
 
-        return complementMaps;
+        return complementGraphs;
     }
 }

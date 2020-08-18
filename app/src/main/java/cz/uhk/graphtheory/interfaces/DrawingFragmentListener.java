@@ -1,7 +1,7 @@
 package cz.uhk.graphtheory.interfaces;
 
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Graph;
 
 public interface DrawingFragmentListener {
-    public Map getUserGraph();
+    public Graph getUserGraph();
 }

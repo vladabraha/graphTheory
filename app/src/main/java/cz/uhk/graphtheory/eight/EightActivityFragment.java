@@ -12,8 +12,8 @@ import java.util.Collections;
 
 import cz.uhk.graphtheory.abstraction.AbstractFragment;
 import cz.uhk.graphtheory.model.Coordinate;
-import cz.uhk.graphtheory.model.CustomLine;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Edge;
+import cz.uhk.graphtheory.model.Graph;
 import cz.uhk.graphtheory.util.GraphGenerator;
 
 public class EightActivityFragment extends AbstractFragment {
@@ -57,43 +57,43 @@ public class EightActivityFragment extends AbstractFragment {
     //nejnižsí souřadnici si zajistím tak, že budu mít array list serazenej pomoci comparatoru
     //plus tam 3 od konce trochu náhodně pospojuju, aby to nějak vypadalo
     @SuppressWarnings("unchecked")
-    public static Map generateTree(int BRUSH_SIZE, int height,int width) {
+    public static Graph generateTree(int BRUSH_SIZE, int height, int width) {
         int amountOfEdges = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
         if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES) amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
         ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfEdges);
         Collections.sort(nodesToSet);
 
-        ArrayList<CustomLine> customLines = new ArrayList<>();
+        ArrayList<Edge> edges = new ArrayList<>();
         for (int i = 0; i < nodesToSet.size(); i++) {
             if (i == nodesToSet.size() - 3 && i > 0) {
-                customLines.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(i - 1)));
-                customLines.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(i + 1)));
-                customLines.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(i + 2)));
+                edges.add(new Edge(nodesToSet.get(i), nodesToSet.get(i - 1)));
+                edges.add(new Edge(nodesToSet.get(i), nodesToSet.get(i + 1)));
+                edges.add(new Edge(nodesToSet.get(i), nodesToSet.get(i + 2)));
             } else if (i < nodesToSet.size() - 3 && i > 0) {
-                customLines.add(new CustomLine(nodesToSet.get(i), nodesToSet.get(i - 1)));
+                edges.add(new Edge(nodesToSet.get(i), nodesToSet.get(i - 1)));
             }
         }
-        return new Map(customLines, nodesToSet);
+        return new Graph(edges, nodesToSet);
     }
 
     //myšlenka - vezmu alg. na generovani stromu, a použiju ho 2 - a mám 2 samostatny stromy -> les
     //ještě tomu dám poloviční šířku viewportu, takže k tý druhý půlce přičtu polovinu viewportu a zobrazí se mi to hezky na půlku
     @SuppressWarnings("unchecked")
-    public static Map generateForrest(int BRUSH_SIZE, int height,int width) {
+    public static Graph generateForrest(int BRUSH_SIZE, int height, int width) {
 
         int amountOfNodes = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
         if (amountOfNodes < MINIMUM_AMOUNT_OF_NODES) amountOfNodes = MINIMUM_AMOUNT_OF_NODES;
         ArrayList<Coordinate> firstNodesToSet = GraphGenerator.generateNodes(height, (width / 2), BRUSH_SIZE, amountOfNodes);
         Collections.sort(firstNodesToSet);
 
-        ArrayList<CustomLine> customLines = new ArrayList<>();
+        ArrayList<Edge> edges = new ArrayList<>();
         for (int i = 0; i < firstNodesToSet.size(); i++) {
             if (i == firstNodesToSet.size() - 3 && i > 0) {
-                customLines.add(new CustomLine(firstNodesToSet.get(i), firstNodesToSet.get(i - 1)));
-                customLines.add(new CustomLine(firstNodesToSet.get(i), firstNodesToSet.get(i + 1)));
-                customLines.add(new CustomLine(firstNodesToSet.get(i), firstNodesToSet.get(i + 2)));
+                edges.add(new Edge(firstNodesToSet.get(i), firstNodesToSet.get(i - 1)));
+                edges.add(new Edge(firstNodesToSet.get(i), firstNodesToSet.get(i + 1)));
+                edges.add(new Edge(firstNodesToSet.get(i), firstNodesToSet.get(i + 2)));
             } else if (i < firstNodesToSet.size() - 3 && i > 0) {
-                customLines.add(new CustomLine(firstNodesToSet.get(i), firstNodesToSet.get(i - 1)));
+                edges.add(new Edge(firstNodesToSet.get(i), firstNodesToSet.get(i - 1)));
             }
         }
 
@@ -101,14 +101,14 @@ public class EightActivityFragment extends AbstractFragment {
         Collections.sort(firstNodesToSet);
         Collections.sort(secondNodesToSet);
 
-        ArrayList<CustomLine> secondCustomLines = new ArrayList<>();
+        ArrayList<Edge> secondEdges = new ArrayList<>();
         for (int i = 0; i < secondNodesToSet.size(); i++) {
             if (i == secondNodesToSet.size() - 3 && i > 0) {
-                secondCustomLines.add(new CustomLine(secondNodesToSet.get(i), secondNodesToSet.get(i - 1)));
-                secondCustomLines.add(new CustomLine(secondNodesToSet.get(i), secondNodesToSet.get(i + 1)));
-                secondCustomLines.add(new CustomLine(secondNodesToSet.get(i - 1), secondNodesToSet.get(i + 2)));
+                secondEdges.add(new Edge(secondNodesToSet.get(i), secondNodesToSet.get(i - 1)));
+                secondEdges.add(new Edge(secondNodesToSet.get(i), secondNodesToSet.get(i + 1)));
+                secondEdges.add(new Edge(secondNodesToSet.get(i - 1), secondNodesToSet.get(i + 2)));
             } else if (i < secondNodesToSet.size() - 3 && i > 0) {
-                secondCustomLines.add(new CustomLine(secondNodesToSet.get(i), secondNodesToSet.get(i - 1)));
+                secondEdges.add(new Edge(secondNodesToSet.get(i), secondNodesToSet.get(i - 1)));
             }
         }
 
@@ -118,22 +118,22 @@ public class EightActivityFragment extends AbstractFragment {
         }
 
 
-        customLines.addAll(secondCustomLines);
+        edges.addAll(secondEdges);
         firstNodesToSet.addAll(secondNodesToSet);
 
-        return new Map(customLines, firstNodesToSet);
+        return new Graph(edges, firstNodesToSet);
     }
 
     public void changeGraph(String mode) {
         switch (mode) {
             case "tree":
-                getGraphGeneratedView().setMap(generateTree(getGraphGeneratedView().getBrushSize(), height, width));
+                getGraphGeneratedView().setGraph(generateTree(getGraphGeneratedView().getBrushSize(), height, width));
                 break;
             case "forrest":
-                getGraphGeneratedView().setMap(generateForrest(getGraphGeneratedView().getBrushSize(), height, width));
+                getGraphGeneratedView().setGraph(generateForrest(getGraphGeneratedView().getBrushSize(), height, width));
                 break;
             default:
-                getGraphGeneratedView().setMap(generateTree(getGraphGeneratedView().getBrushSize(), height, width));
+                getGraphGeneratedView().setGraph(generateTree(getGraphGeneratedView().getBrushSize(), height, width));
                 break;
         }
     }

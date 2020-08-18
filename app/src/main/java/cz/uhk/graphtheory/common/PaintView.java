@@ -20,9 +20,9 @@ import java.util.HashMap;
 import java.util.Objects;
 
 import cz.uhk.graphtheory.model.Coordinate;
-import cz.uhk.graphtheory.model.CustomLine;
+import cz.uhk.graphtheory.model.Edge;
 import cz.uhk.graphtheory.model.FingerPath;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Graph;
 
 /**
  * obecna trida pro kresleni - bude pouzita ve vsech kreslicich prvcich
@@ -54,7 +54,7 @@ public class PaintView extends View {
     private ArrayList<Coordinate> circleCoordinates = new ArrayList<>();
     private ArrayList<Coordinate> allLineList = new ArrayList<>(); //seznam všech vytvořených line, ktere propojuji kruhy
     private ArrayList<Coordinate> redLineList = new ArrayList<>(); //seznam vytvořené cesty
-    private ArrayList<Coordinate> redCirclesCoordinates = new ArrayList<>(); //seznam cervenych vrcholu, napr. pro artikulaci
+    private ArrayList<Coordinate> redNodesCoordinates = new ArrayList<>(); //seznam cervenych vrcholu, napr. pro artikulaci
     private boolean circle, line, move, remove, path = false;
     private boolean isCircleDragged = false;
     PaintView.CommunicationInterface mListener;
@@ -161,7 +161,7 @@ public class PaintView extends View {
      */
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.save();
+        canvas.save(); //uloží to, co bylo do teď vykresleno, dále mohou probíhat modifikace, např. otočení, zvětšení obrazovky atd.
         mCanvas = canvas;
         mCanvas.drawColor(DEFAULT_BG_COLOR); //vybarví celou plochu bílou barvou
 
@@ -214,8 +214,8 @@ public class PaintView extends View {
             }
         }
 
-        if (redCirclesCoordinates != null && redCirclesCoordinates.size() > 0) {
-            for (Coordinate coordinate : redCirclesCoordinates) {
+        if (redNodesCoordinates != null && redNodesCoordinates.size() > 0) {
+            for (Coordinate coordinate : redNodesCoordinates) {
                 mPaint.setColor(RED_COLOR);
                 mPaint.setStrokeWidth(BRUSH_SIZE);
                 mPaint.setStyle(Paint.Style.FILL);
@@ -224,8 +224,8 @@ public class PaintView extends View {
         }
         createCharsInNodes();
 
-        if (redCirclesCoordinates != null && redCirclesCoordinates.size() > 0) {
-            for (Coordinate coordinate : redCirclesCoordinates) {
+        if (redNodesCoordinates != null && redNodesCoordinates.size() > 0) {
+            for (Coordinate coordinate : redNodesCoordinates) {
                 mPaint.setColor(RED_COLOR);
                 mPaint.setStrokeWidth(BRUSH_SIZE);
                 mPaint.setStyle(Paint.Style.FILL);
@@ -238,7 +238,7 @@ public class PaintView extends View {
         }
 
         canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
-        canvas.restore();
+        canvas.restore(); //v případě, že jsme nějak otočili, zvětšili, apod. canvas, tak ho to navrátí do "výchozí" podoby
 
     }
 
@@ -253,7 +253,8 @@ public class PaintView extends View {
             if (circleCoordinates.size() > 0) {
                 for (Coordinate coordinate : circleCoordinates) {
                     charValue++;
-                    if(charValue > 90) charValue = "A".charAt(0); //pokud jsme překročili Z, vrať se na A
+                    if (charValue > 90)
+                        charValue = "A".charAt(0); //pokud jsme překročili Z, vrať se na A
                     String nextChar = String.valueOf((char) charValue);
                     charsForNodes.put(coordinate, nextChar);
                 }
@@ -286,7 +287,7 @@ public class PaintView extends View {
                     if (shouldBreak) break;
                 }
             } else if (charsForNodes.size() > circleCoordinates.size()) {
-                //pokud pro dany zaznam nenalezneme hodnotu v circles, tak víme, že je se ma tento záznam smazat
+                //pokud pro dany zaznam nenalezneme hodnotu v nodes, tak víme, že je se ma tento záznam smazat
                 for (java.util.Map.Entry<Coordinate, String> charEntry : charsForNodes.entrySet()) {
                     if (circleCoordinates.stream().noneMatch(c -> c.equal(charEntry.getKey()))) {
                         charsForNodes.remove(charEntry.getKey(), charEntry.getValue());
@@ -305,7 +306,8 @@ public class PaintView extends View {
                     }
                     if (!found) {
                         charValue++;
-                        if(charValue > 90) charValue = "A".charAt(0); //pokud jsme překročili Z, vrať se na A
+                        if (charValue > 90)
+                            charValue = "A".charAt(0); //pokud jsme překročili Z, vrať se na A
                         charsForNodes.put(coordinate, String.valueOf((char) charValue));
                     }
                 }
@@ -321,27 +323,15 @@ public class PaintView extends View {
                 mPaint.setColor(Color.WHITE);
                 mPaint.setTextSize(80);
 
-                //todo ošetřit písmenka
-//                if(charsForNodes.get(coordinate) != null){
-                    mCanvas.drawText(Objects.requireNonNull(charsForNodes.get(coordinate), "hashmapa nemá pro tento coordinate hodnotu"), coordinate.x - (BRUSH_SIZE * 2), coordinate.y + (BRUSH_SIZE * 2), mPaint);
-//                }
+                mCanvas.drawText(Objects.requireNonNull(charsForNodes.get(coordinate), "hashmapa nemá pro tento coordinate hodnotu"), coordinate.x - (BRUSH_SIZE * 2), coordinate.y + (BRUSH_SIZE * 2), mPaint);
             }
         }
     }
 
     private void touchStart(float x, float y) {
-//        mPath = new Path(); //sem se kresli jedna cesta do zdvihnuti
-//        FingerPath fp = new FingerPath(currentColor, strokeWidth, mPath);
-//        fingerPaths.add(fp);
-//
-//        //nastaveni prvni souradnice do pathu
-//        mPath.reset();
-//        mPath.moveTo(x, y); //posune prvni texku
-
         firstCoordinate = new Coordinate(x, y);
         //nasetuje prvni hodnotu do lineCoordinates (pro vykresleni čáry, která se právě kreslí
         lineCoordinates.add(new Coordinate(x, y));
-
 
         //nastaveni počátečních hodnot pro toleranci
         previousXCoordinate = x;
@@ -378,7 +368,7 @@ public class PaintView extends View {
                     break;
                 }
             }
-            for (Coordinate coordinate : redCirclesCoordinates) {
+            for (Coordinate coordinate : redNodesCoordinates) {
                 if (checkIsInCircle(coordinate.x, coordinate.y, x, y)) {
                     isCircleDragged = true;
                     firstCoordinate = coordinate;
@@ -402,7 +392,7 @@ public class PaintView extends View {
             circleCoordinates.remove(firstCoordinate);
         } else {
             movingWithRedCircle = true;
-            redCirclesCoordinates.remove(firstCoordinate);
+            redNodesCoordinates.remove(firstCoordinate);
         }
         for (Coordinate coordinate : allLineList) {
             //při tažení se přehodí i souřadnice přímky
@@ -423,7 +413,7 @@ public class PaintView extends View {
         if (!movingWithRedCircle) {
             circleCoordinates.add(firstCoordinate);
         } else {
-            redCirclesCoordinates.add(firstCoordinate);
+            redNodesCoordinates.add(firstCoordinate);
         }
     }
 
@@ -557,41 +547,41 @@ public class PaintView extends View {
     }
 
     /**
-     * get map for DrawMapViewModel
+     * get graph for DrawMapViewModel
      */
-    public Map getMap() {
+    public Graph getGraph() {
 
-        ArrayList<CustomLine> lines = new ArrayList<>();
+        ArrayList<Edge> lines = new ArrayList<>();
         for (int x = 0; x < allLineList.size(); x++) {
             if (x % 2 != 0) {
-                CustomLine line = new CustomLine(allLineList.get(x - 1), allLineList.get(x));
+                Edge line = new Edge(allLineList.get(x - 1), allLineList.get(x));
                 lines.add(line);
             }
         }
 
-        ArrayList<CustomLine> path = new ArrayList<>();
+        ArrayList<Edge> path = new ArrayList<>();
         for (int x = 0; x < redLineList.size(); x++) {
             if (x % 2 != 0) {
-                CustomLine line = new CustomLine(redLineList.get(x - 1), redLineList.get(x));
+                Edge line = new Edge(redLineList.get(x - 1), redLineList.get(x));
                 path.add(line);
             }
         }
-        return new Map(lines, circleCoordinates, path, redCirclesCoordinates);
+        return new Graph(lines, circleCoordinates, path, redNodesCoordinates);
     }
 
-    public void setMap(Map map) {
-        ArrayList<CustomLine> lines = map.getCustomLines();
-        ArrayList<CustomLine> path = map.getRedLineList();
+    public void setGraph(Graph graph) {
+        ArrayList<Edge> lines = graph.getEdges();
+        ArrayList<Edge> path = graph.getRedEdgesList();
         charsForNodes = null;
 
         allLineList.clear();
         redLineList.clear();
 
-        if (map.getCircles().isEmpty()) circleCoordinates.clear();
-        if (map.getCircles().isEmpty()) redCirclesCoordinates.clear();
-        circleCoordinates = map.getCircles();
-        redCirclesCoordinates = map.getRedCircles();
-        if (!circleCoordinates.isEmpty() || !allLineList.isEmpty() || !redCirclesCoordinates.isEmpty()) {
+        if (graph.getNodes().isEmpty()) circleCoordinates.clear();
+        if (graph.getNodes().isEmpty()) redNodesCoordinates.clear();
+        circleCoordinates = graph.getNodes();
+        redNodesCoordinates = graph.getRedNodes();
+        if (!circleCoordinates.isEmpty() || !allLineList.isEmpty() || !redNodesCoordinates.isEmpty()) {
             invalidate();
         }
 

@@ -33,7 +33,7 @@
         </activity>
 
         <activity
-            android:name="cz.uhk.graphtheory.first.GraphGeneratorActivity"
+            android:name="cz.uhk.graphtheory.first.FirstActivity"
             android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:theme="@style/AppTheme.NoActionBar" />
             <!--  configChanges da vedet o tom, ze se zmenila rotace obrazovky          -->

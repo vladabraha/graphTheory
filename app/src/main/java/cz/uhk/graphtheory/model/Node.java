@@ -1,9 +1,9 @@
 package cz.uhk.graphtheory.model;
 
-public class Circle {
+public class Node {
     private Coordinate coordinate;
 
-    public Circle(Coordinate coordinate) {
+    public Node(Coordinate coordinate) {
         this.coordinate = coordinate;
     }
 

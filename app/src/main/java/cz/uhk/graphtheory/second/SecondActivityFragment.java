@@ -8,8 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import cz.uhk.graphtheory.abstraction.AbstractFragment;
-import cz.uhk.graphtheory.model.GeneratedMapViewModel;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.GeneratedGraphViewModel;
+import cz.uhk.graphtheory.model.Graph;
 import cz.uhk.graphtheory.util.SpecificGraphGenerator;
 
 
@@ -22,7 +22,7 @@ public class SecondActivityFragment extends AbstractFragment {
 
     private String type = "";
 
-    private GeneratedMapViewModel generatedMapViewModel;
+    private GeneratedGraphViewModel generatedGraphViewModel;
 
     public SecondActivityFragment() {
         // Required empty public constructor
@@ -37,7 +37,7 @@ public class SecondActivityFragment extends AbstractFragment {
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         super.onViewCreated(view, savedInstanceState);
-        generatedMapViewModel = getGeneratedMapViewModel();
+        generatedGraphViewModel = getGeneratedGraphViewModel();
 
         view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -66,15 +66,15 @@ public class SecondActivityFragment extends AbstractFragment {
     }
 
     private void createArticulation() {
-        Map mapToSet = SpecificGraphGenerator.createMapWithArticulation(height, width, getGraphGeneratedView().getBrushSize());
-        getGraphGeneratedView().setMap(mapToSet);
-        generatedMapViewModel.setMap(mapToSet); //pro viemodel
+        Graph graphToSet = SpecificGraphGenerator.createGraphWithArticulation(height, width, getGraphGeneratedView().getBrushSize());
+        getGraphGeneratedView().setGraph(graphToSet);
+        generatedGraphViewModel.setGraph(graphToSet); //pro viemodel
     }
 
     private void createBridge() {
-        Map mapToSet = SpecificGraphGenerator.createMapWithABridge(height, width, getGraphGeneratedView().getBrushSize());
-        getGraphGeneratedView().setMap(mapToSet);
-        generatedMapViewModel.setMap(mapToSet);
+        Graph graphToSet = SpecificGraphGenerator.createGraphWithABridge(height, width, getGraphGeneratedView().getBrushSize());
+        getGraphGeneratedView().setGraph(graphToSet);
+        generatedGraphViewModel.setGraph(graphToSet);
     }
 
     public void changeGraph(String type) {

@@ -11,8 +11,8 @@ import java.util.ArrayList;
 
 import cz.uhk.graphtheory.abstraction.AbstractFragment;
 import cz.uhk.graphtheory.model.Coordinate;
-import cz.uhk.graphtheory.model.CustomLine;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Edge;
+import cz.uhk.graphtheory.model.Graph;
 import cz.uhk.graphtheory.util.GraphGenerator;
 
 public class FifthActivityFragment extends AbstractFragment {
@@ -53,7 +53,7 @@ public class FifthActivityFragment extends AbstractFragment {
                         //myšlenka - mam body, rozdělím je na polovinu a každý bod z jedné poloviny spojím s každým bodem z druhé poloviny
                         ArrayList<Coordinate> firstPartOfNodes  = new ArrayList<>();
                         ArrayList<Coordinate> secondPartOfNodes = new ArrayList<>();
-                        ArrayList<CustomLine> bipartite = new ArrayList<>();
+                        ArrayList<Edge> bipartite = new ArrayList<>();
 
                         for (int i = 0; i < nodesToSet.size(); i++){
                             if (i < (nodesToSet.size() / 2)){
@@ -65,13 +65,13 @@ public class FifthActivityFragment extends AbstractFragment {
 
                         for (Coordinate coordinateFirstPart: firstPartOfNodes){
                             for (Coordinate coordinateSecondPart: secondPartOfNodes){
-                                CustomLine customLine = new CustomLine(coordinateFirstPart, coordinateSecondPart);
-                                bipartite.add(customLine);
+                                Edge edge = new Edge(coordinateFirstPart, coordinateSecondPart);
+                                bipartite.add(edge);
                             }
                         }
 
-                        Map mapToSet = new Map(bipartite, nodesToSet);
-                        getGraphGeneratedView().setMap(mapToSet);
+                        Graph graphToSet = new Graph(bipartite, nodesToSet);
+                        getGraphGeneratedView().setGraph(graphToSet);
                     }
                     disableListener = true;
                 }

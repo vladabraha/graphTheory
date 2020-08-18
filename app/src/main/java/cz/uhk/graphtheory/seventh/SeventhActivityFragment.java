@@ -12,8 +12,8 @@ import java.util.ArrayList;
 
 import cz.uhk.graphtheory.abstraction.AbstractFragment;
 import cz.uhk.graphtheory.model.Coordinate;
-import cz.uhk.graphtheory.model.CustomLine;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Edge;
+import cz.uhk.graphtheory.model.Graph;
 import cz.uhk.graphtheory.util.GraphGenerator;
 
 public class SeventhActivityFragment extends AbstractFragment {
@@ -52,14 +52,14 @@ public class SeventhActivityFragment extends AbstractFragment {
                         ArrayList<Coordinate> nodesToSet = GraphGenerator.generateNodes(height, width, BRUSH_SIZE, amountOfEdges);
 
                         //myšlenka - pro každý vrchol spočítám všechny čáry, který obsahuji daný uzel a mám jednu hodnotu skore grafu
-                        Map mapToSet = GraphGenerator.generateMap(height, width, BRUSH_SIZE, amountOfEdges);
-                        ArrayList<Coordinate> nodes = mapToSet.getCircles();
-                        ArrayList<CustomLine> lines = mapToSet.getCustomLines();
+                        Graph graphToSet = GraphGenerator.generateGraph(height, width, BRUSH_SIZE, amountOfEdges);
+                        ArrayList<Coordinate> nodes = graphToSet.getNodes();
+                        ArrayList<Edge> lines = graphToSet.getEdges();
 
                         ArrayList<Integer> graphScore = computeGraphScore(nodes, lines);
 
                         seventhFragmentActivityCommunicationInterface.onScoreComputed(graphScore);
-                        getGraphGeneratedView().setMap(mapToSet);
+                        getGraphGeneratedView().setGraph(graphToSet);
 
                     }
                     disableListener = true;
@@ -69,12 +69,12 @@ public class SeventhActivityFragment extends AbstractFragment {
     }
 
     @NonNull
-    public static ArrayList<Integer> computeGraphScore(ArrayList<Coordinate> nodes, ArrayList<CustomLine> lines) {
+    public static ArrayList<Integer> computeGraphScore(ArrayList<Coordinate> nodes, ArrayList<Edge> lines) {
         ArrayList<Integer> graphScore = new ArrayList<>();
         for (Coordinate coordinate : nodes){
             int score = 0;
-            for (CustomLine customLine : lines){
-                if (customLine.isPointInStartOrEndOfLine(coordinate)) score++;
+            for (Edge edge : lines){
+                if (edge.isPointInStartOrEndOfLine(coordinate)) score++;
             }
             graphScore.add(score);
         }
@@ -86,7 +86,7 @@ public class SeventhActivityFragment extends AbstractFragment {
 
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
         try {

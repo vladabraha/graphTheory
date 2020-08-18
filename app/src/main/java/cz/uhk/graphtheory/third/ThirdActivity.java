@@ -28,7 +28,7 @@ import cz.uhk.graphtheory.common.TabLayoutFragment;
 import cz.uhk.graphtheory.common.TextFragment;
 import cz.uhk.graphtheory.database.DatabaseConnector;
 import cz.uhk.graphtheory.fourth.FourthActivity;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Graph;
 import cz.uhk.graphtheory.util.GraphChecker;
 import cz.uhk.graphtheory.util.GraphConverter;
 import cz.uhk.graphtheory.util.GraphGenerator;
@@ -44,7 +44,7 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
     DatabaseConnector databaseConnector;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     ThirdActivityFragment thirdActivityFragment;
-    Map mapToCheck;
+    Graph graphToCheck;
     boolean isAttached;
 
     int height, width;
@@ -68,7 +68,7 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
         textFragment.setEducationText(R.string.third_activity_text);
 
         floatingActionButton.setOnClickListener(v -> {
-            if (GraphChecker.checkIfGraphIsComplementGraph(drawingFragment.getUserGraph(), mapToCheck)) {
+            if (GraphChecker.checkIfGraphIsComplementGraph(drawingFragment.getUserGraph(), graphToCheck)) {
                 String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
                 assert userName != null;
                 Double receivedPoints = databaseConnector.recordUserPoints(userName, "third");
@@ -164,23 +164,23 @@ public class ThirdActivity extends AbstractActivity implements TabLayoutFragment
 
     private void createComplementGraph() {
         int amountOfNodes = (int) Math.round(Math.random() * 2) + 4;
-        Map firstMap = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
+        Graph firstGraph = GraphGenerator.generateGraph(height, width, 15, amountOfNodes);
 
-        ArrayList<Map> maps = GraphConverter.convertMapsToSplitScreenArray(firstMap, height);
-        Map splittedMap = maps.get(0);
-        Map splittedMap2 = maps.get(1);
+        ArrayList<Graph> graphs = GraphConverter.convertGraphsToSplitScreenArray(firstGraph, height);
+        Graph splittedGraph = graphs.get(0);
+        Graph splittedGraph2 = graphs.get(1);
 
         //tohle je pro ulozeni si celýho grafu bez vymazanejch čar, abych na tom mohl zavolat jenom dogenerovani do uplnyho grafu a pak to mohl porovnat
-        Map secondMap = new Map(splittedMap2);
-        mapToCheck = PathGenerator.createComplementToGraph(secondMap); //v tomhle bude mapa, vuci ktere budeme kreslit to, co vyvtvoril uzivatel
+        Graph secondGraph = new Graph(splittedGraph2);
+        graphToCheck = PathGenerator.createComplementToGraph(secondGraph); //v tomhle bude mapa, vuci ktere budeme kreslit to, co vyvtvoril uzivatel
 
-        splittedMap2.setCustomLines(new ArrayList<>());
+        splittedGraph2.setEdges(new ArrayList<>());
 
-        splittedMap.getCircles().addAll(splittedMap2.getCircles());
-        splittedMap.getCustomLines().addAll(splittedMap2.getCustomLines());
-        splittedMap.getRedLineList().addAll(splittedMap2.getRedLineList());
+        splittedGraph.getNodes().addAll(splittedGraph2.getNodes());
+        splittedGraph.getEdges().addAll(splittedGraph2.getEdges());
+        splittedGraph.getRedEdgesList().addAll(splittedGraph2.getRedEdgesList());
 
-        drawingFragment.setUserGraph(splittedMap);
+        drawingFragment.setUserGraph(splittedGraph);
     }
 
     @Override

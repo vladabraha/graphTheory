@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import cz.uhk.graphtheory.abstraction.AbstractFragment;
 import cz.uhk.graphtheory.common.GraphGeneratedView;
 import cz.uhk.graphtheory.model.Coordinate;
-import cz.uhk.graphtheory.model.CustomLine;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Edge;
+import cz.uhk.graphtheory.model.Graph;
 import cz.uhk.graphtheory.util.GraphConverter;
 import cz.uhk.graphtheory.util.GraphGenerator;
 
@@ -25,9 +25,9 @@ public class FourthActivityFragment extends AbstractFragment {
     public static final int MAXIMUM_AMOUNT_OF_NODES = 7;
     public static final int MINIMUM_AMOUNT_OF_NODES = 5;
 
-    private Map firstMapToSet;
+    private Graph firstGraphToSet;
     private boolean setFirst;
-    private Map secondMapToSet;
+    private Graph secondGraphToSet;
     private boolean shouldStop, disableListener = false;
     private GraphGeneratedView graphGeneratedView;
     public int BRUSH_SIZE;
@@ -56,12 +56,12 @@ public class FourthActivityFragment extends AbstractFragment {
                         if (amountOfEdges < MINIMUM_AMOUNT_OF_NODES)
                             amountOfEdges = MINIMUM_AMOUNT_OF_NODES;
                         BRUSH_SIZE = getGraphGeneratedView().getBrushSize();
-                        firstMapToSet = GraphGenerator.generateMap(height, width, BRUSH_SIZE, amountOfEdges);
+                        firstGraphToSet = GraphGenerator.generateGraph(height, width, BRUSH_SIZE, amountOfEdges);
 
-                        secondMapToSet = new Map(firstMapToSet);
+                        secondGraphToSet = new Graph(firstGraphToSet);
 
                         //myšlenka - mám graf, změním tam jenom souřadnice a znovu vykreslím
-                        int randomNumber = (int) Math.round(Math.random() * firstMapToSet.getCircles().size());
+                        int randomNumber = (int) Math.round(Math.random() * firstGraphToSet.getNodes().size());
                         for (int i = 0; i < randomNumber; i++) {
                             //vytvořím si náhodnou souřadnici
                             float newXCoordinate = (float) (Math.random() * width);
@@ -69,37 +69,37 @@ public class FourthActivityFragment extends AbstractFragment {
 
                             //vezmu náhodný uzel a tomu změním souřadnice + všem elementům se stejnou souřadnicí
 
-                            int randomIndex = (int) Math.round(Math.random() * (secondMapToSet.getCircles().size() - 1));
-                            Coordinate oldCoordinate = secondMapToSet.getCircles().get(randomIndex);
+                            int randomIndex = (int) Math.round(Math.random() * (secondGraphToSet.getNodes().size() - 1));
+                            Coordinate oldCoordinate = secondGraphToSet.getNodes().get(randomIndex);
                             Coordinate newCoordinate = new Coordinate(newXCoordinate, newYCoordinate);
 
-                            secondMapToSet.getCircles().set(randomIndex, newCoordinate);
-                            ArrayList<CustomLine> customLines = secondMapToSet.getCustomLines();
-                            for (int j = 0; j < customLines.size(); j++) {
-                                CustomLine customLine = customLines.get(j);
-                                if (customLine.getTo().equal(oldCoordinate)) {
-                                    CustomLine newCustomLine = new CustomLine(customLine.getFrom(), newCoordinate);
-                                    customLines.set(j, newCustomLine);
-                                } else if (customLine.getFrom().equal(oldCoordinate)) {
-                                    CustomLine newCustomLine = new CustomLine(newCoordinate, customLine.getTo());
-                                    customLines.set(j, newCustomLine);
+                            secondGraphToSet.getNodes().set(randomIndex, newCoordinate);
+                            ArrayList<Edge> edges = secondGraphToSet.getEdges();
+                            for (int j = 0; j < edges.size(); j++) {
+                                Edge edge = edges.get(j);
+                                if (edge.getTo().equal(oldCoordinate)) {
+                                    Edge newEdge = new Edge(edge.getFrom(), newCoordinate);
+                                    edges.set(j, newEdge);
+                                } else if (edge.getFrom().equal(oldCoordinate)) {
+                                    Edge newEdge = new Edge(newCoordinate, edge.getTo());
+                                    edges.set(j, newEdge);
                                 }
                             }
                         }
                         graphGeneratedView = getGraphGeneratedView();
 
-                        //rozdelim si mapu na 2 poloviny (metoda bohužel vrací ten samej graf rozdelenej na polovinu, takze si to musi zavolat 2x a pak si to z toho vytahnu
+                        //rozdelim si graf na 2 poloviny (metoda bohužel vrací ten samej graf rozdelenej na polovinu, takze si to musi zavolat 2x a pak si to z toho vytahnu
                         //nez to poslu do view, tak to musim ještě slepit do jednoho grafu
-                        ArrayList<Map> firstMapTwice = GraphConverter.convertMapsToSplitScreenArray(firstMapToSet, height);
-                        firstMapToSet = firstMapTwice.get(0);
-                        ArrayList<Map> secondMapTwice = GraphConverter.convertMapsToSplitScreenArray(secondMapToSet, height);
-                        secondMapToSet = secondMapTwice.get(1);
+                        ArrayList<Graph> firstGraphTwice = GraphConverter.convertGraphsToSplitScreenArray(firstGraphToSet, height);
+                        firstGraphToSet = firstGraphTwice.get(0);
+                        ArrayList<Graph> secondGraphTwice = GraphConverter.convertGraphsToSplitScreenArray(secondGraphToSet, height);
+                        secondGraphToSet = secondGraphTwice.get(1);
 
-                        firstMapToSet.getCustomLines().addAll(secondMapToSet.getCustomLines());
-                        firstMapToSet.getCircles().addAll(secondMapToSet.getCircles());
-                        firstMapToSet.getRedLineList().addAll(secondMapToSet.getRedLineList());
+                        firstGraphToSet.getEdges().addAll(secondGraphToSet.getEdges());
+                        firstGraphToSet.getNodes().addAll(secondGraphToSet.getNodes());
+                        firstGraphToSet.getRedEdgesList().addAll(secondGraphToSet.getRedEdgesList());
 
-                        graphGeneratedView.setMap(firstMapToSet);
+                        graphGeneratedView.setGraph(firstGraphToSet);
 
                     }
                     disableListener = true;

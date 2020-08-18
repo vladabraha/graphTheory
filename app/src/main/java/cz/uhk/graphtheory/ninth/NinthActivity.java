@@ -29,8 +29,7 @@ import cz.uhk.graphtheory.common.SecondaryTabLayoutFragment;
 import cz.uhk.graphtheory.common.TabLayoutFragment;
 import cz.uhk.graphtheory.common.TextFragment;
 import cz.uhk.graphtheory.database.DatabaseConnector;
-import cz.uhk.graphtheory.interfaces.DrawingFragmentListener;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Graph;
 import cz.uhk.graphtheory.statistics.StatisticsActivity;
 import cz.uhk.graphtheory.util.GraphChecker;
 import cz.uhk.graphtheory.util.GraphGenerator;
@@ -41,14 +40,10 @@ public class NinthActivity extends AbstractActivity implements TabLayoutFragment
     private DrawingFragment drawingFragment;
     private TextFragment textFragment;
     private BottomNavigationView bottomNavigationView;
-    private Fragment educationGraphFragment;
-    private FloatingActionButton floatingActionButton;
-    private DrawingFragmentListener drawingFragmentListener;
-    private TabLayoutFragment tabLayoutFragment;
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
-    private Map generatedMap;
+    private Graph generatedGraph;
 
 
     int height, width;
@@ -65,16 +60,13 @@ public class NinthActivity extends AbstractActivity implements TabLayoutFragment
         //get instance of abstraction object
         textFragment = getTextFragment();
         drawingFragment = getDrawingFragment();
-        educationGraphFragment = getGenerateGraphFragment();
         bottomNavigationView = getBottomNavigationView();
-        floatingActionButton = getFloatingActionButton();
-        tabLayoutFragment = getTabLayoutFragment();
+        FloatingActionButton floatingActionButton = getFloatingActionButton();
 
         textFragment.setEducationText(R.string.ninth_activity_text);
 
-        drawingFragmentListener = drawingFragment; //potřeba předat, kdo poslouchá daný listener
         floatingActionButton.setOnClickListener(v -> {
-            String isValid = GraphChecker.checkIfGraphIsSpanningTree(drawingFragment.getUserGraph(), generatedMap);
+            String isValid = GraphChecker.checkIfGraphIsSpanningTree(drawingFragment.getUserGraph(), generatedGraph);
             switch (isValid) {
                 case "true":
                     String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
@@ -220,10 +212,10 @@ public class NinthActivity extends AbstractActivity implements TabLayoutFragment
         int amountOfNodes = (int) (Math.random() * MAXIMUM_AMOUNT_OF_NODES);
         if (amountOfNodes < MINIMUM_AMOUNT_OF_NODES) amountOfNodes = MINIMUM_AMOUNT_OF_NODES;
 
-        Map mapToSet = GraphGenerator.generateMap(height, width, 15, amountOfNodes);
+        Graph graphToSet = GraphGenerator.generateGraph(height, width, 15, amountOfNodes);
 
-        generatedMap = new Map(mapToSet);
-        drawingFragment.setUserGraph(mapToSet);
+        generatedGraph = new Graph(graphToSet);
+        drawingFragment.setUserGraph(graphToSet);
         bottomNavigationView.setSelectedItemId(R.id.path);
     }
 

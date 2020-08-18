@@ -14,8 +14,8 @@ import android.view.View;
 import java.util.ArrayList;
 
 import cz.uhk.graphtheory.model.Coordinate;
-import cz.uhk.graphtheory.model.CustomLine;
-import cz.uhk.graphtheory.model.Map;
+import cz.uhk.graphtheory.model.Edge;
+import cz.uhk.graphtheory.model.Graph;
 
 /**
  * trida slouzici jenom pro vygenerovani jednoho grafu (mozna toho da i vic?)
@@ -30,7 +30,7 @@ public class GraphGeneratedView extends View {
     private ArrayList<Coordinate> circleCoordinates = new ArrayList<>();
     private ArrayList<Coordinate> allLineList = new ArrayList<>(); //seznam všech vytvořených line, ktere propojuji kruhy
     private ArrayList<Coordinate> redLineList = new ArrayList<>();
-    private ArrayList<Coordinate> redCirclesCoordinates = new ArrayList<>();
+    private ArrayList<Coordinate> redNodesCoordinates = new ArrayList<>();
 
     public static final int DEFAULT_COLOR = Color.BLACK;
     public static final int RED = Color.RED;
@@ -131,8 +131,8 @@ public class GraphGeneratedView extends View {
             }
         }
 
-        if (redCirclesCoordinates != null && redCirclesCoordinates.size() > 0){
-            for (Coordinate coordinate : redCirclesCoordinates) {
+        if (redNodesCoordinates != null && redNodesCoordinates.size() > 0){
+            for (Coordinate coordinate : redNodesCoordinates) {
                 mPaint.setColor(RED);
                 mPaint.setStrokeWidth(BRUSH_SIZE);
                 mPaint.setStyle(Paint.Style.FILL);
@@ -158,7 +158,7 @@ public class GraphGeneratedView extends View {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (mListener != null ) mListener.sentPreviousMap(getMap());
+                if (mListener != null ) mListener.sentPreviousGraph(getGraph());
                 Coordinate circleCoordinate;
                 circleCoordinate = isInAnyCircle(x, y);
                 if (circleCoordinate != null){
@@ -180,7 +180,7 @@ public class GraphGeneratedView extends View {
                 break;
 
             case MotionEvent.ACTION_UP:
-                if (mListener != null ) mListener.sentUpdatedMap(getMap());
+                if (mListener != null ) mListener.sentUpdatedGraph(getGraph());
                 break;
 
         }
@@ -229,39 +229,39 @@ public class GraphGeneratedView extends View {
 
 
     /**
-     * get map for DrawMapViewModel
+     * get graph for DrawMapViewModel
      */
-    public Map getMap() {
+    public Graph getGraph() {
 
-        ArrayList<CustomLine> lines = new ArrayList<>();
+        ArrayList<Edge> lines = new ArrayList<>();
         for (int x = 0; x < allLineList.size(); x++) {
             if (x % 2 != 0) {
-                CustomLine line = new CustomLine(allLineList.get(x - 1), allLineList.get(x));
+                Edge line = new Edge(allLineList.get(x - 1), allLineList.get(x));
                 lines.add(line);
             }
         }
 
-        ArrayList<CustomLine> path = new ArrayList<>();
+        ArrayList<Edge> path = new ArrayList<>();
         for (int x = 0; x < redLineList.size(); x++){
             if (x % 2 != 0) {
-                CustomLine line = new CustomLine(redLineList.get(x - 1), redLineList.get(x));
+                Edge line = new Edge(redLineList.get(x - 1), redLineList.get(x));
                 path.add(line);
             }
         }
 
-        return new Map(lines, circleCoordinates, path, redCirclesCoordinates);
+        return new Graph(lines, circleCoordinates, path, redNodesCoordinates);
     }
 
-    public void setMap(Map map) {
-        ArrayList<CustomLine> lines = map.getCustomLines();
-        ArrayList<CustomLine> path = map.getRedLineList();
+    public void setGraph(Graph graph) {
+        ArrayList<Edge> lines = graph.getEdges();
+        ArrayList<Edge> path = graph.getRedEdgesList();
 
         allLineList.clear();
         redLineList.clear();
 
-        circleCoordinates = map.getCircles();
-        redCirclesCoordinates = map.getRedCircles();
-        if (!circleCoordinates.isEmpty() || !allLineList.isEmpty() || !redCirclesCoordinates.isEmpty()) {
+        circleCoordinates = graph.getNodes();
+        redNodesCoordinates = graph.getRedNodes();
+        if (!circleCoordinates.isEmpty() || !allLineList.isEmpty() || !redNodesCoordinates.isEmpty()) {
             invalidate();
         }
 
@@ -294,8 +294,8 @@ public class GraphGeneratedView extends View {
      * interface pro komunikaci s aktivitou, ktera chce vedět jak vypadal graf pred posunutim a po posuniti nějakého prvku
      */
     public interface CommunicationInterface {
-        public void sentPreviousMap(Map map);
-        public void sentUpdatedMap(Map map);
+        public void sentPreviousGraph(Graph graph);
+        public void sentUpdatedGraph(Graph graph);
     }
 
 }
